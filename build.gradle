@@ -10,7 +10,13 @@ project(':stalker') {
 }
 
 project(':harm') {
-  dependencies {
+	dependencies {
     implementation project(':library')
   }
+}
+
+project(':jcp') {
+	dependencies {
+		implementation project(':library')
+	}
 }
