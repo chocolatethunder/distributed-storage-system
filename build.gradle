@@ -1,22 +1,31 @@
 subprojects {
-  apply plugin: 'java'
-  version = '1.0'
+    apply plugin: 'java'
+    version = '1.0'
 }
 
 project(':stalker') {
-  dependencies {
-    implementation project(':library')
-  }
+    dependencies {
+        implementation project(':library')
+        compile 'com.fasterxml.jackson.core:jackson-core:2.7.3'
+        compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.3'
+        compile 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
+    }
 }
 
 project(':harm') {
-	dependencies {
-    implementation project(':library')
-  }
+    dependencies {
+        implementation project(':library')
+        compile 'com.fasterxml.jackson.core:jackson-core:2.7.3'
+        compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.3'
+        compile 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
+    }
 }
 
 project(':jcp') {
-	dependencies {
-		implementation project(':library')
-	}
+    dependencies {
+        implementation project(':library')
+        compile 'com.fasterxml.jackson.core:jackson-core:2.7.3'
+        compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.3'
+        compile 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
+    }
 }

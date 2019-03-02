@@ -4,11 +4,11 @@
 package app;
 
 public class App {
-    public String getGreeting() {
-        return "Hello world.";
-    }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+
+        FileStreamer fileStreamer = new FileStreamer();
+        fileStreamer.sendFile("/Users/Mehnaz/Desktop/distributed-storage-system/jcp/src/main/java/app/test.txt");
+
     }
 }

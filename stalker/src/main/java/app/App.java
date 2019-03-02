@@ -3,12 +3,103 @@
  */
 package app;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Optional;
+
 public class App {
     public String getGreeting() {
-      return "Hello world.";
+        return "Hello world.";
     }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+
+
+        //initialize socket and input stream
+        Socket socket = null;
+        Socket newServer = null;
+        ServerSocket server = null;
+        DataInputStream in = null;
+        DataOutputStream out = null;
+        BufferedOutputStream bufferedOutputStream = null;
+
+
+        int bytesRead;
+        int count = 0;
+
+
+        try {
+            server = new ServerSocket(6553);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        System.out.println("Waiting...");
+
+        while(true) {
+            try {
+
+                socket = server.accept();
+                System.out.println("Accepted connection : " + socket);
+
+
+                in = new DataInputStream(socket.getInputStream());
+                out = new DataOutputStream(socket.getOutputStream());
+
+
+                executeHandshake(in, out);
+                // receive file in chunks
+                byte[] chunkArray = new byte[1024];
+
+
+
+                while ((bytesRead = in.read(chunkArray)) != -1 )
+                {
+                        bufferedOutputStream = new BufferedOutputStream(new FileOutputStream("chunk_"  + ".txt"));
+                        bufferedOutputStream.write(chunkArray, 0, bytesRead);
+                        bufferedOutputStream.flush();
+                        System.out.println("File "
+                                + " downloaded (" + bytesRead + " bytes read)");
+
+                }
+
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static  String executeHandshake(DataInputStream in, DataOutputStream out) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        Optional<TcpPacket> receivedPacket = Optional.empty();
+
+        try {
+            String rec = in.readUTF();
+            receivedPacket = Optional.of(mapper.readValue(rec, TcpPacket.class));
+
+        } catch (EOFException e) {
+        }
+
+
+        TcpPacket sendAvail = new TcpPacket(TcpPacket.RequestType.UPLOAD, "AVAIL");
+
+        String jsonInString = mapper.writeValueAsString(sendAvail);
+        System.out.println(jsonInString);
+        out.writeUTF(jsonInString);
+
+
+        return receivedPacket.isPresent()? receivedPacket.get().getRequestType() : "";
+
+
     }
 }
+
+
