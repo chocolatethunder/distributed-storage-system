@@ -11,16 +11,12 @@ import java.net.Socket;
 import java.util.Optional;
 
 public class App {
-    public String getGreeting() {
-        return "Hello world.";
-    }
 
     public static void main(String[] args) {
 
 
         //initialize socket and input stream
         Socket socket = null;
-        Socket newServer = null;
         ServerSocket server = null;
         DataInputStream in = null;
         DataOutputStream out = null;
@@ -28,7 +24,7 @@ public class App {
 
 
         int bytesRead;
-        int count = 0;
+
 
 
         try {
@@ -42,6 +38,7 @@ public class App {
         System.out.println("Waiting...");
 
         while(true) {
+
             try {
 
                 socket = server.accept();
@@ -73,7 +70,17 @@ public class App {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }finally {
+                    try {
+                        in.close();
+                        out.close();
+                        socket.close();
+                        bufferedOutputStream.close();
+                    } catch (IOException i) {
+                        i.printStackTrace();
+                    }
+                }
+
         }
     }
 
