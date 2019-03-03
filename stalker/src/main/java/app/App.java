@@ -9,6 +9,9 @@ public class App {
     }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+
+        FileChunker f = new FileChunker();
+        f.printGreet();
+        //System.out.println(new App().getGreeting());
     }
 }
