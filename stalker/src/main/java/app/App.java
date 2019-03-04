@@ -11,7 +11,7 @@ public class App {
     public static void main(String[] args) {
 
         FileChunker f = new FileChunker();
-        f.printGreet();
+        f.test();
         //System.out.println(new App().getGreeting());
     }
 }
