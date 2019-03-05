@@ -33,6 +33,7 @@ public class IndexEntry {
     }
     /////-------------------------------------   getters/setters
 
+    public String fileName(){ return(file_prefix + "." + file_type); }
     public boolean processed(){return processed;}
     public void setChunks(List<Chunk> chunks){
         chunkCount = chunks.size();
