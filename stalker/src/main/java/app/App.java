@@ -9,9 +9,26 @@ public class App {
     }
 
     public static void main(String[] args) {
+        String input_file = "chunks/test_files/000_mp4_test.mp4";
+        String chunk_dir = "chunks/chunked/";
+        FileChunker f = new FileChunker(chunk_dir);
+        f.cleanChunks();
+        IndexEntry entry = f.chunkFile(input_file, 3);
+        entry.summary();
 
-        FileChunker f = new FileChunker();
-        f.test();
+
         //System.out.println(new App().getGreeting());
     }
 }
+
+
+
+// "chunks/test_files/000_mp4_test.mp4",
+//                    "chunks/test_files/001_jpg_test.jpg",
+//                    "chunks/test_files/002_png_test.png",
+//                    "chunks/test_files/003_txt_test.txt",
+//                    "chunks/test_files/004_mov_test.mov",
+//                    "chunks/test_files/005_zip_test.zip",
+//                    "chunks/test_files/006_rar_test.rar",
+//                    "chunks/test_files/007_docx_test.docx",
+//                    "chunks/test_files/008_pdf_test.pdf"));
