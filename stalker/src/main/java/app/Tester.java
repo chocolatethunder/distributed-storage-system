@@ -56,15 +56,17 @@ public class Tester {
     public void cleanChunks(List<String> h_list, String chunk_dir) {
         File folder = new File(chunk_dir);
         File[] flist = folder.listFiles();
-        for (int i = 0; i < flist.length; i++) {
-            flist[i].delete();
-        }
-
-        for(String s : h_list){
-            folder = new File(s);
-            flist = folder.listFiles();
+        if (flist.length != 0) {
             for (int i = 0; i < flist.length; i++) {
                 flist[i].delete();
+            }
+
+            for(String s : h_list){
+                folder = new File(s);
+                flist = folder.listFiles();
+                for (int i = 0; i < flist.length; i++) {
+                    flist[i].delete();
+                }
             }
         }
 
