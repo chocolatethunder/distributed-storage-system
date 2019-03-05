@@ -5,20 +5,23 @@ package app;
 import java.util.*;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Optional;
+
 public class App {
-    public String getGreeting() {
-      return "Hello world.";
-    }
 
     public static void main(String[] args) {
+
         Tester t = new Tester();
         t.test();
         //System.out.println(new App().getGreeting());
     }
 
 }
-
-
 
 
 // "chunks/test_files/000_mp4_test.mp4",
