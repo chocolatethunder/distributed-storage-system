@@ -8,7 +8,7 @@ import org.apache.commons.io.FileUtils;
 
 public class IndexEntry {
 
-    private bool processed = false;
+    private boolean processed = false;
     private String file_prefix;
     private String file_type;
     private long file_size;
@@ -24,22 +24,35 @@ public class IndexEntry {
         file_size = size;
         //index_map = new HashMap<int, List<String>>();
     }
+
+
+    public void cleanLocalChunks() {
+        for(Chunk c : chunkList){
+            c.removeLocalChunk();
+        }
+    }
     /////-------------------------------------   getters/setters
 
-    public bool processed(){return processed;}
+    public boolean processed(){return processed;}
     public void setChunks(List<Chunk> chunks){
         chunkCount = chunks.size();
         chunkList = chunks;
     }
     public void addChunk(Chunk c){
-        chunkList.add(chunk);
+        chunkList.add(c);
+    }
+
+    public List<Chunk> getChunks(){
+        return(chunkList);
     }
 
     public long size(){return file_size;}
     //print all data related to this entry
     public void summary(){
+        System.out.println("Entry Summary: ");
         printMetaData();
         printChunkData();
+        System.out.println("\n");
     }
     //print file info
     public void printMetaData(){
@@ -49,6 +62,6 @@ public class IndexEntry {
     }
     //print data for each chunk
     public void printChunkData(){
-        chunkList.forEach(c -> System.out.println(c.toString()));
+        chunkList.forEach(c -> {System.out.println(c.toString()); c.printReplicas();});
     }
 }

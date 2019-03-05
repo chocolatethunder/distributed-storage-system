@@ -70,10 +70,9 @@ public class FileChunker {
             if (debug) System.out.println("offset: " + offset);
             in.close();
             //write bytes to new file
-            String chunkPath =  chunkDir + "c" + Integer.toString(cInd) + ".chunk";
-            //create the chunk object
-            tChunk = new Chunk(chunkPath, cInd, offset);
-            FileUtils.writeByteArrayToFile(new File(chunkPath), bytes);
+            //create the chunk object, the name
+            tChunk = new Chunk(chunkDir, cInd, offset);
+            FileUtils.writeByteArrayToFile(new File(tChunk.path()), bytes);
         }
         catch (FileNotFoundException e){
             e.printStackTrace();
@@ -88,7 +87,7 @@ public class FileChunker {
         return(tChunk);
     }
 
-
+    //--------------------------------- Utilities
     //prints contents of a text file
     public void printFileContents(String filepath) {
         try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
@@ -109,18 +108,7 @@ public class FileChunker {
     }
 
 
-    //purges chunk directory of
-    public void cleanChunks() {
-        File folder = new File(chunkDir);
-        File[] flist = folder.listFiles();
-        for (int i = 0; i < flist.length; i++) {
-            flist[i].delete();
-        }
-    }
-    public void debug()
-    {
-        debug = !debug;
-    }
+    public void debug() { debug = !debug; }
 
 
 }
