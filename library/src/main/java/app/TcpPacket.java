@@ -7,15 +7,11 @@ import java.io.Serializable;
  */
 public class TcpPacket {
 
-    public enum RequestType{
-        UPLOAD,
-        DOWNLOAD,
-        LIST
-    }
 
     private String requestType;
     private String message;
 
+    // need default for Jackson
     public TcpPacket(){}
 
     public TcpPacket(RequestType requestType, String message){

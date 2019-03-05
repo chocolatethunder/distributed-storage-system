@@ -7,8 +7,9 @@ public class App {
 
     public static void main(String[] args) {
 
-        FileStreamer fileStreamer = new FileStreamer();
-        fileStreamer.sendFile("/Users/Mehnaz/Desktop/distributed-storage-system/jcp/src/main/java/app/test.txt");
+        RequestSender requestSender = RequestSender.getInstance();
+
+        requestSender.sendFile("/Users/Mehnaz/Desktop/distributed-storage-system/jcp/src/main/java/app/test.txt");
 
     }
 }
