@@ -9,7 +9,7 @@ public class App {
 
         RequestSender requestSender = RequestSender.getInstance();
 
-        requestSender.sendFile("/Users/Mehnaz/Desktop/distributed-storage-system/jcp/src/main/java/app/test.txt");
+        requestSender.sendFile("test.txt");
 
     }
 }
