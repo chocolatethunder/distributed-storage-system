@@ -19,6 +19,8 @@ public class App {
         Tester t = new Tester();
         t.test();
         //System.out.println(new App().getGreeting());
+        JcpRequestHandler jcpRequestHandler = new JcpRequestHandler();
+        jcpRequestHandler.run();
     }
 
 }
