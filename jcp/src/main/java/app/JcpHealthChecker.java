@@ -26,7 +26,7 @@ public class JcpHealthChecker implements Runnable {
 			for (int i = 0; i < 256; i++) {
 				//String host = "192.168.1." + i;
 				String host = "127.0.0." + i;
-				System.out.println("Attempting to connect to " + host + " ...");
+				//System.out.println("Attempting to connect to " + host + " ...");
 				try {
 					socket = new Socket();
 					if (listOfStalkers.contains(host)) {
@@ -36,7 +36,7 @@ public class JcpHealthChecker implements Runnable {
 					listOfStalkers.add(host);
 					socket.close();
 				} catch (IOException e) {
-					System.out.println("Not connected.");
+					//System.out.println("Not connected.");
 				}
 			}
 			

@@ -3,6 +3,7 @@ package app;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
+import java.util.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -14,6 +15,7 @@ public class RequestSender {
 
     Socket socket = null;
     DataOutputStream out = null;
+	String lastIPAccessed = "127.0.0.1";
 
 
 
@@ -27,8 +29,8 @@ public class RequestSender {
         try {
 
             //TO:DO  need to implement the ROUND ROBIN logic to chose the STALKER to connect
-
-            socket = createConnection("127.0.0.1", 6553);
+			connectToNextStalker
+			
         } catch (IOException e) {
             //Could not connect , need another STALKER here
         }
@@ -149,6 +151,33 @@ public class RequestSender {
             System.out.println("Connected");
         return socket;
     }
+	
+	public void connectToNextStalker() {
+		
+			//change this to a json file?
+			String stalkerListFile = "STALKERs.txt";
+			List<String> stalkerList = new ArrayList<String>();
+			
+			BufferedReader in = new BufferedReader(new FileReader(stalkerListFile));
+			
+			String readInIP;
+			while ((readInIP = in.readLine()) != null) {
+				stalkerList.add(readInIP);
+			}
+			
+			//System.out.println(stalkerList);
+			
+			int lastIPIndex = stalkerList.indexOf(lastIPAccessed);
+			int nextIPIndex = lastIPIndex + 1;
+			if (nextIPIndex >= stalkerList.size()) {
+				nextIPIndex = 0;
+			}
+			String nextIP = stalkerList.get(nextIPIndex);
+
+            //socket = createConnection("127.0.0.1", 6553);
+			//System.out.println(nextIP);
+			socket = createConnection(nextIP, 6553);
+	}
 
 
 }

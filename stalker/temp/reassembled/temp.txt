@@ -86,3 +86,47 @@ If there is an error in the input file, the program ends with an error message.
 The set-based search will run for a fixed number of generations or until no further solution is possible,
 it outputs the best solution or a message stating that no possible solution.
 
+CPSC 433 Course Scheduling Problem
+
+
+Team members : 
+Bader Abdul Waseem 
+John Benedict Mendoza
+Mehnaz Tarannum
+Parva Thaker 
+Ryan Anderson 
+Victor Guan
+
+
+External Library to be installed: 
+Install java-openjfx through your package manager
+(Note that java-openjfx is compatible with OpenJDK8, not previous versions.)
+ 
+
+
+General Usage:
+
+1. In CPSC-433 directory, run the utility script compile.sh to compile all java files 
+   or alternatively from CPSC-433, run the command 
+   javac *.java ./OrTree/*.java ./ParseData/*.java ./Parser/*.java ./SetBased/*.java ./Slot_Occupant/*.java 
+2. Run the system with: java Driver configFile.txt [input file name]
+3. The file configFile.txt contains the following system parameters:
+
+	Soft Constraint Parameters:
+	
+	1. minFilledWeight  - The weight value for the pen_courseMin and pen_labMin parameters.
+	2. prefWeight 	    - The weight value for the preference penalties contained in the input file.
+	3. notPairedWeight 	- The weight value for the pen_notPaired parameter.
+	4. secDiffWeight    - The weight value for the pen_section parameter.
+	5. pen_courseMin	- Penalty to incur if a course time slot is not assigned the minimum number of courses indicated in the input file.
+	6. pen_labMin		- Penalty to incur if a lab time slot is not assigned the minimum number of labs indicated in the input file.
+	7. pen_notPaired	- Penalty to incur if a pair of courses/labs indicated in the input file are not assigned the same time slot.
+	8. pen_section		- Penalty to incur if a pair of sections for a course are assigned the same (or overlapping) time slot(s).
+	
+	
+
+General Comments: 
+If there is an error in the input file, the program ends with an error message. 
+The set-based search will run for a fixed number of generations or until no further solution is possible,
+it outputs the best solution or a message stating that no possible solution.
+
