@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
+import org.apache.commons.io.*;
 
 /**
  *
@@ -52,7 +53,6 @@ public class RequestSender {
             //DEBUG
             System.out.println("SERVER BUSY");
         }
-
     }
 
 
@@ -62,7 +62,6 @@ public class RequestSender {
         if(handShakeSuccess(RequestType.LIST)) {
 
         }
-
         return null;
 
     }
@@ -74,13 +73,10 @@ public class RequestSender {
 
         if(handShakeSuccess(RequestType.DELETE)) {
         }
-
     }
 
     public void getFile(String filePath){
-
         // TO:DO need logic to verify file size  here
-
         if(handShakeSuccess(RequestType.DOWNLOAD)) {
 
             FileStreamer fileStreamer = new FileStreamer(socket);
@@ -92,7 +88,7 @@ public class RequestSender {
 
     //just incase no file is specified
     private boolean handShakeSuccess(RequestType requestType){
-        handShakeSuccess(requestType, "");
+        return(handShakeSuccess(requestType, ""));
     }
 
     //resposnible for making a request to the STALKER
@@ -104,14 +100,15 @@ public class RequestSender {
             // in the case that we are sending a file we need to also
             // send the name of the file as well as the file size
             //The request will not be sent if the file doesn't exist...
-            if (requestType == RequestType.UPLOAD){
-                if (!initialPacket.setFile(toSend)){
-
-                    System.out.println("Incorrect file path...");
-                    return false;
-                }
-
+            File f = new File(toSend);
+            if (f.exists()){
+                initialPacket.setFile(FilenameUtils.getName(toSend), f.length());
             }
+            else{
+                throw new FileNotFoundException("The file specified does not exist!");
+            }
+
+
             out = new DataOutputStream(socket.getOutputStream());
             DataInputStream  in = new DataInputStream((socket.getInputStream()));
 
@@ -140,7 +137,6 @@ public class RequestSender {
         } catch (IOException  e) {
             e.printStackTrace();
         }
-
         return receivedPacket != null && receivedPacket.getMessage().equals("AVAIL");
     }
 
@@ -155,7 +151,6 @@ public class RequestSender {
         return socket;
     }
 
-    public
 
 
 }

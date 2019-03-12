@@ -10,7 +10,7 @@ public class TcpPacket {
 
     private String requestType;
     private String message;
-    private string fileName;
+    private String fileName;
     private int fileSize;
 
     // need default for Jackson
@@ -30,20 +30,22 @@ public class TcpPacket {
         return this.message;
     }
 
-    // used for file tranfer operations
+    // used for file transfer operations
     // if we are going to send a file
     // we need to specify the name of the file and make sure it exists before we send it
     // we also need to make sure the file isn't too big!
-    public boolean setFile(String fname){
-        try{
-            File file = new File(fname);
-            fileName = fname;
-            fileSize = file.length();
-        }
-        catch (IOException e){
-            return false;
-        }
+    public void setFile(String fname, int size){
 
+        fileName = fname;
+        fileSize = size;
+    }
+
+    public String getFileName(){
+        return fileName;
+    }
+
+    public int getFileSize(){
+        return(fileSize);
     }
 
 

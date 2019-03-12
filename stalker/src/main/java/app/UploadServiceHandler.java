@@ -11,9 +11,12 @@ public class UploadServiceHandler implements Runnable {
     private final Socket socket;
     private DataInputStream in = null;
     private BufferedOutputStream bufferedOutputStream = null;
+    private String temp_dir = "temp/temp/";
+    private String fileName;
 
-    public UploadServiceHandler(Socket socket){
+    public UploadServiceHandler(Socket socket, String fname){
          this.socket = socket;
+         this.fileName = fname;
     }
 
     @Override
@@ -24,7 +27,7 @@ public class UploadServiceHandler implements Runnable {
         int bytesRead = 0;
         try {
             in = new DataInputStream(socket.getInputStream());
-            bufferedOutputStream = new BufferedOutputStream(new FileOutputStream("temp.txt"));
+            bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(temp_dir + fileName));
         } catch (IOException e) {
             e.printStackTrace();
         }
