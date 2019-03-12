@@ -25,7 +25,8 @@ public class Tester {
     }
 
     public void test() {
-        String input_file = "temp/temp/000_mp4_test.mp4";
+        //String input_file = "temp/temp/000_mp4_test.mp4";
+		String input_file = "temp.txt";
         String chunk_dir = "temp/chunked/";
         String ass_dir = "temp/reassembled/";
         List<String> harm_list = harmList();

@@ -16,11 +16,12 @@ public class App {
 
     public static void main(String[] args) {
 
+        JcpRequestHandler jcpRequestHandler = new JcpRequestHandler();
+        jcpRequestHandler.run();
+		
         Tester t = new Tester();
         t.test();
         //System.out.println(new App().getGreeting());
-        JcpRequestHandler jcpRequestHandler = new JcpRequestHandler();
-        jcpRequestHandler.run();
     }
 
 }
