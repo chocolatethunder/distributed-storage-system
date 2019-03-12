@@ -15,12 +15,16 @@ import java.util.Optional;
 public class App {
 
     public static void main(String[] args) {
-
+    	/*
         Tester t = new Tester();
         t.test();
         //System.out.println(new App().getGreeting());
         JcpRequestHandler jcpRequestHandler = new JcpRequestHandler();
         jcpRequestHandler.run();
+        */
+    	
+    	DiscoveryReply reply = new DiscoveryReply();
+    	reply.listen();
     }
 
 }
