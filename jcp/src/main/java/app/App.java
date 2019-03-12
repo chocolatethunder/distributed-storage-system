@@ -16,7 +16,7 @@ public class App {
 		//File file = new File("test.txt");
 		//String path = file.getParent();
 
-        requestSender.sendFile("test.txt");
+        requestSender.sendFile("temp\\000_mp4_test.mp4");
 
     }
 }

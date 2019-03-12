@@ -2,20 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d283698d-ac06-432a-b590-11a741c5e976" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/jcp/CPSC559DS.jcp.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/jcp/CPSC559DS.jcp.main.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/jcp/CPSC559DS.jcp.test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/jcp/CPSC559DS.jcp.test.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RunTest.bat" beforeDir="false" afterPath="$PROJECT_DIR$/RunTest.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jcp/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/jcp/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jcp/src/main/java/app/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/jcp/src/main/java/app/App.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jcp/src/main/java/app/RequestSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/jcp/src/main/java/app/RequestSender.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/library/src/main/java/app/TcpPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/library/src/main/java/app/TcpPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stalker/src/main/java/app/Chunk Utils/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/stalker/src/main/java/app/Chunk.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stalker/src/main/java/app/Chunk Utils/ChunkAssembler.java" beforeDir="false" afterPath="$PROJECT_DIR$/stalker/src/main/java/app/ChunkAssembler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stalker/src/main/java/app/Chunk Utils/ChunkDistributor.java" beforeDir="false" afterPath="$PROJECT_DIR$/stalker/src/main/java/app/ChunkDistributor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stalker/src/main/java/app/Chunk Utils/ChunkRetriever.java" beforeDir="false" afterPath="$PROJECT_DIR$/stalker/src/main/java/app/ChunkRetriever.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stalker/src/main/java/app/Chunk Utils/FileChunker.java" beforeDir="false" afterPath="$PROJECT_DIR$/stalker/src/main/java/app/FileChunker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stalker/src/main/java/app/Network Utils/DeleteServiceHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/stalker/src/main/java/app/DeleteServiceHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stalker/src/main/java/app/Network Utils/DownloadServiceHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/stalker/src/main/java/app/DownloadServiceHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stalker/src/main/java/app/Network Utils/FileListServiceHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/stalker/src/main/java/app/FileListServiceHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stalker/src/main/java/app/Network Utils/JcpRequestHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/stalker/src/main/java/app/JcpRequestHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stalker/src/main/java/app/Network Utils/ServiceHandlerFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/stalker/src/main/java/app/ServiceHandlerFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stalker/src/main/java/app/Network Utils/UploadServiceHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/stalker/src/main/java/app/UploadServiceHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stalker/src/main/java/app/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/stalker/src/main/java/app/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stalker/src/main/java/app/UploadServiceHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/stalker/src/main/java/app/UploadServiceHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stalker/temp/temp/000_mp4_test.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/stalker/temp/temp/001_jpg_test.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/stalker/temp/temp/002_png_test.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/stalker/temp/temp/003_txt_test.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/stalker/temp/temp/004_mov_test.mov" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/stalker/temp/temp/005_zip_test.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/stalker/temp/temp/006_rar_test.rar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/stalker/temp/temp/007_docx_test.docx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/stalker/temp/temp/008_pdf_test.pdf" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -44,11 +49,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/UploadServiceHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+            <state relative-caret-position="-622">
+              <caret line="13" column="38" lean-forward="true" selection-start-line="13" selection-start-column="38" selection-end-line="13" selection-end-column="38" />
             </state>
           </provider>
         </entry>
@@ -63,10 +68,31 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/jcp/src/main/java/app/RequestSender.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-289">
+              <caret line="63" column="20" selection-start-line="63" selection-start-column="20" selection-end-line="63" selection-end-column="20" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/jcp/src/main/java/app/App.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="272">
+              <caret line="18" column="38" selection-start-line="18" selection-start-column="36" selection-end-line="18" selection-end-column="38" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/JcpRequestHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7">
-              <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+            <state relative-caret-position="493">
+              <caret line="36" selection-start-line="36" selection-end-line="36" />
             </state>
           </provider>
         </entry>
@@ -74,8 +100,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/FileChunker.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
+            <state relative-caret-position="680">
+              <caret line="72" column="47" selection-start-line="72" selection-start-column="47" selection-end-line="72" selection-end-column="47" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -92,11 +118,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/DownloadServiceHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="16" column="30" selection-start-line="16" selection-start-column="30" selection-end-line="16" selection-end-column="30" />
+            <state relative-caret-position="153">
+              <caret line="11" column="32" selection-start-line="11" selection-start-column="32" selection-end-line="11" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -111,28 +137,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/ChunkAssembler.java">
+        <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/App.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="13" column="13" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/ChunkDistributor.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7">
-              <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/ChunkRetriever.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7">
-              <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+            <state relative-caret-position="357">
+              <caret line="31" column="59" selection-start-line="31" selection-start-column="59" selection-end-line="31" selection-end-column="59" />
             </state>
           </provider>
         </entry>
@@ -149,12 +157,15 @@
         <option value="$PROJECT_DIR$/stalker/src/main/java/app/Network Utils/JcpRequestHandler.java" />
         <option value="$PROJECT_DIR$/library/src/main/java/app/TcpPacket.java" />
         <option value="$PROJECT_DIR$/stalker/src/main/java/app/Network Utils/UploadServiceHandler.java" />
-        <option value="$PROJECT_DIR$/jcp/src/main/java/app/RequestSender.java" />
         <option value="$PROJECT_DIR$/stalker/src/main/java/app/DownloadServiceHandler.java" />
+        <option value="$PROJECT_DIR$/jcp/src/main/java/app/RequestSender.java" />
+        <option value="$PROJECT_DIR$/stalker/src/main/java/app/App.java" />
+        <option value="$PROJECT_DIR$/jcp/src/main/java/app/App.java" />
+        <option value="$PROJECT_DIR$/stalker/src/main/java/app/UploadServiceHandler.java" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-15" />
     <option name="y" value="-15" />
     <option name="width" value="3500" />
@@ -170,99 +181,64 @@
         <subPane>
           <expand>
             <path>
-              <item name="distributed-storage-system" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CPSC559DS" type="b2602c69:ProjectViewProjectNode" />
               <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
             <path>
-              <item name="distributed-storage-system" type="b2602c69:ProjectViewProjectNode" />
-              <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="jcp" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="distributed-storage-system" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CPSC559DS" type="b2602c69:ProjectViewProjectNode" />
               <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="jcp" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="distributed-storage-system" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CPSC559DS" type="b2602c69:ProjectViewProjectNode" />
               <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="jcp" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
             <path>
-              <item name="distributed-storage-system" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CPSC559DS" type="b2602c69:ProjectViewProjectNode" />
               <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="jcp" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="distributed-storage-system" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CPSC559DS" type="b2602c69:ProjectViewProjectNode" />
               <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="jcp" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="distributed-storage-system" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CPSC559DS" type="b2602c69:ProjectViewProjectNode" />
               <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="library" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="distributed-storage-system" type="b2602c69:ProjectViewProjectNode" />
-              <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="library" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="distributed-storage-system" type="b2602c69:ProjectViewProjectNode" />
-              <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="library" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="distributed-storage-system" type="b2602c69:ProjectViewProjectNode" />
-              <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="library" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="distributed-storage-system" type="b2602c69:ProjectViewProjectNode" />
-              <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="library" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="jcp" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="distributed-storage-system" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CPSC559DS" type="b2602c69:ProjectViewProjectNode" />
               <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="stalker" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
             <path>
-              <item name="distributed-storage-system" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CPSC559DS" type="b2602c69:ProjectViewProjectNode" />
               <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="stalker" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="distributed-storage-system" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CPSC559DS" type="b2602c69:ProjectViewProjectNode" />
               <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="stalker" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
             <path>
-              <item name="distributed-storage-system" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CPSC559DS" type="b2602c69:ProjectViewProjectNode" />
               <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="stalker" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
@@ -270,7 +246,7 @@
               <item name="java" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="distributed-storage-system" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CPSC559DS" type="b2602c69:ProjectViewProjectNode" />
               <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="stalker" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
@@ -286,7 +262,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552428430652" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552430297763" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/build.gradle" />
   </component>
   <component name="RunDashboard">
@@ -368,18 +344,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/jcp/src/main/java/app/RequestSender.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="103" column="28" lean-forward="true" selection-start-line="103" selection-start-column="28" selection-end-line="103" selection-end-column="28" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1966#1967#0" expanded="true" />
-            <element signature="e#2015#2016#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/Chunk.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
@@ -408,10 +372,45 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/FileChunker.java">
+    <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/FileListServiceHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
+        <state relative-caret-position="-7">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/DownloadServiceHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="11" column="32" selection-start-line="11" selection-start-column="32" selection-end-line="11" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/ServiceHandlerFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="12" column="56" selection-start-line="12" selection-start-column="56" selection-end-line="12" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/jcp/src/main/java/app/App.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="18" column="38" selection-start-line="18" selection-start-column="36" selection-end-line="18" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/App.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="31" column="59" selection-start-line="31" selection-start-column="59" selection-end-line="31" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/jcp/src/main/java/app/RequestSender.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-289">
+          <caret line="63" column="20" selection-start-line="63" selection-start-column="20" selection-end-line="63" selection-end-column="20" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -425,38 +424,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/FileListServiceHandler.java">
+    <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/JcpRequestHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7">
-          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+        <state relative-caret-position="493">
+          <caret line="36" selection-start-line="36" selection-end-line="36" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/JcpRequestHandler.java">
+    <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/FileChunker.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7">
-          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+        <state relative-caret-position="680">
+          <caret line="72" column="47" selection-start-line="72" selection-start-column="47" selection-end-line="72" selection-end-column="47" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/UploadServiceHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/ServiceHandlerFactory.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="56" selection-start-line="12" selection-start-column="56" selection-end-line="12" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/DownloadServiceHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="16" column="30" selection-start-line="16" selection-start-column="30" selection-end-line="16" selection-end-column="30" />
+        <state relative-caret-position="-622">
+          <caret line="13" column="38" lean-forward="true" selection-start-line="13" selection-start-column="38" selection-end-line="13" selection-end-column="38" />
         </state>
       </provider>
     </entry>

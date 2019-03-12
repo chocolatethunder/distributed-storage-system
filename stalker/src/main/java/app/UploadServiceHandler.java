@@ -11,7 +11,7 @@ public class UploadServiceHandler implements Runnable {
     private final Socket socket;
     private DataInputStream in = null;
     private BufferedOutputStream bufferedOutputStream = null;
-    private String temp_dir = "temp/temp/";
+    private String temp_dir = "temp/";
     private String fileName;
 
     public UploadServiceHandler(Socket socket, String fname){
@@ -43,11 +43,14 @@ public class UploadServiceHandler implements Runnable {
                         + " downloaded (" + bytesRead + " bytes read)");
 
             }
+            bufferedOutputStream.close();
 
 
         }catch (IOException e){
             e.printStackTrace();
         }
+
+
 
 
 //        FileChunker f = new FileChunker(chunk_dir);

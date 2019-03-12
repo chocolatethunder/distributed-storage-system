@@ -20,7 +20,6 @@ public class RequestSender {
 
         static final RequestSender requestSender = new RequestSender();
     }
-
     private RequestSender(){
 
         try {
@@ -63,9 +62,7 @@ public class RequestSender {
 
         }
         return null;
-
     }
-
 
     public void deleteFile(String fileName){
 
@@ -74,18 +71,14 @@ public class RequestSender {
         if(handShakeSuccess(RequestType.DELETE)) {
         }
     }
-
     public void getFile(String filePath){
         // TO:DO need logic to verify file size  here
         if(handShakeSuccess(RequestType.DOWNLOAD)) {
 
             FileStreamer fileStreamer = new FileStreamer(socket);
             fileStreamer.receiveFile(filePath);
-
         }
-
     }
-
     //just incase no file is specified
     private boolean handShakeSuccess(RequestType requestType){
         return(handShakeSuccess(requestType, ""));
@@ -102,7 +95,7 @@ public class RequestSender {
             //The request will not be sent if the file doesn't exist...
             File f = new File(toSend);
             if (f.exists()){
-                initialPacket.setFile(FilenameUtils.getName(toSend), f.length());
+                initialPacket.setFile(FilenameUtils.getName(toSend), (int) f.length());
             }
             else{
                 throw new FileNotFoundException("The file specified does not exist!");
