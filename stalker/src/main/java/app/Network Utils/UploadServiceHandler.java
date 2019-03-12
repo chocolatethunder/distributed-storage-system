@@ -40,9 +40,34 @@ public class UploadServiceHandler implements Runnable {
                         + " downloaded (" + bytesRead + " bytes read)");
 
             }
+
+
         }catch (IOException e){
             e.printStackTrace();
         }
+
+
+//        FileChunker f = new FileChunker(chunk_dir);
+//        ChunkDistributor cd = new ChunkDistributor(chunk_dir, harm_list);
+//
+//
+//        //chunk file
+//        IndexEntry entry = f.chunkFile(input_file, 3);
+//        entry.summary();
+//
+//        //distribute file
+//        if(cd.distributeChunks(entry, 3)){
+//            entry.cleanLocalChunks();
+//        }
+//        //retrieve chunks
+//        cr.retrieveChunks(entry);
+//        //assemble the chunks
+//        if(ca.assembleChunks(entry)){
+//            System.out.println("Test passed without fail");
+//        }
+
+
+        //entry.summary();
 
     }
 }

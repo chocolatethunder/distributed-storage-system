@@ -4,6 +4,7 @@
  */
 package app;
 import java.io.*;
+import java.net.Socket;
 import java.util.*;
 import org.apache.commons.io.FileUtils;
 
@@ -57,6 +58,14 @@ public class ChunkDistributor {
             //in the future this will instead copy the file to a byte stream
             //and get a response from the node
             FileUtils.copyFile(new File(c.path()),new File(target));
+
+            NetworkUtils networkUtils = new NetworkUtils();
+            Socket harmServer = networkUtils.createConnection("127.0.0.1", 7555);
+
+            //handshake
+            // filestream.sendFile()
+
+
         }
         catch(IOException e){
             System.out.println("Error copying chunk to directory: ");
