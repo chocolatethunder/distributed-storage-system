@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.List;
 
 /**
@@ -15,6 +14,7 @@ public class RequestSender {
 
     Socket socket = null;
     DataOutputStream out = null;
+    NetworkUtils networkUtils = null;
 
 
 
@@ -25,23 +25,21 @@ public class RequestSender {
 
 
     private RequestSender(){
-
-        try {
-
-            //TO:DO  need to implement the ROUND ROBIN logic to chose the STALKER to connect
-
-            socket = createConnection("127.0.0.1", 6555);
-        } catch (IOException e) {
-            //Could not connect , need another STALKER here
-        }
-
-
-
+        networkUtils = new NetworkUtils();
     }
 
 
     public static RequestSender getInstance(){
         return  RequestSenderHolder.requestSender;
+    }
+
+
+    public void connect(){
+        try {
+            socket = networkUtils.createConnection("127.0.0.1", 6555);
+        } catch (IOException e) {
+            //Could not connect , need another STALKER here
+        }
     }
 
 
@@ -56,7 +54,7 @@ public class RequestSender {
 
         if(handShakeSuccess(RequestType.UPLOAD)) {
             FileStreamer fileStreamer = new FileStreamer(socket);
-            fileStreamer.sendFile(fileName);
+            fileStreamer.sendFileToSocket(fileName);
 
         }else{
             //need a way to connect to another STALKER
@@ -114,7 +112,7 @@ public class RequestSender {
         if(handShakeSuccess(RequestType.DOWNLOAD)) {
 
             FileStreamer fileStreamer = new FileStreamer(socket);
-            fileStreamer.receiveFile(filePath);
+            fileStreamer.receiveFileFromSocket(filePath);
 
         }
 
@@ -135,7 +133,7 @@ public class RequestSender {
             out = new DataOutputStream(socket.getOutputStream());
             DataInputStream  in = new DataInputStream((socket.getInputStream()));
 
-            TcpPacket initialPacket = new TcpPacket(requestType, "HELLO_INIT");
+            TcpPacket initialPacket = new TcpPacket(requestType, "HELLO_INIT", "something");
 
             ObjectMapper mapper = new ObjectMapper();
 
@@ -163,24 +161,5 @@ public class RequestSender {
 
         return receivedPacket != null && receivedPacket.getMessage().equals("AVAIL");
     }
-
-
-    /**
-     * Connects with given host ip and port
-     * @param host
-     * @param port
-     * @return
-     * @throws IOException
-     */
-    private Socket createConnection(String host, int port) throws IOException {
-        Socket socket = null;
-
-        // establish a connection
-        //TO:DO Need logic for getting the stalker in round robin fashion
-            socket = new Socket(host, port);
-            System.out.println("Connected");
-        return socket;
-    }
-
 
 }

@@ -63,7 +63,7 @@ public class ChunkDistributor {
             Socket harmServer = networkUtils.createConnection("127.0.0.1", 7555);
 
             //handshake
-            // filestream.sendFile()
+            // filestream.sendFileToSocket()
 
 
         }

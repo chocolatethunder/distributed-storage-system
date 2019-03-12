@@ -21,7 +21,6 @@ public class App {
         ServerSocket server = null;
         DataInputStream in = null;
         DataOutputStream out = null;
-        BufferedOutputStream bufferedOutputStream = null;
 
 
         int bytesRead;
@@ -65,14 +64,13 @@ public class App {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                try {
-                    in.close();
-                    out.close();
-                    socket.close();
-                    bufferedOutputStream.close();
-                } catch (IOException i) {
-                    i.printStackTrace();
-                }
+//                try {
+//                    in.close();
+//                    out.close();
+//                    socket.close();
+//                } catch (IOException i) {
+//                    i.printStackTrace();
+//                }
             }
 
         }

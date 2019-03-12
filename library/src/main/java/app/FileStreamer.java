@@ -20,14 +20,14 @@ public class FileStreamer {
         this.socket = socket;
     }
 
-    public void sendFile(String fileName) {
+    public void sendFileToSocket(String filepath) {
 
 
         if (socket != null) {
             try {
 
                 // send file
-                File file = new File(fileName);
+                File file = new File(filepath);
 
                 byte[] byteArray = new byte[(int) file.length()];
 
@@ -35,7 +35,7 @@ public class FileStreamer {
                 bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
                 bufferedInputStream.read(byteArray, 0, byteArray.length);
 
-                System.out.println("Sending " + fileName + "(" + byteArray.length + " bytes)");
+                System.out.println("Sending " + filepath + "(" + byteArray.length + " bytes)");
 
                 out.write(byteArray, 0, byteArray.length);
                 out.flush();
@@ -56,16 +56,17 @@ public class FileStreamer {
 
     }
 
-    public void receiveFile(String fileName) {
+    public void receiveFileFromSocket(String fileName) {
 
 
         if (socket != null) {
+            BufferedOutputStream bufferedOutputStream = null;
             try {
 
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
 
-                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+                bufferedOutputStream = new BufferedOutputStream(
                         new FileOutputStream(fileName));
 
                 byte[] chunkArray = new byte[1024];
@@ -85,7 +86,7 @@ public class FileStreamer {
                 ex.printStackTrace();
             } finally {
                 try {
-                    bufferedInputStream.close();
+                    bufferedOutputStream.close();
                     out.close();
                     socket.close();
                 } catch (IOException i) {

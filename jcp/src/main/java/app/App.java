@@ -15,7 +15,7 @@ public class App {
         The object is a singleton and will persist through the life of JCP
          */
         RequestSender requestSender = RequestSender.getInstance();
-
+        requestSender.connect();
 
         // upload file request
         requestSender.sendFile("test.txt");

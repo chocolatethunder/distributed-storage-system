@@ -1,6 +1,5 @@
 package app;
 
-import java.io.*;
 import java.net.Socket;
 
 /**
@@ -25,9 +24,9 @@ public class Handler implements Runnable {
         FileStreamer streamer = new FileStreamer(this.socket);
 
         if(requestType == RequestType.UPLOAD){
-            streamer.sendFile(filename);
+            streamer.receiveFileFromSocket(filename);
         }else if(requestType == RequestType.DOWNLOAD){
-            streamer.receiveFile(filename);
+            streamer.sendFileToSocket(filename);
 
         }else{
             //delete logic
