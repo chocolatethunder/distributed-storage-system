@@ -30,7 +30,7 @@ public class StalkerHealthGiver implements Runnable {
 		while(true) {
 			try {
 				socket = server.accept();
-				System.out.println("Accepted connection: " + socket);
+				System.out.println("Accepted health check connection: " + socket);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
