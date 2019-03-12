@@ -1,4 +1,4 @@
-package app;
+package app.handlers;
 
 import java.io.*;
 import java.net.Socket;

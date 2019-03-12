@@ -8,7 +8,8 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 /**
- *
+ *This is the singleton object that will do the round robin connection of
+ * STALKER unit and make requests
  */
 public class RequestSender {
 
@@ -22,13 +23,14 @@ public class RequestSender {
         static final RequestSender requestSender = new RequestSender();
     }
 
+
     private RequestSender(){
 
         try {
 
             //TO:DO  need to implement the ROUND ROBIN logic to chose the STALKER to connect
 
-            socket = createConnection("127.0.0.1", 6553);
+            socket = createConnection("127.0.0.1", 6555);
         } catch (IOException e) {
             //Could not connect , need another STALKER here
         }
@@ -37,12 +39,17 @@ public class RequestSender {
 
     }
 
+
     public static RequestSender getInstance(){
         return  RequestSenderHolder.requestSender;
     }
 
 
-
+    /**
+     * This is the request for uploading file
+     *
+     * @param fileName absolute file path
+     */
     public void sendFile(String fileName){
 
         // TO:DO need logic to verify file size here
@@ -60,6 +67,10 @@ public class RequestSender {
     }
 
 
+    /**
+     * This will fetch a list of all file names in the system
+     * @return list of filenames
+     */
     public List<String> getFileList(){
 
 
@@ -74,6 +85,10 @@ public class RequestSender {
     }
 
 
+    /**
+     * This will delete a file with the filename in the system
+     * @param fileName actual file name (not path)
+     */
     public void deleteFile(String fileName){
 
         // TO:DO need logic to verify file size  here
@@ -86,6 +101,12 @@ public class RequestSender {
 
     }
 
+
+    /**
+     * This will download a file given the filename
+     *
+     * @param filePath
+     */
     public void getFile(String filePath){
 
         // TO:DO need logic to verify file size  here
@@ -100,8 +121,12 @@ public class RequestSender {
     }
 
 
-
-
+    /**
+     * This is the handshake logic between JCP and STALKER
+     * Occurs in 2 steps  HELLO_INIT -> AVAIL | BUSY
+     * @param requestType
+     * @return
+     */
     private boolean handShakeSuccess(RequestType requestType){
         TcpPacket receivedPacket = null;
         try {
@@ -140,6 +165,13 @@ public class RequestSender {
     }
 
 
+    /**
+     * Connects with given host ip and port
+     * @param host
+     * @param port
+     * @return
+     * @throws IOException
+     */
     private Socket createConnection(String host, int port) throws IOException {
         Socket socket = null;
 

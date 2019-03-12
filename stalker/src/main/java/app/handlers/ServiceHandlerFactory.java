@@ -1,4 +1,6 @@
-package app;
+package app.handlers;
+
+import app.RequestType;
 
 import java.net.Socket;
 

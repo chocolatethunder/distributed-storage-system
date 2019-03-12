@@ -1,5 +1,8 @@
 package app;
 
+import app.RequestType;
+import app.TcpPacket;
+import app.handlers.ServiceHandlerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
@@ -10,11 +13,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- *
+ *This is main thread that receives request through TCP from JCP
  */
 public class JcpRequestHandler implements Runnable {
 
 
+    /**
+     *
+     * @param in
+     * @param out
+     * @return
+     * @throws IOException
+     */
     private static String executeHandshake(DataInputStream in, DataOutputStream out) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         Optional<TcpPacket> receivedPacket = Optional.empty();
@@ -42,6 +52,9 @@ public class JcpRequestHandler implements Runnable {
     }
 
 
+    /**
+     *
+     */
     @Override
     public void run() {
 

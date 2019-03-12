@@ -7,14 +7,17 @@ import java.io.*;
 
 public class App {
 
+
     public static void main(String[] args) {
 
-        //
+        /*
+        This is the main point of entry for JCP request
+        The object is a singleton and will persist through the life of JCP
+         */
         RequestSender requestSender = RequestSender.getInstance();
-		
-		//File file = new File("test.txt");
-		//String path = file.getParent();
 
+
+        // upload file request
         requestSender.sendFile("test.txt");
 
     }
