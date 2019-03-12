@@ -5,17 +5,38 @@ package app;
 
 import java.io.*;
 import java.util.concurrent.*;
+import javax.swing.*;
+import javax.swing.filechooser.*;
 
 public class App {
 
     public static void main(String[] args) {
+		
+		ExecutorService executor = Executors.newFixedThreadPool(2);
+		
+		Runnable worker = new JcpHealthChecker();
+		executor.execute(worker);
+		
+		//JcpHealthChecker jcphc = new JcpHealthChecker();
+		//jcphc.run();
 
         RequestSender requestSender = RequestSender.getInstance();
 		
 		//File file = new File("test.txt");
 		//String path = file.getParent();
+		
+		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 
-        requestSender.sendFile("test.txt");
+		int returnValue = jfc.showOpenDialog(null);
+		// int returnValue = jfc.showSaveDialog(null);
+
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = jfc.getSelectedFile();
+			//System.out.println(selectedFile.getAbsolutePath());
+			requestSender.sendFile(selectedFile.getAbsolutePath());
+		}
+
+        //requestSender.sendFile("test.txt");
 		//requestSender.getFile("temp.txt");
 		//System.out.println(requestSender.getFileList());
 

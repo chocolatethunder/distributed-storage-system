@@ -3,6 +3,7 @@
  */
 package app;
 import java.util.*;
+import java.util.concurrent.*;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,9 +16,19 @@ import java.util.Optional;
 public class App {
 
     public static void main(String[] args) {
+		
+		ExecutorService executor = Executors.newFixedThreadPool(2);
+		
+		Runnable worker = new StalkerHealthGiver();
+		executor.execute(worker);
+		worker = new JcpRequestHandler();
+		executor.execute(worker);
+		
+		//StalkerHealthGiver stalkerHealthGiver = new StalkerHealthGiver();
+		//stalkerHealthGiver.run();
 
-        JcpRequestHandler jcpRequestHandler = new JcpRequestHandler();
-        jcpRequestHandler.run();
+        //JcpRequestHandler jcpRequestHandler = new JcpRequestHandler();
+        //jcpRequestHandler.run();
 		
         Tester t = new Tester();
         t.test();

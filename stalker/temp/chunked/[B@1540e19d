@@ -1,0 +1,24 @@
+CPSC 433 Course Scheduling Problem
+
+
+Team members : 
+Bader Abdul Waseem 
+John Benedict Mendoza
+Mehnaz Tarannum
+Parva Thaker 
+Ryan Anderson 
+Victor Guan
+
+
+External Library to be installed: 
+Install java-openjfx through your package manager
+(Note that java-openjfx is compatible with OpenJDK8, not previous versions.)
+ 
+
+
+General Usage:
+
+1. In CPSC-433 directory, run the utility script compile.sh to compile all java files 
+   or alternatively from CPSC-433, run the command 
+   javac *.java ./OrTree/*.java ./ParseData/*.java ./Parser/*.java ./SetBased/*.java ./Slot_Occupant/*.java 
+2. Run the system with: java Driver 

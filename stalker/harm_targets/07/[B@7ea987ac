@@ -1,0 +1,11 @@
+if a lab time slot is not assigned the minimum number of labs indicated in the input file.
+	7. pen_notPaired	- Penalty to incur if a pair of courses/labs indicated in the input file are not assigned the same time slot.
+	8. pen_section		- Penalty to incur if a pair of sections for a course are assigned the same (or overlapping) time slot(s).
+	
+	
+
+General Comments: 
+If there is an error in the input file, the program ends with an error message. 
+The set-based search will run for a fixed number of generations or until no further solution is possible,
+it outputs the best solution or a message stating that no possible solution.
+

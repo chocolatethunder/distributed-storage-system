@@ -1,0 +1,11 @@
+configFile.txt [input file name]
+3. The file configFile.txt contains the following system parameters:
+
+	Soft Constraint Parameters:
+	
+	1. minFilledWeight  - The weight value for the pen_courseMin and pen_labMin parameters.
+	2. prefWeight 	    - The weight value for the preference penalties contained in the input file.
+	3. notPairedWeight 	- The weight value for the pen_notPaired parameter.
+	4. secDiffWeight    - The weight value for the pen_section parameter.
+	5. pen_courseMin	- Penalty to incur if a course time slot is not assigned the minimum number of courses indicated in the input file.
+	6. pen_labMin		- Penalty to incur 
