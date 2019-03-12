@@ -9,6 +9,9 @@ public class App {
     }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+
+        if (args.length > 0){
+            System.out.println("Harm " + args[0] + " running!");
+        }
     }
 }

@@ -15,8 +15,6 @@ public class RequestSender {
     Socket socket = null;
     DataOutputStream out = null;
 
-
-
     private static class RequestSenderHolder{
 
         static final RequestSender requestSender = new RequestSender();
@@ -33,8 +31,6 @@ public class RequestSender {
             //Could not connect , need another STALKER here
         }
 
-
-
     }
 
     public static RequestSender getInstance(){
@@ -46,8 +42,8 @@ public class RequestSender {
     public void sendFile(String fileName){
 
         // TO:DO need logic to verify file size here
-
-        if(handShakeSuccess(RequestType.UPLOAD)) {
+        // we make the handshake first
+        if(handShakeSuccess(RequestType.UPLOAD, fileName)) {
             FileStreamer fileStreamer = new FileStreamer(socket);
             fileStreamer.sendFile(fileName);
 
@@ -65,8 +61,6 @@ public class RequestSender {
 
         if(handShakeSuccess(RequestType.LIST)) {
 
-
-
         }
 
         return null;
@@ -79,9 +73,6 @@ public class RequestSender {
         // TO:DO need logic to verify file size  here
 
         if(handShakeSuccess(RequestType.DELETE)) {
-
-
-
         }
 
     }
@@ -99,18 +90,32 @@ public class RequestSender {
 
     }
 
-
-
-
+    //just incase no file is specified
     private boolean handShakeSuccess(RequestType requestType){
+        handShakeSuccess(requestType, "");
+    }
+
+    //resposnible for making a request to the STALKER
+    private boolean handShakeSuccess(RequestType requestType, String toSend){
         TcpPacket receivedPacket = null;
         try {
 
+            TcpPacket initialPacket = new TcpPacket(requestType, "HELLO_INIT");
+            // in the case that we are sending a file we need to also
+            // send the name of the file as well as the file size
+            //The request will not be sent if the file doesn't exist...
+            if (requestType == RequestType.UPLOAD){
+                if (!initialPacket.setFile(toSend)){
 
+                    System.out.println("Incorrect file path...");
+                    return false;
+                }
+
+            }
             out = new DataOutputStream(socket.getOutputStream());
             DataInputStream  in = new DataInputStream((socket.getInputStream()));
 
-            TcpPacket initialPacket = new TcpPacket(requestType, "HELLO_INIT");
+
 
             ObjectMapper mapper = new ObjectMapper();
 
@@ -149,6 +154,8 @@ public class RequestSender {
             System.out.println("Connected");
         return socket;
     }
+
+    public
 
 
 }

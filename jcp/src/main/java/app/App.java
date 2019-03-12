@@ -9,12 +9,13 @@ public class App {
 
     public static void main(String[] args) {
 
-        RequestSender requestSender = RequestSender.getInstance();
-		
-		//File file = new File("test.txt");
-		//String path = file.getParent();
-
-        requestSender.sendFile("test.txt");
+//        RequestSender requestSender = RequestSender.getInstance();
+//
+//		//File file = new File("test.txt");
+//		//String path = file.getParent();
+//
+//        requestSender.sendFile("test.txt");
+        System.out.println("JCP running!");
 
     }
 }
