@@ -5,7 +5,7 @@
 ::start cmd /K call test_batch/harm.bat 3
 
 start cmd /K call test_batch/stalker.bat
-timeout /t 2
+timeout /t 4
 start cmd /K call test_batch/jcp.bat
 
 

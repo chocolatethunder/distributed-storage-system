@@ -104,9 +104,6 @@ public class RequestSender {
 
             out = new DataOutputStream(socket.getOutputStream());
             DataInputStream  in = new DataInputStream((socket.getInputStream()));
-
-
-
             ObjectMapper mapper = new ObjectMapper();
 
             //DEBUG : Object to JSON in file

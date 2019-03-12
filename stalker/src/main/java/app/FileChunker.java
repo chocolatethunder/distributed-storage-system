@@ -19,6 +19,9 @@ public class FileChunker {
     //returns a list of the chunk paths
     public IndexEntry chunkFile(String filepath, int chunkCount){
         File file = new File(filepath);
+        if (!file.exists()){
+            return(null);
+        }
         String file_prefix =  FilenameUtils.getBaseName(filepath);
         String file_type = FilenameUtils.getExtension(filepath);
         //init index entry
