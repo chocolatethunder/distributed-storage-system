@@ -32,20 +32,23 @@ public class IndexEntry {
     /////-------------------------------------   getters/setters
 
     public String fileName(){ return(file_prefix + "." + file_type); }
+
     public boolean processed(){return processed;}
+    public String getType(){ return file_type; }
+    public int getChunkCount(){ return chunkCount; }
+    public List<Chunk> getChunks(){
+        return(chunkList);
+    }
+    public String getFile_prefix(){ return file_prefix; }
+    public long size(){return file_size;}
+    public void addChunk(Chunk c){
+        chunkList.add(c);
+    }
     public void setChunks(List<Chunk> chunks){
         chunkCount = chunks.size();
         chunkList = chunks;
     }
-    public void addChunk(Chunk c){
-        chunkList.add(c);
-    }
 
-    public List<Chunk> getChunks(){
-        return(chunkList);
-    }
-
-    public long size(){return file_size;}
     //print all data related to this entry
     public void summary(){
         System.out.println("Entry Summary: ");

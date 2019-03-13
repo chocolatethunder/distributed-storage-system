@@ -1,11 +1,14 @@
 package app.chunk_utils;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
 public class IndexFile {
     private Map<String,IndexEntry> entries;
-    public IndexFile(){}
+    public IndexFile(){
+        entries = new HashMap<>();
+    }
 
 
     public void summary(){
@@ -14,6 +17,12 @@ public class IndexFile {
         }
     }
 
+    public IndexEntry search(String filename){
+        return(entries.get(filename));
+    }
+    public Map<String, IndexEntry> getEntries(){
+        return entries;
+    }
     //get the info to be sent
     public List<String> infoList(){
         List<String> temp = new ArrayList<>();

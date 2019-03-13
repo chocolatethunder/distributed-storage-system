@@ -78,5 +78,6 @@ public class UploadServiceHandler implements Runnable {
 
         Indexer.addEntry(index, entry);
 
+        Indexer.saveToFile(index);
     }
 }

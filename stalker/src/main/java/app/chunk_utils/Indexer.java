@@ -3,8 +3,12 @@ package app.chunk_utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.nio.charset.StandardCharsets;
@@ -18,15 +22,21 @@ public class Indexer {
         ObjectMapper mapper = new ObjectMapper();
         Optional<IndexFile> ind = Optional.empty();
         try {
+            File f = new File(indexPath);
+            if (!f.exists()){
+                throw new FileNotFoundException("Index file not found...");
+            }
             ind = Optional.of(mapper.readValue(fileToString(indexPath), IndexFile.class));
         }
         catch (IOException e){
             //if the file is corrupt or empty we create a new IndexFile
-            e.printStackTrace();
+           // e.printStackTrace();
+            System.out.println("Creating new indexfile");
             IndexFile temp = new IndexFile();
-
+            saveToFile(temp);
             return(temp);
         }
+        System.out.println("Indexfile loaded from file.");
         return ind.get();
     }
 
@@ -35,10 +45,23 @@ public class Indexer {
         try{
             ObjectMapper mapper = new ObjectMapper();
             String jsonInString = mapper.writeValueAsString(ind);
+
+            File f = new File("index/main");
+            if (f.exists()){
+                f.delete();
+            }
+            PrintWriter out = new PrintWriter("index/main");
+            out.print(jsonInString);
+            out.close();
+
+            
+            System.out.println("Index saved to file");
+
         }
         catch(IOException e){
             e.printStackTrace();
-
+            System.out.println("Could not write to indexfile!");
+            return false;
         }
         return(true);
     }
@@ -63,7 +86,7 @@ public class Indexer {
     //process thread safe
     public static boolean addEntry(IndexFile ind, IndexEntry ent){
         //get consent then add
-        //ind.add();
+        ind.add(ent);
         //-----------
         //update() file on disk
         return true;
@@ -76,6 +99,9 @@ public class Indexer {
         }
         catch (IOException e){
             e.printStackTrace();
+            return(null);
+        }
+        catch (NullPointerException ex){
             return(null);
         }
         return fileString;

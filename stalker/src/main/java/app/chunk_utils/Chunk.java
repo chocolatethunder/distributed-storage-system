@@ -8,7 +8,7 @@ import org.apache.commons.io.FileUtils;
 import java.security.MessageDigest;
 
 public class Chunk {
-    private String chunkStatus;
+    //private String chunkStatus;
     private String hash;
     //the index is stored for easy reassembly
     private int chunk_index;
@@ -55,6 +55,12 @@ public class Chunk {
     public String hash(){return hash;}
     public List<String> getReplicaAddrs(){return(replicas);}
 
+    //-----------------------  Getter/Setters
+    public void setIndex(int ind){chunk_index=ind;}
+    public void setSize(long s){chunk_size = s;}
+    public void SetPath(String s){chunk_path = s;}
+    public void SetHash(String s){hash = s;}
+    public void setReplicaAddrs(List<String> s){replicas = s;}
 
     //add a replica to the tracked list
     public void addReplica(String addr){replicas.add(addr);}
