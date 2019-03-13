@@ -38,11 +38,9 @@ public class UploadServiceHandler implements Runnable {
             while ((bytesRead = in.read(chunkArray)) != -1) {
 
                 bufferedOutputStream.write(chunkArray, 0, bytesRead);
-
                 bufferedOutputStream.flush();
                 System.out.println("File "
                         + " downloaded (" + bytesRead + " bytes read)");
-
             }
             bufferedOutputStream.close();
 

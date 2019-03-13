@@ -25,22 +25,14 @@ public class JcpRequestHandler implements Runnable {
 
         } catch (EOFException e) {
         }
-
-
         //TO:Do need actual logic here if the server is busy or available depending on the type of Request
-
         TcpPacket sendAvail = new TcpPacket(RequestType.UPLOAD, "AVAIL");
 
         String jsonInString = mapper.writeValueAsString(sendAvail);
         System.out.println(jsonInString);
         out.writeUTF(jsonInString);
-
-
         return receivedPacket.get();
-
-
     }
-
 
     @Override
     public void run() {
@@ -57,8 +49,6 @@ public class JcpRequestHandler implements Runnable {
 
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
-
-
         try {
             server = new ServerSocket(6553);
 
@@ -66,30 +56,21 @@ public class JcpRequestHandler implements Runnable {
             e.printStackTrace();
         }
 
-
         System.out.println("Waiting...");
         String fname = "";
         // will keep on listening for requests
         while (true) {
 
             try {
-
                 socket = server.accept();
                 System.out.println("Accepted connection : " + socket);
-
-
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
 
 
                 TcpPacket req = executeHandshake(in, out);
                 // receive file in chunks
-
-
-
                 executorService.execute(ServiceHandlerFactory.getServiceHandler(RequestType.valueOf(req.getRequestType()), socket,req.getFileName()));
-
-
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
