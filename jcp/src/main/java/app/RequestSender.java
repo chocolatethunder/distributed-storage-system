@@ -9,7 +9,7 @@ import org.apache.commons.io.*;
 
 /**
  *This is the singleton object that will do the round robin connection of
- * STALKER unit and make requests
+ * STALKER unit and make requests to STALKER for download, upload, delete and filelist
  */
 public class RequestSender {
 
@@ -17,6 +17,10 @@ public class RequestSender {
     DataOutputStream out = null;
     NetworkUtils networkUtils = null;
 
+
+    /**
+     * Single Instance of RequestSender Holder
+     */
     private static class RequestSenderHolder{
 
         static final RequestSender requestSender = new RequestSender();
@@ -33,18 +37,23 @@ public class RequestSender {
     }
 
 
-    public void connect(){
+    /**
+     * This is the method that connects to a given host and port
+     *
+     */
+    public void connect(String host, int port){
         try {
-            socket = networkUtils.createConnection("127.0.0.1", 6555);
+
+            //TO:DO modify this to connect to STALKER in a round robin fashion
+
+            socket = networkUtils.createConnection(host, port);
         } catch (IOException e) {
             //Could not connect , need another STALKER here
         }
 
     }
 
-    public static RequestSender getInstance(){
-        return  RequestSenderHolder.requestSender;
-    }
+
 
 
     /**
@@ -81,13 +90,13 @@ public class RequestSender {
         return null;
     }
 
+
+
     /**
      * This will delete a file with the filename in the system
      * @param fileName actual file name (not path)
      */
     public void deleteFile(String fileName){
-
-        // TO:DO need logic to verify file size  here
 
         if(handShakeSuccess(RequestType.DELETE)) {
         }
@@ -114,12 +123,16 @@ public class RequestSender {
     /**
      * This is the handshake logic between JCP and STALKER
      * Occurs in 2 steps  HELLO_INIT -> AVAIL | BUSY
-     * @param requestType
-     * @return
+     * @param requestType  UPLOAD,
+     *                     DOWNLOAD,
+     *                     DELETE,
+     *                     LIST
+     * @return  true if handshake was successfull, false otherwise
      */
     private boolean handShakeSuccess(RequestType requestType){
         return(handShakeSuccess(requestType, ""));
     }
+
 
     //resposnible for making a request to the STALKER
     private boolean handShakeSuccess(RequestType requestType, String toSend){
@@ -153,6 +166,7 @@ public class RequestSender {
 
             try {
 
+                // receiving packet back from STALKER
                 String received = in.readUTF();
                 System.out.println("rec " + received);
                 receivedPacket = mapper.readValue(received, TcpPacket.class);
@@ -166,18 +180,5 @@ public class RequestSender {
         }
         return receivedPacket != null && receivedPacket.getMessage().equals("AVAIL");
     }
-
-
-    private Socket createConnection(String host, int port) throws IOException {
-        Socket socket = null;
-
-        // establish a connection
-        //TO:DO Need logic for getting the stalker in round robin fashion
-            socket = new Socket(host, port);
-            System.out.println("Connected");
-        return socket;
-    }
-
-
 
 }

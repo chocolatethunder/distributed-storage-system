@@ -5,7 +5,7 @@ import java.io.DataInputStream;
 import java.net.Socket;
 
 /**
- *
+ *This runnable class will handle requests for downloading a file
  */
 public class DownloadServiceHandler implements Runnable {
 

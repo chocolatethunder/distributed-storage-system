@@ -14,10 +14,9 @@ public class App {
         The object is a singleton and will persist through the life of JCP
          */
         RequestSender requestSender = RequestSender.getInstance();
-        requestSender.connect();
+        requestSender.connect("127.0.0.1", 6555);
 
         // upload file request
-        requestSender.sendFile("test.txt");
         requestSender.sendFile("temp\\000_mp4_test.mp4");
 
     }

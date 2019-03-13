@@ -19,10 +19,11 @@ public class JcpRequestHandler implements Runnable {
 
 
     /**
-     *
+     * This execute the initial handshake with JCP. It should check if it can handle request type
+     * then send reply back with AVAIL | BUSY
      * @param in
      * @param out
-     * @return
+     * @return received TCP packet from JCP
      * @throws IOException
      */
 
@@ -32,6 +33,7 @@ public class JcpRequestHandler implements Runnable {
 
         try {
             String rec = in.readUTF();
+            // reading the packet as object from json string
             receivedPacket = Optional.of(mapper.readValue(rec, TcpPacket.class));
 
         } catch (EOFException e) {
@@ -40,6 +42,7 @@ public class JcpRequestHandler implements Runnable {
 
         //TO:Do need actual logic here if the server is busy or available depending on the type of Request
 
+        //tcp reply packet
         TcpPacket sendAvail = new TcpPacket(RequestType.UPLOAD, "AVAIL");
 
         String jsonInString = mapper.writeValueAsString(sendAvail);
@@ -54,7 +57,8 @@ public class JcpRequestHandler implements Runnable {
 
 
     /**
-     *
+     *This is the main run method for this thread. It run in a while loop to receive connections from
+     * JCP/s  and then executes handshake. Then it spawns a thread to handle the request.
      */
     @Override
     public void run() {
@@ -64,10 +68,7 @@ public class JcpRequestHandler implements Runnable {
         ServerSocket server = null;
         DataInputStream in = null;
         DataOutputStream out = null;
-        BufferedOutputStream bufferedOutputStream = null;
 
-
-        int bytesRead;
 
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
@@ -101,7 +102,10 @@ public class JcpRequestHandler implements Runnable {
 
 
 
-                executorService.execute(ServiceHandlerFactory.getServiceHandler(RequestType.valueOf(req.getRequestType()), socket,req.getFileName()));
+                //creating a specific type of service handler using factory method
+                executorService.execute(ServiceHandlerFactory.getServiceHandler(RequestType.valueOf(req.getRequestType()),
+                        socket,
+                        req.getFileName()));
 
 
 
