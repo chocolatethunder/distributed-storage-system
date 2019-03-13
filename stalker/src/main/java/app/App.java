@@ -17,16 +17,9 @@ public class App {
 
     public static void main(String[] args) {
         initStalker();
-//        Tester t = new Tester();
-//        t.test();
-//        //System.out.println(new App().getGreeting());
-
-
-//        JcpRequestHandler jcpRequestHandler = new JcpRequestHandler();
-//        jcpRequestHandler.run();
-
-
-        //System.out.println("Stalker Online");
+        System.out.println("Stalker Online");
+        JcpRequestHandler jcpRequestHandler = new JcpRequestHandler();
+        jcpRequestHandler.run();
     }
 
     public static void initStalker(){
