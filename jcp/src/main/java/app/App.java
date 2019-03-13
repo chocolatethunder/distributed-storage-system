@@ -25,6 +25,7 @@ public class App {
 		//File file = new File("test.txt");
 		//String path = file.getParent();
 		
+		/*
 		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 
 		int returnValue = jfc.showOpenDialog(null);
@@ -35,6 +36,9 @@ public class App {
 			//System.out.println(selectedFile.getAbsolutePath());
 			requestSender.sendFile(selectedFile.getAbsolutePath());
 		}
+		*/
+		
+		requestSender.sendFile(args[0]);
 
         //requestSender.sendFile("test.txt");
 		//requestSender.getFile("temp.txt");

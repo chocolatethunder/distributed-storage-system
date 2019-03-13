@@ -26,14 +26,11 @@ public class RequestSender {
 
     private RequestSender(){
 
-        try {
+ 
 
-            //TO:DO  need to implement the ROUND ROBIN logic to chose the STALKER to connect
-			connectToNextStalker
-			
-        } catch (IOException e) {
-            //Could not connect , need another STALKER here
-        }
+        //TO:DO  need to implement the ROUND ROBIN logic to chose the STALKER to connect
+		connectToNextStalker();
+
 
 
 
@@ -158,11 +155,15 @@ public class RequestSender {
 			String stalkerListFile = "STALKERs.txt";
 			List<String> stalkerList = new ArrayList<String>();
 			
-			BufferedReader in = new BufferedReader(new FileReader(stalkerListFile));
+			try {
+				BufferedReader in = new BufferedReader(new FileReader(stalkerListFile));
 			
-			String readInIP;
-			while ((readInIP = in.readLine()) != null) {
-				stalkerList.add(readInIP);
+				String readInIP;
+				while ((readInIP = in.readLine()) != null) {
+					stalkerList.add(readInIP);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 			
 			//System.out.println(stalkerList);
@@ -176,7 +177,11 @@ public class RequestSender {
 
             //socket = createConnection("127.0.0.1", 6553);
 			//System.out.println(nextIP);
-			socket = createConnection(nextIP, 6553);
+			try {
+				socket = createConnection(nextIP, 6553);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
 
 
