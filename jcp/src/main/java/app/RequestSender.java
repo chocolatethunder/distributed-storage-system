@@ -41,15 +41,17 @@ public class RequestSender {
      * This is the method that connects to a given host and port
      *
      */
-    public void connect(String host, int port){
+    public Socket connect(String host, int port){
         try {
 
             //TO:DO modify this to connect to STALKER in a round robin fashion
 
-            socket = networkUtils.createConnection(host, port);
+            this.socket = networkUtils.createConnection(host, port);
         } catch (IOException e) {
             //Could not connect , need another STALKER here
         }
+
+        return this.socket;
 
     }
 
@@ -110,7 +112,7 @@ public class RequestSender {
      */
     public void getFile(String filePath){
         // TO:DO need logic to verify file size  here
-        if(handShakeSuccess(RequestType.DOWNLOAD)) {
+        if(handShakeSuccess(RequestType.DOWNLOAD, filePath)) {
 
             FileStreamer fileStreamer = new FileStreamer(socket);
             fileStreamer.receiveFileFromSocket(filePath);

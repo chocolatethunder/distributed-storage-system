@@ -47,10 +47,14 @@ public class FileStreamer {
                 ex.printStackTrace();
             } finally {
                 try {
-                    bufferedInputStream.close();
-                    out.close();
-                    socket.close();
-                } catch (IOException i) {
+                  bufferedInputStream.close();
+                  out.close();
+                  //For debugging
+                 // System.out.println(socket.isClosed());
+
+                    // Close these in the calling method
+                  // socket.close();
+                } catch (Exception i) {
                     i.printStackTrace();
                 }
             }
@@ -90,7 +94,9 @@ public class FileStreamer {
                 try {
                     bufferedOutputStream.close();
                     out.close();
-                    socket.close();
+
+                    //Close this from calling method;
+                   // socket.close();
                 } catch (IOException i) {
                     i.printStackTrace();
                 }
