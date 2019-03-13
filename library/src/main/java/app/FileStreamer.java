@@ -28,7 +28,6 @@ public class FileStreamer {
 
                 // send file
                 File file = new File(filepath);
-                //HARD CODED????
 
 
                 byte[] byteArray = new byte[(int) file.length()];

@@ -3,13 +3,10 @@
  * reassemble the file
  *
  */
-package app;
+package app.chunk_utils;
 import java.io.*;
-import java.util.*;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
-import org.apache.commons.io.FileUtils;
 
 public class ChunkAssembler {
     private boolean debug = false;

@@ -16,9 +16,11 @@ import java.util.concurrent.TimeUnit;
 public class App {
 
     public static void main(String[] args) {
-
+        //use the argvalues to add a port modifier to the HARM to differentiate it from the others
+        int port_modifier = 0;
         if (args.length > 0){
-            System.out.println("Harm " + args[0] + " running!");
+            port_modifier = new Integer(args[0]);
+            System.out.println("Harm " + port_modifier + " running!");
         }
 
         //initialize socket and input stream
@@ -27,20 +29,19 @@ public class App {
         DataInputStream in = null;
         DataOutputStream out = null;
 
-
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
 
 
         try {
-            //initializing harm server  // HARDCODED for now
-            server = new ServerSocket(6555);
+            //initializing harm server  // add a modifier from the args
+            //currently only supports modifiers 0 - 4 SOOOOORRy
+            //in the future the port will stay constant and IP will change
+            server = new ServerSocket(6555 + port_modifier);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
         System.out.println("Waiting...");
 
         // will keep on listening for requests from STALKERs
@@ -50,8 +51,6 @@ public class App {
 
                 socket = server.accept();
                 System.out.println("Accepted connection : " + socket);
-
-
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
 
@@ -59,11 +58,10 @@ public class App {
                 Optional<TcpPacket> packet = executeHandshake(in, out);
 
                 System.out.println(socket.isClosed());
-
+                Handler h = new Handler(socket, packet.get(), port_modifier);
+                h.run();
                 // creating a runnable task for each request from the same socket connection
-                executorService.execute(new Handler(socket, packet.get()));
-
-
+                //executorService.execute();
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -75,12 +73,10 @@ public class App {
 
                     // waiting until all thread tasks are done before closing the resources
                     awaitTerminationAfterShutdown(executorService);
-
-
                     //WARNING: Closing the in and out put stream also closes the socket, therefore can't do it here
-                    in.close();
-                    out.close();
-                    socket.close();   // closing the socket from here, may be should be closed from STALKER after request is completed?
+//                    in.close();
+//                    out.close();
+//                    socket.close();   // closing the socket from here, may be should be closed from STALKER after request is completed?
                 } catch (Exception i) {
                     i.printStackTrace();
                 }
@@ -94,9 +90,7 @@ public class App {
      * @param threadPool
      */
     public static void awaitTerminationAfterShutdown(ExecutorService threadPool) {
-
         threadPool.shutdown();
-
         try {
             if (!threadPool.awaitTermination(60, TimeUnit.SECONDS)) {
                 threadPool.shutdownNow();
@@ -107,8 +101,6 @@ public class App {
         }
 
     }
-
-
     /**
      *This execute handshake between STALKER and HARM target
      *
@@ -128,7 +120,6 @@ public class App {
         } catch (EOFException e) {
         }
 
-
         //TO:Do need actual logic here if the HARM server is busy or available depending on the type of Request
 
         TcpPacket sendAvail = new TcpPacket(RequestType.ACK, "AVAIL");
@@ -140,7 +131,5 @@ public class App {
 
 
         return receivedPacket;
-
-
     }
 }

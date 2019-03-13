@@ -4,6 +4,7 @@ import app.RequestType;
 import app.TcpPacket;
 import app.handlers.ServiceHandlerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -64,7 +65,7 @@ public class JcpRequestHandler implements Runnable {
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            server = new ServerSocket(6553);
+            server = new ServerSocket(7555);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -84,7 +85,10 @@ public class JcpRequestHandler implements Runnable {
 
                 TcpPacket req = executeHandshake(in, out);
                 // receive file in chunks
+                System.out.println("------------------------------------");
+                System.out.println(FilenameUtils.getName(req.getFileName()));
 
+                System.out.println("------------------------------------");
                 //creating a specific type of service handler using factory method
                 executorService.execute(ServiceHandlerFactory.getServiceHandler(RequestType.valueOf(req.getRequestType()),
                         socket,

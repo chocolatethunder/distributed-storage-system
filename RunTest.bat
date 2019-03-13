@@ -1,8 +1,14 @@
 ::batch script for calling multiple processes
-::start cmd /K call test_batch/harm.bat 0
-::start cmd /K call test_batch/harm.bat 1
-::start cmd /K call test_batch/harm.bat 2
-::start cmd /K call test_batch/harm.bat 3
+:: args for harms will determine port number
+
+start cmd /K call test_batch/harm.bat 0
+timeout /t 5
+start cmd /K call test_batch/harm.bat 1
+timeout /t 5
+start cmd /K call test_batch/harm.bat 2
+timeout /t 5
+start cmd /K call test_batch/harm.bat 3
+timeout /t 5
 
 start cmd /K call test_batch/stalker.bat
 timeout /t 4

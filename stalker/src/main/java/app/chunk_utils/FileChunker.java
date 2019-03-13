@@ -2,7 +2,7 @@
  * The file chunker takes the path to a file and returns an
  * Unprocessed IndexEntry Object
  */
-package app;
+package app.chunk_utils;
 import java.io.*;
 import java.util.*;
 import org.apache.commons.io.*;

@@ -1,10 +1,8 @@
 /*
  * Used to hold file metadata as well as a chunklist
  */
-package app;
-import java.io.*;
+package app.chunk_utils;
 import java.util.*;
-import org.apache.commons.io.FileUtils;
 
 public class IndexEntry {
 

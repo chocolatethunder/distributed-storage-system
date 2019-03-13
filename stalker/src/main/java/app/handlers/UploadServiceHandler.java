@@ -1,10 +1,13 @@
 package app.handlers;
 
-import app.FileChunker;
-import app.IndexEntry;
+import app.chunk_utils.FileChunker;
+import app.chunk_utils.IndexEntry;
+import app.ChunkDistributor;
 
+import java.util.List;
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  *
@@ -51,16 +54,11 @@ public class UploadServiceHandler implements Runnable {
         }catch (IOException e){
             e.printStackTrace();
         }
-
-
-
-
+        List<String> harm_list = new ArrayList<String>();
         FileChunker f = new FileChunker(chunk_dir);
-          //ChunkDistributor cd = new ChunkDistributor(chunk_dir, harm_list);
-//
-//
-//        //chunk file
+        ChunkDistributor cd = new ChunkDistributor(chunk_dir, harm_list);
 
+//        //chunk file and get the index entry object
         IndexEntry entry = f.chunkFile(filePath, 3);
         if (entry != null){
             File file = new File(filePath);
@@ -68,10 +66,10 @@ public class UploadServiceHandler implements Runnable {
         }
         entry.summary();
 //
-//        //distribute file
-//        if(cd.distributeChunks(entry, 3)){
-//            entry.cleanLocalChunks();
-//        }
+        //distribute file
+        if(cd.distributeChunks(entry, 3)){
+            entry.cleanLocalChunks();
+        }
 
         ///used for download
 //        //retrieve chunks

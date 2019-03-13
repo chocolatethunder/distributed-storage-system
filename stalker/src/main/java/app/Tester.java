@@ -4,7 +4,8 @@
 package app;
 import java.io.*;
 import java.util.*;
-import org.apache.commons.io.FileUtils;
+
+import app.chunk_utils.*;
 
 public class Tester {
     //temp function for testing the fileDistributor

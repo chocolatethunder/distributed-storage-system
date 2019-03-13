@@ -1,4 +1,4 @@
-package app;
+package app.chunk_utils;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;

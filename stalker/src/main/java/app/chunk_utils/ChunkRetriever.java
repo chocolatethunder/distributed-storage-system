@@ -3,9 +3,9 @@
  * reassemble the file
  *
  */
-package app;
+package app.chunk_utils;
 import java.io.*;
-import java.util.*;
+
 import org.apache.commons.io.FileUtils;
 
 public class ChunkRetriever {
