@@ -3,6 +3,8 @@
  */
 package app;
 
+import app.chunk_utils.Indexer;
+import app.chunk_utils.IndexFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FilenameUtils;
 
@@ -15,8 +17,9 @@ public class App {
 
     public static void main(String[] args) {
         initStalker();
+        IndexFile ind = Indexer.loadFromFile("index/main.index");
         System.out.println("Stalker Online");
-        JcpRequestHandler jcpRequestHandler = new JcpRequestHandler();
+        JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
         jcpRequestHandler.run();
     }
 

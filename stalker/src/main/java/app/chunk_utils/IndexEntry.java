@@ -63,4 +63,8 @@ public class IndexEntry {
     public void printChunkData(){
         chunkList.forEach(c -> {System.out.println(c.toString()); c.printReplicas();});
     }
+
+    public String getClientData(){
+        return("Filename: " + file_prefix + "; File Type: " + file_type + "; File Size: " + file_size);
+    }
 }

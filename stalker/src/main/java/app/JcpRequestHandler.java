@@ -2,6 +2,7 @@ package app;
 
 import app.RequestType;
 import app.TcpPacket;
+import app.chunk_utils.IndexFile;
 import app.handlers.ServiceHandlerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FilenameUtils;
@@ -18,7 +19,10 @@ import java.util.concurrent.Executors;
  */
 public class JcpRequestHandler implements Runnable {
 
-
+     private IndexFile index;
+     public JcpRequestHandler(IndexFile ind){
+         this.index = ind;
+     }
     /**
      * This execute the initial handshake with JCP. It should check if it can handle request type
      * then send reply back with AVAIL | BUSY
@@ -85,14 +89,10 @@ public class JcpRequestHandler implements Runnable {
 
                 TcpPacket req = executeHandshake(in, out);
                 // receive file in chunks
-                System.out.println("------------------------------------");
-                System.out.println(FilenameUtils.getName(req.getFileName()));
-
-                System.out.println("------------------------------------");
                 //creating a specific type of service handler using factory method
                 executorService.execute(ServiceHandlerFactory.getServiceHandler(RequestType.valueOf(req.getRequestType()),
                         socket,
-                        req.getFileName()));
+                        req.getFileName(), index));
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

@@ -1,5 +1,7 @@
 package app.handlers;
 
+import app.chunk_utils.IndexFile;
+
 import java.net.Socket;
 
 /**
@@ -9,10 +11,11 @@ import java.net.Socket;
 public class FileListServiceHandler implements Runnable {
 
     private final Socket socket;
+    private IndexFile index;
 
-
-    public FileListServiceHandler(Socket socket){
+    public FileListServiceHandler(Socket socket, IndexFile ind){
         this.socket = socket;
+        this.index = ind;
     }
 
     @Override

@@ -3,6 +3,8 @@ package app.handlers;
 import app.chunk_utils.FileChunker;
 import app.chunk_utils.IndexEntry;
 import app.ChunkDistributor;
+import app.chunk_utils.IndexFile;
+import app.chunk_utils.Indexer;
 
 import java.util.List;
 import java.io.*;
@@ -20,10 +22,12 @@ public class UploadServiceHandler implements Runnable {
     private String temp_dir = "temp/toChunk/";
     private String chunk_dir = "temp/chunks/";
     private String filePath;
+    private IndexFile index;
 
-    public UploadServiceHandler(Socket socket, String fname){
+    public UploadServiceHandler(Socket socket, String fname, IndexFile ind){
          this.socket = socket;
          this.filePath = temp_dir + fname;
+         this.index = ind;
     }
 
     @Override
@@ -70,17 +74,9 @@ public class UploadServiceHandler implements Runnable {
         if(cd.distributeChunks(entry, 3)){
             entry.cleanLocalChunks();
         }
+        entry.summary();
 
-        ///used for download
-//        //retrieve chunks
-//        cr.retrieveChunks(entry);
-//        //assemble the chunks
-//        if(ca.assembleChunks(entry)){
-//            System.out.println("Test passed without fail");
-//        }
-
-
-        //entry.summary();
+        Indexer.addEntry(index, entry);
 
     }
 }

@@ -21,10 +21,29 @@ public class Indexer {
             ind = Optional.of(mapper.readValue(fileToString(indexPath), IndexFile.class));
         }
         catch (IOException e){
+            //if the file is corrupt or empty we create a new IndexFile
             e.printStackTrace();
+            IndexFile temp = new IndexFile();
+
+            return(temp);
         }
         return ind.get();
     }
+
+    //Save index to file
+    public static boolean saveToFile(IndexFile ind){
+        try{
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonInString = mapper.writeValueAsString(ind);
+        }
+        catch(IOException e){
+            e.printStackTrace();
+
+        }
+        return(true);
+    }
+
+
 
     //prints the indexfile object to file
     public static boolean writeIndex(IndexFile ind){
@@ -41,6 +60,7 @@ public class Indexer {
     }
 
     //add an entry to the index file
+    //process thread safe
     public static boolean addEntry(IndexFile ind, IndexEntry ent){
         //get consent then add
         //ind.add();
@@ -56,6 +76,7 @@ public class Indexer {
         }
         catch (IOException e){
             e.printStackTrace();
+            return(null);
         }
         return fileString;
     }

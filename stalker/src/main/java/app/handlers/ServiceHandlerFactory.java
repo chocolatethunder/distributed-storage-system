@@ -1,6 +1,7 @@
 package app.handlers;
 
 import app.RequestType;
+import app.chunk_utils.IndexFile;
 
 import java.net.Socket;
 
@@ -14,18 +15,19 @@ public class ServiceHandlerFactory {
      * @param requestType
      * @param socket
      * @param fileName
+     * @param index
      * @return
      */
-    public static Runnable getServiceHandler(RequestType requestType, Socket socket, String fileName) {
+    public static Runnable getServiceHandler(RequestType requestType, Socket socket, String fileName, IndexFile index) {
         switch (requestType) {
             case DOWNLOAD:
-                return new DownloadServiceHandler(socket, fileName);
+                return new DownloadServiceHandler(socket, fileName, index);
             case UPLOAD:
-                return new UploadServiceHandler(socket, fileName);
+                return new UploadServiceHandler(socket, fileName, index);
             case DELETE:
-                return new DeleteServiceHandler(socket, fileName);
+                return new DeleteServiceHandler(socket, fileName, index);
             case LIST:
-                return new FileListServiceHandler(socket);
+                return new FileListServiceHandler(socket, index);
             default:
                 //
                // throw new Exception("Wrong request type");
