@@ -151,37 +151,45 @@ public class RequestSender {
 	
 	public void connectToNextStalker() {
 		
-			//change this to a json file?
-			String stalkerListFile = "STALKERs.txt";
-			List<String> stalkerList = new ArrayList<String>();
-			
-			try {
-				BufferedReader in = new BufferedReader(new FileReader(stalkerListFile));
-			
-				String readInIP;
-				while ((readInIP = in.readLine()) != null) {
-					stalkerList.add(readInIP);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+
 			
 			//System.out.println(stalkerList);
 			
-			int lastIPIndex = stalkerList.indexOf(lastIPAccessed);
-			int nextIPIndex = lastIPIndex + 1;
-			if (nextIPIndex >= stalkerList.size()) {
-				nextIPIndex = 0;
-			}
-			String nextIP = stalkerList.get(nextIPIndex);
+			
 
             //socket = createConnection("127.0.0.1", 6553);
 			//System.out.println(nextIP);
-			try {
-				socket = createConnection(nextIP, 6553);
-			} catch (IOException e) {
-				e.printStackTrace();
+			while (socket == null) {
+				try {
+					socket = createConnection(getNextIP(), 6553);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+	}
+	
+	public String getNextIP() {
+		//change this to a json file?
+		String stalkerListFile = "STALKERs.txt";
+		List<String> stalkerList = new ArrayList<String>();
+		
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(stalkerListFile));
+		
+			String readInIP;
+			while ((readInIP = in.readLine()) != null) {
+				stalkerList.add(readInIP);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		int lastIPIndex = stalkerList.indexOf(lastIPAccessed);
+		int nextIPIndex = lastIPIndex + 1;
+		if (nextIPIndex >= stalkerList.size()) {
+			nextIPIndex = 0;
+		}
+		String nextIP = stalkerList.get(nextIPIndex);
+		return nextIP;
 	}
 
 
