@@ -3,17 +3,51 @@
  */
 package app;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FilenameUtils;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Optional;
 
 public class App {
 
     public static void main(String[] args) {
+        initStalker();
+//        Tester t = new Tester();
+//        t.test();
+//        //System.out.println(new App().getGreeting());
 
-        Tester t = new Tester();
-        t.test();
-        //System.out.println(new App().getGreeting());
-        JcpRequestHandler jcpRequestHandler = new JcpRequestHandler();
-        jcpRequestHandler.run();
+
+//        JcpRequestHandler jcpRequestHandler = new JcpRequestHandler();
+//        jcpRequestHandler.run();
+
+
+        //System.out.println("Stalker Online");
     }
+
+    public static void initStalker(){
+        //clear chunk folder
+        File chunk_folder = new File("temp/chunks/");
+        File[] chunk_folder_contents = chunk_folder.listFiles();
+
+        File temp_folder = new File("temp/toChunk/");
+        File[] temp_folder_contents = temp_folder.listFiles();
+
+        for(File f : chunk_folder_contents){
+            if (!FilenameUtils.getExtension(f.getName()).equals("empty")){
+                f.delete();
+            }
+        }
+        for(File f : temp_folder_contents){
+            if (!FilenameUtils.getExtension(f.getName()).equals("empty")){
+                f.delete();
+            }
+        }
+
+    }
+
 
 }
 

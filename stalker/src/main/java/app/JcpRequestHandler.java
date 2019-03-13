@@ -25,7 +25,8 @@ public class JcpRequestHandler implements Runnable {
      * @return
      * @throws IOException
      */
-    private static String executeHandshake(DataInputStream in, DataOutputStream out) throws IOException {
+
+    private static TcpPacket executeHandshake(DataInputStream in, DataOutputStream out) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         Optional<TcpPacket> receivedPacket = Optional.empty();
 
@@ -46,7 +47,7 @@ public class JcpRequestHandler implements Runnable {
         out.writeUTF(jsonInString);
 
 
-        return receivedPacket.isPresent() ? receivedPacket.get().getRequestType() : "";
+        return receivedPacket.get();
 
 
     }
@@ -81,7 +82,7 @@ public class JcpRequestHandler implements Runnable {
 
 
         System.out.println("Waiting...");
-
+        String fname = "";
         // will keep on listening for requests
         while (true) {
 
@@ -95,12 +96,12 @@ public class JcpRequestHandler implements Runnable {
                 out = new DataOutputStream(socket.getOutputStream());
 
 
-                String requestType = executeHandshake(in, out);
+                TcpPacket req = executeHandshake(in, out);
                 // receive file in chunks
 
 
 
-                executorService.execute(ServiceHandlerFactory.getServiceHandler(RequestType.valueOf(requestType), socket));
+                executorService.execute(ServiceHandlerFactory.getServiceHandler(RequestType.valueOf(req.getRequestType()), socket,req.getFileName()));
 
 
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="CPSC559DS.harm.main" target="1.8" />
+      <module name="CPSC559DS.harm.test" target="1.8" />
+      <module name="CPSC559DS.jcp.main" target="1.8" />
+      <module name="CPSC559DS.jcp.test" target="1.8" />
+      <module name="CPSC559DS.library.main" target="1.8" />
+      <module name="CPSC559DS.library.test" target="1.8" />
+      <module name="CPSC559DS.stalker.main" target="1.8" />
+      <module name="CPSC559DS.stalker.test" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

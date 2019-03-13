@@ -16,6 +16,10 @@ public class App {
 
     public static void main(String[] args) {
 
+        if (args.length > 0){
+            System.out.println("Harm " + args[0] + " running!");
+        }
+
         //initialize socket and input stream
         Socket socket = null;
         ServerSocket server = null;

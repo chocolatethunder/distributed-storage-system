@@ -10,10 +10,11 @@ import java.net.Socket;
 public class DownloadServiceHandler implements Runnable {
 
     private final Socket socket;
+    private String fileName;
 
-
-    public DownloadServiceHandler(Socket socket){
+    public DownloadServiceHandler(Socket socket, String fname){
         this.socket = socket;
+        this.fileName = fname;
     }
 
     @Override

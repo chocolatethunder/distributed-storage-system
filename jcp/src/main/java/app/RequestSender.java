@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
+import org.apache.commons.io.*;
 
 /**
  *This is the singleton object that will do the round robin connection of
@@ -15,8 +16,6 @@ public class RequestSender {
     Socket socket = null;
     DataOutputStream out = null;
     NetworkUtils networkUtils = null;
-
-
 
     private static class RequestSenderHolder{
 
@@ -40,6 +39,11 @@ public class RequestSender {
         } catch (IOException e) {
             //Could not connect , need another STALKER here
         }
+
+    }
+
+    public static RequestSender getInstance(){
+        return  RequestSenderHolder.requestSender;
     }
 
 
@@ -51,8 +55,8 @@ public class RequestSender {
     public void sendFile(String fileName){
 
         // TO:DO need logic to verify file size here
-
-        if(handShakeSuccess(RequestType.UPLOAD)) {
+        // we make the handshake first
+        if(handShakeSuccess(RequestType.UPLOAD, fileName)) {
             FileStreamer fileStreamer = new FileStreamer(socket);
             fileStreamer.sendFileToSocket(fileName);
 
@@ -61,7 +65,6 @@ public class RequestSender {
             //DEBUG
             System.out.println("SERVER BUSY");
         }
-
     }
 
 
@@ -74,14 +77,9 @@ public class RequestSender {
 
         if(handShakeSuccess(RequestType.LIST)) {
 
-
-
         }
-
         return null;
-
     }
-
 
     /**
      * This will delete a file with the filename in the system
@@ -92,11 +90,7 @@ public class RequestSender {
         // TO:DO need logic to verify file size  here
 
         if(handShakeSuccess(RequestType.DELETE)) {
-
-
-
         }
-
     }
 
 
@@ -106,17 +100,15 @@ public class RequestSender {
      * @param filePath
      */
     public void getFile(String filePath){
-
         // TO:DO need logic to verify file size  here
-
         if(handShakeSuccess(RequestType.DOWNLOAD)) {
 
             FileStreamer fileStreamer = new FileStreamer(socket);
             fileStreamer.receiveFileFromSocket(filePath);
 
         }
-
     }
+    //just incase no file is specified
 
 
     /**
@@ -126,15 +118,29 @@ public class RequestSender {
      * @return
      */
     private boolean handShakeSuccess(RequestType requestType){
+        return(handShakeSuccess(requestType, ""));
+    }
+
+    //resposnible for making a request to the STALKER
+    private boolean handShakeSuccess(RequestType requestType, String toSend){
         TcpPacket receivedPacket = null;
         try {
+
+            TcpPacket initialPacket = new TcpPacket(requestType, "HELLO_INIT");
+            // in the case that we are sending a file we need to also
+            // send the name of the file as well as the file size
+            //The request will not be sent if the file doesn't exist...
+            File f = new File(toSend);
+            if (f.exists()){
+                initialPacket.setFile(FilenameUtils.getName(toSend), (int) f.length());
+            }
+            else{
+                throw new FileNotFoundException("The file specified does not exist!");
+            }
 
 
             out = new DataOutputStream(socket.getOutputStream());
             DataInputStream  in = new DataInputStream((socket.getInputStream()));
-
-            TcpPacket initialPacket = new TcpPacket(requestType, "HELLO_INIT", "something");
-
             ObjectMapper mapper = new ObjectMapper();
 
             //DEBUG : Object to JSON in file
@@ -158,8 +164,20 @@ public class RequestSender {
         } catch (IOException  e) {
             e.printStackTrace();
         }
-
         return receivedPacket != null && receivedPacket.getMessage().equals("AVAIL");
     }
+
+
+    private Socket createConnection(String host, int port) throws IOException {
+        Socket socket = null;
+
+        // establish a connection
+        //TO:DO Need logic for getting the stalker in round robin fashion
+            socket = new Socket(host, port);
+            System.out.println("Connected");
+        return socket;
+    }
+
+
 
 }

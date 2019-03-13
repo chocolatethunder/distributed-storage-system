@@ -7,7 +7,6 @@ import java.io.*;
 
 public class App {
 
-
     public static void main(String[] args) {
 
         /*
@@ -19,6 +18,7 @@ public class App {
 
         // upload file request
         requestSender.sendFile("test.txt");
+        requestSender.sendFile("temp\\000_mp4_test.mp4");
 
     }
 }
