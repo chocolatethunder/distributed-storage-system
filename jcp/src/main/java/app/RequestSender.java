@@ -4,48 +4,72 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.List;
 import org.apache.commons.io.*;
 
 /**
- *
+ *This is the singleton object that will do the round robin connection of
+ * STALKER unit and make requests to STALKER for download, upload, delete and filelist
  */
 public class RequestSender {
 
     Socket socket = null;
     DataOutputStream out = null;
+    NetworkUtils networkUtils = null;
 
+
+    /**
+     * Single Instance of RequestSender Holder
+     */
     private static class RequestSenderHolder{
 
         static final RequestSender requestSender = new RequestSender();
     }
+
+
     private RequestSender(){
-
-        try {
-
-            //TO:DO  need to implement the ROUND ROBIN logic to chose the STALKER to connect
-
-            socket = createConnection("127.0.0.1", 6553);
-        } catch (IOException e) {
-            //Could not connect , need another STALKER here
-        }
-
+        networkUtils = new NetworkUtils();
     }
+
 
     public static RequestSender getInstance(){
         return  RequestSenderHolder.requestSender;
     }
 
 
+    /**
+     * This is the method that connects to a given host and port
+     *
+     */
+    public Socket connect(String host, int port){
+        try {
 
+            //TO:DO modify this to connect to STALKER in a round robin fashion
+
+            this.socket = networkUtils.createConnection(host, port);
+        } catch (IOException e) {
+            //Could not connect , need another STALKER here
+        }
+
+        return this.socket;
+
+    }
+
+
+
+
+    /**
+     * This is the request for uploading file
+     *
+     * @param fileName absolute file path
+     */
     public void sendFile(String fileName){
 
         // TO:DO need logic to verify file size here
         // we make the handshake first
         if(handShakeSuccess(RequestType.UPLOAD, fileName)) {
             FileStreamer fileStreamer = new FileStreamer(socket);
-            fileStreamer.sendFile(fileName);
+            fileStreamer.sendFileToSocket(fileName);
 
         }else{
             //need a way to connect to another STALKER
@@ -55,6 +79,10 @@ public class RequestSender {
     }
 
 
+    /**
+     * This will fetch a list of all file names in the system
+     * @return list of filenames
+     */
     public List<String> getFileList(){
 
 
@@ -64,25 +92,49 @@ public class RequestSender {
         return null;
     }
 
-    public void deleteFile(String fileName){
 
-        // TO:DO need logic to verify file size  here
+
+    /**
+     * This will delete a file with the filename in the system
+     * @param fileName actual file name (not path)
+     */
+    public void deleteFile(String fileName){
 
         if(handShakeSuccess(RequestType.DELETE)) {
         }
     }
+
+
+    /**
+     * This will download a file given the filename
+     *
+     * @param filePath
+     */
     public void getFile(String filePath){
         // TO:DO need logic to verify file size  here
-        if(handShakeSuccess(RequestType.DOWNLOAD)) {
+        if(handShakeSuccess(RequestType.DOWNLOAD, filePath)) {
 
             FileStreamer fileStreamer = new FileStreamer(socket);
-            fileStreamer.receiveFile(filePath);
+            fileStreamer.receiveFileFromSocket(filePath);
+
         }
     }
     //just incase no file is specified
+
+
+    /**
+     * This is the handshake logic between JCP and STALKER
+     * Occurs in 2 steps  HELLO_INIT -> AVAIL | BUSY
+     * @param requestType  UPLOAD,
+     *                     DOWNLOAD,
+     *                     DELETE,
+     *                     LIST
+     * @return  true if handshake was successfull, false otherwise
+     */
     private boolean handShakeSuccess(RequestType requestType){
         return(handShakeSuccess(requestType, ""));
     }
+
 
     //resposnible for making a request to the STALKER
     private boolean handShakeSuccess(RequestType requestType, String toSend){
@@ -116,6 +168,7 @@ public class RequestSender {
 
             try {
 
+                // receiving packet back from STALKER
                 String received = in.readUTF();
                 System.out.println("rec " + received);
                 receivedPacket = mapper.readValue(received, TcpPacket.class);
@@ -129,18 +182,5 @@ public class RequestSender {
         }
         return receivedPacket != null && receivedPacket.getMessage().equals("AVAIL");
     }
-
-
-    private Socket createConnection(String host, int port) throws IOException {
-        Socket socket = null;
-
-        // establish a connection
-        //TO:DO Need logic for getting the stalker in round robin fashion
-            socket = new Socket(host, port);
-            System.out.println("Connected");
-        return socket;
-    }
-
-
 
 }

@@ -1,5 +1,8 @@
 package app;
 
+import app.RequestType;
+import app.TcpPacket;
+import app.handlers.ServiceHandlerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
@@ -10,10 +13,19 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- *
+ *This is main thread that receives request through TCP from JCP
  */
 public class JcpRequestHandler implements Runnable {
 
+
+    /**
+     * This execute the initial handshake with JCP. It should check if it can handle request type
+     * then send reply back with AVAIL | BUSY
+     * @param in
+     * @param out
+     * @return received TCP packet from JCP
+     * @throws IOException
+     */
 
     private static TcpPacket executeHandshake(DataInputStream in, DataOutputStream out) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -21,6 +33,7 @@ public class JcpRequestHandler implements Runnable {
 
         try {
             String rec = in.readUTF();
+            // reading the packet as object from json string
             receivedPacket = Optional.of(mapper.readValue(rec, TcpPacket.class));
 
         } catch (EOFException e) {
@@ -34,6 +47,10 @@ public class JcpRequestHandler implements Runnable {
         return receivedPacket.get();
     }
 
+    /**
+     *This is the main run method for this thread. It run in a while loop to receive connections from
+     * JCP/s  and then executes handshake. Then it spawns a thread to handle the request.
+     */
     @Override
     public void run() {
 
@@ -42,10 +59,7 @@ public class JcpRequestHandler implements Runnable {
         ServerSocket server = null;
         DataInputStream in = null;
         DataOutputStream out = null;
-        BufferedOutputStream bufferedOutputStream = null;
 
-
-        int bytesRead;
 
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
@@ -70,7 +84,11 @@ public class JcpRequestHandler implements Runnable {
 
                 TcpPacket req = executeHandshake(in, out);
                 // receive file in chunks
-                executorService.execute(ServiceHandlerFactory.getServiceHandler(RequestType.valueOf(req.getRequestType()), socket,req.getFileName()));
+
+                //creating a specific type of service handler using factory method
+                executorService.execute(ServiceHandlerFactory.getServiceHandler(RequestType.valueOf(req.getRequestType()),
+                        socket,
+                        req.getFileName()));
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

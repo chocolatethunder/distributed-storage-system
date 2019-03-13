@@ -1,4 +1,7 @@
-package app;
+package app.handlers;
+
+import app.FileChunker;
+import app.IndexEntry;
 
 import java.io.*;
 import java.net.Socket;

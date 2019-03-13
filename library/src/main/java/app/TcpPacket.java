@@ -10,6 +10,7 @@ public class TcpPacket {
 
     private String requestType;
     private String message;
+
     private String fileName;
     private int fileSize;
 

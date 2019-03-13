@@ -18,6 +18,4 @@ public class NetworkUtils {
         return socket;
     }
 
-
-
 }
