@@ -16,10 +16,10 @@ public class App {
          */
         RequestSender requestSender = RequestSender.getInstance();
         Socket socket = requestSender.connect("127.0.0.1", 7555);
-
+        requestSender.getFile("temp\\003_txt_test.txt");
         // upload file request
 
-        requestSender.sendFile("temp\\003_txt_test.txt");
+        //requestSender.sendFile("temp\\003_txt_test.txt");
 
 
         // should close socket from main calling method, otherwise threads giving null pointer exception

@@ -34,7 +34,7 @@ public class UploadServiceHandler implements Runnable {
     public void run() {
 
         byte[] chunkArray = new byte[1024];
-
+        //get file from jcp
         int bytesRead = 0;
         try {
             in = new DataInputStream(socket.getInputStream());
@@ -42,8 +42,6 @@ public class UploadServiceHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
         try {
             while ((bytesRead = in.read(chunkArray)) != -1) {
 
@@ -54,30 +52,27 @@ public class UploadServiceHandler implements Runnable {
             }
             bufferedOutputStream.close();
 
-
+        ////////////////////////////////////////File Chunking section
         }catch (IOException e){
             e.printStackTrace();
         }
         List<String> harm_list = new ArrayList<String>();
         FileChunker f = new FileChunker(chunk_dir);
         ChunkDistributor cd = new ChunkDistributor(chunk_dir, harm_list);
-
-//        //chunk file and get the index entry object
+        ///////////////////////chunk file and get the index entry object
         IndexEntry entry = f.chunkFile(filePath, 3);
         if (entry != null){
             File file = new File(filePath);
             file.delete();
         }
         entry.summary();
-//
-        //distribute file
+        ////////////////distribute file
         if(cd.distributeChunks(entry, 3)){
             entry.cleanLocalChunks();
         }
         entry.summary();
-
         Indexer.addEntry(index, entry);
-
+        /////////Save that shit
         Indexer.saveToFile(index);
     }
 }

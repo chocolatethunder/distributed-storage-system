@@ -39,7 +39,7 @@ public class ChunkDistributor {
         //we go through each chunk in the IndexEntry object
         //token represents which harm target we are currently sending to
         int token = 0;
-        for (Chunk c : iEnt.getChunks()){
+        for (Chunk c : iEnt.getChunkList()){
             //for each replica
             for (int i = 0; i < num_reps; i++){
                 //String target_path = harm_list.get(token) + c.hash();
@@ -81,9 +81,9 @@ public class ChunkDistributor {
                 NetworkUtils networkUtils = new NetworkUtils();
                 Socket harmServer = networkUtils.createConnection("127.0.0.1", 6555 + port_mod);
                 //if everything went well then we can send the damn file
-                if(handShakeSuccess(RequestType.UPLOAD, c.path(), harmServer)){
+                if(handShakeSuccess(RequestType.UPLOAD, c.getChunk_path(), harmServer)){
                     FileStreamer fileStreamer = new FileStreamer(harmServer);
-                    fileStreamer.sendFileToSocket(c.path());
+                    fileStreamer.sendFileToSocket(c.getChunk_path());
                     harmServer.close();
                     break;
                 }
@@ -122,8 +122,6 @@ public class ChunkDistributor {
             else{
                 throw new FileNotFoundException("The file specified does not exist!");
             }
-
-
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             DataInputStream  in = new DataInputStream((socket.getInputStream()));
             ObjectMapper mapper = new ObjectMapper();

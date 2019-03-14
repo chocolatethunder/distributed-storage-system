@@ -33,10 +33,10 @@ public class Chunk {
         catch (Exception e){
             e.printStackTrace();
         }
-        chunk_path = c_path + hash;
-        chunk_index = c_index;
-        chunk_size = c_size;
-        replicas = new ArrayList();
+        this.chunk_path = c_path + hash;
+        this.chunk_index = c_index;
+        this.chunk_size = c_size;
+        this.replicas = new ArrayList();
     }
 
 
@@ -48,23 +48,8 @@ public class Chunk {
     }
 
 
-    //-----------------------  Getter/Setters
-    public int index(){return chunk_index;}
-    public long size(){return chunk_size;}
-    public String path(){return chunk_path;}
-    public String hash(){return hash;}
-    public List<String> getReplicaAddrs(){return(replicas);}
-
-    //-----------------------  Getter/Setters
-    public void setIndex(int ind){chunk_index=ind;}
-    public void setSize(long s){chunk_size = s;}
-    public void SetPath(String s){chunk_path = s;}
-    public void SetHash(String s){hash = s;}
-    public void setReplicaAddrs(List<String> s){replicas = s;}
-
     //add a replica to the tracked list
     public void addReplica(String addr){replicas.add(addr);}
-    public void setPath(String new_path){chunk_path = new_path;}
 
     @Override
     public String toString(){
@@ -82,4 +67,16 @@ public class Chunk {
     }
 
 
+    //////////////////////////////////-----------------------  Getter/Setters
+    public String getHash() { return hash; }
+    public void setHash(String hash) { this.hash = hash; }
+    public int getChunk_index() { return chunk_index; }
+    public void setChunk_index(int chunk_index) { this.chunk_index = chunk_index; }
+    public String getChunk_path() { return chunk_path; }
+    public void setChunk_path(String chunk_path) { this.chunk_path = chunk_path; }
+    public long getChunk_size() { return chunk_size; }
+    public void setChunk_size(long chunk_size) { this.chunk_size = chunk_size; }
+    public List<String> getReplicas() { return replicas; }
+
+    public void setReplicas(List<String> replicas) { this.replicas = replicas; }
 }

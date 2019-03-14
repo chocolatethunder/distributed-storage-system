@@ -17,7 +17,8 @@ public class App {
 
     public static void main(String[] args) {
         initStalker();
-        IndexFile ind = Indexer.loadFromFile("index/main.index");
+        IndexFile ind = Indexer.loadFromFile();
+        ind.summary();
         System.out.println("Stalker Online");
         JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
         jcpRequestHandler.run();

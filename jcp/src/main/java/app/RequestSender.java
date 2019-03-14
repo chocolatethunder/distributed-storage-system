@@ -78,7 +78,6 @@ public class RequestSender {
         }
     }
 
-
     /**
      * This will fetch a list of all file names in the system
      * @return list of filenames
@@ -92,8 +91,6 @@ public class RequestSender {
         return null;
     }
 
-
-
     /**
      * This will delete a file with the filename in the system
      * @param fileName actual file name (not path)
@@ -103,8 +100,6 @@ public class RequestSender {
         if(handShakeSuccess(RequestType.DELETE)) {
         }
     }
-
-
     /**
      * This will download a file given the filename
      *
@@ -120,8 +115,6 @@ public class RequestSender {
         }
     }
     //just incase no file is specified
-
-
     /**
      * This is the handshake logic between JCP and STALKER
      * Occurs in 2 steps  HELLO_INIT -> AVAIL | BUSY
@@ -140,7 +133,6 @@ public class RequestSender {
     private boolean handShakeSuccess(RequestType requestType, String toSend){
         TcpPacket receivedPacket = null;
         try {
-
             TcpPacket initialPacket = new TcpPacket(requestType, "HELLO_INIT");
             // in the case that we are sending a file we need to also
             // send the name of the file as well as the file size
@@ -152,20 +144,15 @@ public class RequestSender {
             else{
                 throw new FileNotFoundException("The file specified does not exist!");
             }
-
-
             out = new DataOutputStream(socket.getOutputStream());
             DataInputStream  in = new DataInputStream((socket.getInputStream()));
             ObjectMapper mapper = new ObjectMapper();
 
             //DEBUG : Object to JSON in file
             //mapper.writeValue(new File("file.json"), initialPacket);
-
             //Object to JSON in String
             String jsonInString = mapper.writeValueAsString(initialPacket);
             out.writeUTF(jsonInString);
-
-
             try {
 
                 // receiving packet back from STALKER
@@ -176,7 +163,6 @@ public class RequestSender {
             } catch (EOFException e) {
                 // do nothing end of packet
             }
-
         } catch (IOException  e) {
             e.printStackTrace();
         }

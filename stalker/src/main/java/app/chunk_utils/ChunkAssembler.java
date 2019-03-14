@@ -21,8 +21,8 @@ public class ChunkAssembler {
     }
 
     public boolean assembleChunks(IndexEntry iEnt){
-        for (Chunk c : iEnt.getChunks()){
-            if (c.path() == ""){return false;}
+        for (Chunk c : iEnt.getChunkList()){
+            if (c.getChunk_path() == ""){return false;}
             if(!writeChunkTofile(c, iEnt.fileName())){
                 System.out.println("assembly failed!");
                 return false;
@@ -36,8 +36,8 @@ public class ChunkAssembler {
         try{
             File f = new File(ass_dir + fileName);
             OutputStream os = new FileOutputStream(f, true);
-            byte[] chunk_data = Files.readAllBytes(Paths.get(c.path()));
-            os.write(chunk_data, 0, (int)c.size());
+            byte[] chunk_data = Files.readAllBytes(Paths.get(c.getChunk_path()));
+            os.write(chunk_data, 0, (int)c.getChunk_size());
             os.close();
             return true;
         }

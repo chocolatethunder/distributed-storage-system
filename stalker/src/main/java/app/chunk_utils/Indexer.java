@@ -16,9 +16,9 @@ import java.nio.charset.StandardCharsets;
 //This class will be in control of the indexFiles
 //all these functions are probably going to need to be thread safe
 public class Indexer {
-
+    public static final String indexPath = "index/main.index";
     //loads the json from file and converts it to an IndexFile object
-    public static IndexFile loadFromFile(String indexPath){
+    public static IndexFile loadFromFile(){
         ObjectMapper mapper = new ObjectMapper();
         Optional<IndexFile> ind = Optional.empty();
         try {
@@ -30,7 +30,7 @@ public class Indexer {
         }
         catch (IOException e){
             //if the file is corrupt or empty we create a new IndexFile
-           // e.printStackTrace();
+            e.printStackTrace();
             System.out.println("Creating new indexfile");
             IndexFile temp = new IndexFile();
             saveToFile(temp);
@@ -42,19 +42,34 @@ public class Indexer {
 
     //Save index to file
     public static boolean saveToFile(IndexFile ind){
+        String tempfile = "index/main";
         try{
             ObjectMapper mapper = new ObjectMapper();
             String jsonInString = mapper.writeValueAsString(ind);
 
-            File f = new File("index/main");
-            if (f.exists()){
-                f.delete();
+            File temp = new File(tempfile);
+            File indexfile = new File(indexPath);
+
+
+            if (temp.exists()){
+                temp.delete();
             }
-            PrintWriter out = new PrintWriter("index/main");
+            //must be thread safe
+            ///////////////////////////////////////////////////////
+            //delete old indexfile and replace with new
+            //lock
+
+            //keep the old index around just in case
+            if (indexfile.exists()){
+                indexfile.renameTo(temp);
+            }
+            //write to tempfile first
+            PrintWriter out = new PrintWriter(indexPath);
             out.print(jsonInString);
             out.close();
 
-            
+            temp.delete();
+            //////////////////////////////////////////////////////
             System.out.println("Index saved to file");
 
         }

@@ -75,7 +75,7 @@ public class FileChunker {
             //write bytes to new file
             //create the chunk object, the name
             tChunk = new Chunk(chunkDir, cInd, offset);
-            FileUtils.writeByteArrayToFile(new File(tChunk.path()), bytes);
+            FileUtils.writeByteArrayToFile(new File(tChunk.getChunk_path()), bytes);
         }
         catch (FileNotFoundException e){
             e.printStackTrace();

@@ -64,8 +64,6 @@ public class JcpRequestHandler implements Runnable {
         ServerSocket server = null;
         DataInputStream in = null;
         DataOutputStream out = null;
-
-
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
@@ -74,7 +72,6 @@ public class JcpRequestHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         System.out.println("Waiting...");
         String fname = "";
         // will keep on listening for requests
@@ -85,8 +82,6 @@ public class JcpRequestHandler implements Runnable {
                 System.out.println("Accepted connection : " + socket);
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
-
-
                 TcpPacket req = executeHandshake(in, out);
                 // receive file in chunks
                 //creating a specific type of service handler using factory method

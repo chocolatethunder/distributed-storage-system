@@ -20,14 +20,12 @@ public class IndexFile {
     public IndexEntry search(String filename){
         return(entries.get(filename));
     }
-    public Map<String, IndexEntry> getEntries(){
-        return entries;
-    }
+
     //get the info to be sent
     public List<String> infoList(){
         List<String> temp = new ArrayList<>();
         for(IndexEntry e: entries.values()){
-            temp.add(e.getClientData());
+            temp.add(e.clientData());
         }
         return temp;
     }
@@ -35,6 +33,13 @@ public class IndexFile {
     public void add(IndexEntry e){
         entries.put(e.fileName(), e);
     }
+
+
+
+    ////////////////////gettet/setter
+
+    public Map<String, IndexEntry> getEntries() {return entries; }
+    public void setEntries(Map<String, IndexEntry> entries) { this.entries = entries; }
 
 
 }

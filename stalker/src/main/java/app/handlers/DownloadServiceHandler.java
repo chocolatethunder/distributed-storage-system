@@ -1,9 +1,9 @@
 package app.handlers;
 
+import app.ChunkRetriever;
+import app.chunk_utils.IndexEntry;
 import app.chunk_utils.IndexFile;
 
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
 import java.net.Socket;
 
 /**
@@ -14,6 +14,8 @@ public class DownloadServiceHandler implements Runnable {
     private final Socket socket;
     private String fileName;
     private IndexFile index;
+    private final String c_dir = "temp/chunks/";
+    private final String ass_dir = "temp/assembled/";
 
     public DownloadServiceHandler(Socket socket, String fname, IndexFile ind){
         this.socket = socket;
@@ -24,13 +26,12 @@ public class DownloadServiceHandler implements Runnable {
     @Override
     public void run(){
 
-
-
-
-        
+        ChunkRetriever cr = new ChunkRetriever(c_dir);
+        IndexEntry e = index.search(fileName);
+        cr.retrieveChunks(e);
         ///used for download
 //        //retrieve chunks
-//        cr.retrieveChunks(entry);
+
 //        //assemble the chunks
 //        if(ca.assembleChunks(entry)){
 //            System.out.println("Test passed without fail");
