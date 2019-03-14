@@ -48,7 +48,6 @@ public class App {
         while (true) {
 
             try {
-
                 socket = server.accept();
                 System.out.println("Accepted connection : " + socket);
                 in = new DataInputStream(socket.getInputStream());

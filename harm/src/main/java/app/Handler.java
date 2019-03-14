@@ -29,7 +29,7 @@ public class Handler implements Runnable {
         if (requestType == RequestType.UPLOAD) {
             streamer.receiveFileFromSocket(harm_path + filename);
         } else if (requestType == RequestType.DOWNLOAD) {
-            streamer.sendFileToSocket(filename);
+            streamer.sendFileToSocket(harm_path + filename);
 
         } else {
             //delete logic here

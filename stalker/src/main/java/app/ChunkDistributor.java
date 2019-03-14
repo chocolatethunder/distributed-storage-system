@@ -92,7 +92,7 @@ public class ChunkDistributor {
                 // filestream.sendFileToSocket()
             }
             catch(IOException e){
-                System.out.println("Attempt: " + attempts + "failed!");
+                System.out.println("Attempt: " + attempts + " failed!");
                 //e.printStackTrace();
                 attempts++;
             }

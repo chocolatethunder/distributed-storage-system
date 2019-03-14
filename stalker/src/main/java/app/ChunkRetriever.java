@@ -43,24 +43,34 @@ public class ChunkRetriever {
     //if it cannot get any copies of the chunk it will fail and return false
     //in the future will retrieve it from a remote node
     public boolean retrieveChunk(Chunk c){
+        int attempts = 0;
         for (String s : c.getReplicas()){
-            try{
-                System.out.println("SOCKET: " + Integer.valueOf(s));
-                NetworkUtils networkUtils = new NetworkUtils();
-                Socket harmServer = networkUtils.createConnection("127.0.0.1", Integer.valueOf(s));
-                //FileUtils.copyFile(new File(s),new File(chunkDir + c.getHash()));
-                if(handShakeSuccess(RequestType.DOWNLOAD, c.getHash(), harmServer)){
-                    FileStreamer fileStreamer = new FileStreamer(harmServer);
-                    fileStreamer.receiveFileFromSocket(chunkDir + c.getHash());
-                    harmServer.close();
+            while(true){
+                if (attempts == 3){
+                    System.out.println("Failed to receive file from HARM target after multiple attempts");
                     break;
                 }
-                c.setChunk_path(chunkDir + c.getHash());
-                return true;
+                try{
+                    System.out.println("SOCKET: " + Integer.valueOf(s));
+                    int port = Integer.valueOf(s);
+                    NetworkUtils networkUtils = new NetworkUtils();
+                    Socket harmServer = networkUtils.createConnection("127.0.0.1", port);
+                    //FileUtils.copyFile(new File(s),new File(chunkDir + c.getHash()));
+                    if(handShakeSuccess(RequestType.DOWNLOAD, c.getHash(), harmServer)){
+                        FileStreamer fileStreamer = new FileStreamer(harmServer);
+                        fileStreamer.receiveFileFromSocket(chunkDir + c.getHash());
+                        harmServer.close();
+                        return true;
+                    }
+                    c.setChunk_path(chunkDir + c.getHash());
+                }
+                catch(IOException e){
+                    e.printStackTrace();
+                    System.out.println("Attempt: " + attempts + " failed!");
+                    attempts++;
+                }
             }
-            catch(IOException e){
-                e.printStackTrace();
-            }
+
         }
         return(false);
     }
