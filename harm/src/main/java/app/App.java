@@ -18,33 +18,12 @@ import java.util.concurrent.TimeUnit;
 public class App {
 
     public static void main(String[] args) {
+        int macID = NetworkUtils.getMacID();
+        System.out.println("" + macID);
         boolean cont = false;
-        int mac_addr = Integer.MAX_VALUE;
-        //use the argvalues to add a port modifier to the HARM to differentiate it from the others
-        try{
-
-            InetAddress ip = InetAddress.getLocalHost();
-            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
-
-            Enumeration<NetworkInterface> e = network.getNetworkInterfaces();
-            NetworkInterface next = e.nextElement();
-            System.out.println(next.toString());
-            byte[] bytes = next.getHardwareAddress();
-            System.out.println(mac_addr);
-            mac_addr = convertByteToInt(bytes);
-        }
-        catch (NullPointerException ex){
-            ex.printStackTrace();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-
-        System.out.println("Harm ID: " + mac_addr);
         if (!cont){
             return;
         }
-
 //        return;
 //        if (args.length > 0){
 //            port_modifier = new Integer(args[0]);
@@ -85,7 +64,7 @@ public class App {
                 Optional<TcpPacket> packet = executeHandshake(in, out);
 
                 System.out.println(socket.isClosed());
-                Handler h = new Handler(socket, packet.get(), mac_addr);
+                Handler h = new Handler(socket, packet.get(), macID);
                 h.run();
                 // creating a runnable task for each request from the same socket connection
                 //executorService.execute();
@@ -111,18 +90,6 @@ public class App {
 
         }
     }
-
-    ///get an integer from a MAC addr
-    public static int convertByteToInt(byte[] b) throws NullPointerException
-    {
-        int value= 0;
-        for(int i=0; i<b.length; i++)
-            value = (value << 8) | b[i];
-        return value;
-    }
-
-
-
 
     /**
      * Method to wait until all threads are done

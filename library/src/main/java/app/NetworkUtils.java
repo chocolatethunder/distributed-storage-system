@@ -2,11 +2,13 @@ package app;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Enumeration;
 import java.util.Optional;
 import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -72,7 +74,40 @@ public class NetworkUtils {
         return true;
     }
 
+    public static int getMacID(){    //get the mac ID of the current device
+        int mac_addr = Integer.MAX_VALUE;
+        //use the argvalues to add a port modifier to the HARM to differentiate it from the others
+        try{
+
+            InetAddress ip = InetAddress.getLocalHost();
+            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+
+            Enumeration<NetworkInterface> e = network.getNetworkInterfaces();
+            NetworkInterface next = e.nextElement();
+            System.out.println(next.toString());
+            byte[] bytes = next.getHardwareAddress();
+            System.out.println(mac_addr);
+            mac_addr = convertByteToInt(bytes);
+        }
+        catch (NullPointerException ex){
+            ex.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        System.out.println("Harm ID: " + mac_addr);
+        return(mac_addr);
+    }
 
 
+
+    ///get an integer from a MAC addr
+    public static int convertByteToInt(byte[] b) throws NullPointerException
+    {
+        int value= 0;
+        for(int i=0; i<b.length; i++)
+            value = (value << 8) | b[i];
+        return value;
+    }
 
 }

@@ -61,7 +61,7 @@ public class Chunk {
         System.out.println("Replicas: ");
         int i = 0;
         for (String s : replicas){
-            System.out.println(i + " ----> " + s);
+            System.out.println(i + " ----> Harm ID: " + s);
             i++;
         }
     }
