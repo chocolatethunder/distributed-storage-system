@@ -17,11 +17,21 @@ public class App {
         RequestSender requestSender = RequestSender.getInstance();
         Socket socket = requestSender.connect("127.0.0.1", 11111);
 
-        //requestSender.getFile("temp\\003_txt_test.txt");
-        // upload file request
-        //requestSender.sendFile("temp\\003_txt_test.txt");
+        //ip of stalker
+        String stalkerip = "127.0.0.1";
+        //port to connect to
+        int port = 11111;
+        Socket socket = requestSender.connect(stalkerip, port);
+        String req = "download";
+        switch (req){
+            case("download"):
+                requestSender.sendFile("temp\\003_txt_test.txt");
+                break;
+            case("uplodad"):
+                requestSender.getFile("temp\\003_txt_test.txt");
+                break;
 
-
+        }
         // should close socket from main calling method, otherwise threads giving null pointer exception
         try {
             socket.close();
