@@ -27,7 +27,6 @@ public class App {
             NetworkInterface network = NetworkInterface.getByInetAddress(ip);
 
             Enumeration<NetworkInterface> e = network.getNetworkInterfaces();
-            e.nextElement();
             NetworkInterface next = e.nextElement();
             System.out.println(next.toString());
             byte[] bytes = next.getHardwareAddress();
