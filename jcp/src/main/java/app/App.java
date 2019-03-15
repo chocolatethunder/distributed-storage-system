@@ -15,10 +15,10 @@ public class App {
         The object is a singleton and will persist through the life of JCP
          */
         RequestSender requestSender = RequestSender.getInstance();
-        Socket socket = requestSender.connect("127.0.0.1", 7555);
-        requestSender.getFile("temp\\003_txt_test.txt");
-        // upload file request
+        Socket socket = requestSender.connect("127.0.0.1", 11111);
 
+        //requestSender.getFile("temp\\003_txt_test.txt");
+        // upload file request
         //requestSender.sendFile("temp\\003_txt_test.txt");
 
 
