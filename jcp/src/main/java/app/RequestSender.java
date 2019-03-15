@@ -54,10 +54,6 @@ public class RequestSender {
         return this.socket;
 
     }
-
-
-
-
     /**
      * This is the request for uploading file
      *

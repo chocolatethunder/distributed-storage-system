@@ -19,6 +19,7 @@ import java.util.concurrent.Executors;
  */
 public class JcpRequestHandler implements Runnable {
 
+     private final int serverPort = 11111;
      private IndexFile index;
      public JcpRequestHandler(IndexFile ind){
          this.index = ind;
@@ -67,7 +68,7 @@ public class JcpRequestHandler implements Runnable {
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            server = new ServerSocket(7555);
+            server = new ServerSocket(serverPort);
 
         } catch (IOException e) {
             e.printStackTrace();

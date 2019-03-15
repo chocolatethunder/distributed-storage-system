@@ -4,11 +4,13 @@
 package app;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.graph.Network;
 
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
+import java.util.Enumeration;
 import java.util.Optional;
+import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -16,12 +18,39 @@ import java.util.concurrent.TimeUnit;
 public class App {
 
     public static void main(String[] args) {
+        boolean cont = false;
+        int mac_addr = Integer.MAX_VALUE;
         //use the argvalues to add a port modifier to the HARM to differentiate it from the others
-        int port_modifier = 0;
-        if (args.length > 0){
-            port_modifier = new Integer(args[0]);
-            System.out.println("Harm " + port_modifier + " running!");
+        try{
+
+            InetAddress ip = InetAddress.getLocalHost();
+            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+
+            Enumeration<NetworkInterface> e = network.getNetworkInterfaces();
+            e.nextElement();
+            NetworkInterface next = e.nextElement();
+            System.out.println(next.toString());
+            byte[] bytes = next.getHardwareAddress();
+            System.out.println(mac_addr);
+            mac_addr = convertByteToInt(bytes);
         }
+        catch (NullPointerException ex){
+            ex.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+
+        System.out.println("Harm ID: " + mac_addr);
+        if (!cont){
+            return;
+        }
+
+//        return;
+//        if (args.length > 0){
+//            port_modifier = new Integer(args[0]);
+//            System.out.println("Harm " + port_modifier + " running!");
+//        }
 
         //initialize socket and input stream
         Socket socket = null;
@@ -37,7 +66,7 @@ public class App {
             //initializing harm server  // add a modifier from the args
             //currently only supports modifiers 0 - 4 SOOOOORRy
             //in the future the port will stay constant and IP will change
-            server = new ServerSocket(6555 + port_modifier);
+            server = new ServerSocket(22222);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -57,7 +86,7 @@ public class App {
                 Optional<TcpPacket> packet = executeHandshake(in, out);
 
                 System.out.println(socket.isClosed());
-                Handler h = new Handler(socket, packet.get(), port_modifier);
+                Handler h = new Handler(socket, packet.get(), mac_addr);
                 h.run();
                 // creating a runnable task for each request from the same socket connection
                 //executorService.execute();
@@ -83,6 +112,18 @@ public class App {
 
         }
     }
+
+    ///get an integer from a MAC addr
+    public static int convertByteToInt(byte[] b) throws NullPointerException
+    {
+        int value= 0;
+        for(int i=0; i<b.length; i++)
+            value = (value << 8) | b[i];
+        return value;
+    }
+
+
+
 
     /**
      * Method to wait until all threads are done

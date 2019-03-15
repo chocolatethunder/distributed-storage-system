@@ -31,6 +31,7 @@ public class ChunkDistributor {
         chunkDir = c_dir;
         //this list will contain harm id and ip in the future...
         harm_list = h_list;
+        harm_count = h_list.size();
     }
 
     //take an index entry object and process distribute
@@ -42,10 +43,10 @@ public class ChunkDistributor {
         for (Chunk c : iEnt.getChunkList()){
             //for each replica
             for (int i = 0; i < num_reps; i++){
-                //String target_path = harm_list.get(token) + c.hash();
-                String target_ip = "127.0.0.1";
+                String target_path = harm_list.get(token);
+                //String target_ip = "127.0.0.1";
 
-                if(sendChunk(c, target_ip, token)) {
+                if(sendChunk(c, target_path)) {
                     //add the address to the replica list if success
                     //for now the port number is the identifier
                     c.addReplica("" + (6665 + token));
@@ -66,7 +67,7 @@ public class ChunkDistributor {
     }
 
     //placeholder chunk sending function
-    public boolean sendChunk(Chunk c, String target, int port_mod){
+    public boolean sendChunk(Chunk c, String target){
         int attempts = 0;
         while(true){
             if (attempts == 3){
@@ -79,7 +80,7 @@ public class ChunkDistributor {
                 System.out.println("Sending chunk");
                 //make a connection to the harm target using the port modifier
                 NetworkUtils networkUtils = new NetworkUtils();
-                Socket harmServer = networkUtils.createConnection("127.0.0.1", 6555 + port_mod);
+                Socket harmServer = networkUtils.createConnection("127.0.0.1", 22222);
                 //if everything went well then we can send the damn file
                 if(handShakeSuccess(RequestType.UPLOAD, c.getChunk_path(), harmServer)){
                     FileStreamer fileStreamer = new FileStreamer(harmServer);

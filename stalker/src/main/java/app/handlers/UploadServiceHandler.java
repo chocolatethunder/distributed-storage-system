@@ -33,6 +33,8 @@ public class UploadServiceHandler implements Runnable {
     @Override
     public void run() {
 
+        
+
         byte[] chunkArray = new byte[1024];
         //get file from jcp
         int bytesRead = 0;
@@ -56,7 +58,9 @@ public class UploadServiceHandler implements Runnable {
         }catch (IOException e){
             e.printStackTrace();
         }
-        List<String> harm_list = new ArrayList<String>();
+        List<String> harm_list = getHarms();
+
+
         FileChunker f = new FileChunker(chunk_dir);
         ChunkDistributor cd = new ChunkDistributor(chunk_dir, harm_list);
         ///////////////////////chunk file and get the index entry object
@@ -75,4 +79,15 @@ public class UploadServiceHandler implements Runnable {
         /////////Save that shit
         Indexer.saveToFile(index);
     }
+
+
+    public List<String>getHarms(){
+        List<String> temp = new ArrayList<String>();
+        temp.add("127.0.0.1");
+        temp.add("127.0.0.1");
+        temp.add("127.0.0.1");
+        temp.add("127.0.0.1");
+        return temp;
+    }
+
 }
