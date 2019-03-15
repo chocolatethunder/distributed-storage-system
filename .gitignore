@@ -6,3 +6,4 @@ build
 .idea
 .idea/workspace.xml
 *.xml
+*.index
