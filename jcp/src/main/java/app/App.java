@@ -15,8 +15,6 @@ public class App {
         The object is a singleton and will persist through the life of JCP
          */
         RequestSender requestSender = RequestSender.getInstance();
-        Socket socket = requestSender.connect("127.0.0.1", 11111);
-
         //ip of stalker
         String stalkerip = "127.0.0.1";
         //port to connect to
