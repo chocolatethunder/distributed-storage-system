@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.nio.charset.StandardCharsets;
+import app.NetworkUtils;
 
 //This class will be in control of the indexFiles
 //all these functions are probably going to need to be thread safe
@@ -26,7 +26,7 @@ public class Indexer {
             if (!f.exists()){
                 throw new FileNotFoundException("Index file not found...");
             }
-            ind = Optional.of(mapper.readValue(fileToString(indexPath), IndexFile.class));
+            ind = Optional.of(mapper.readValue(NetworkUtils.fileToString(indexPath), IndexFile.class));
         }
         catch (IOException e){
             //if the file is corrupt or empty we create a new IndexFile
@@ -67,7 +67,6 @@ public class Indexer {
             PrintWriter out = new PrintWriter(indexPath);
             out.print(jsonInString);
             out.close();
-
             temp.delete();
             //////////////////////////////////////////////////////
             System.out.println("Index saved to file");
@@ -83,19 +82,19 @@ public class Indexer {
 
 
 
-    //prints the indexfile object to file
-    public static boolean writeIndex(IndexFile ind){
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            //Object to JSON in String
-            String jsonInString = mapper.writeValueAsString(ind);
-
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
-        return true;
-    }
+//    //prints the indexfile object to file
+//    public static boolean writeIndex(IndexFile ind){
+//        try {
+//            ObjectMapper mapper = new ObjectMapper();
+//            //Object to JSON in String
+//            String jsonInString = mapper.writeValueAsString(ind);
+//
+//        }
+//        catch(IOException e){
+//            e.printStackTrace();
+//        }
+//        return true;
+//    }
 
     //add an entry to the index file
     //process thread safe
@@ -107,18 +106,4 @@ public class Indexer {
         return true;
     }
 
-    private static String fileToString(String fileName) {
-        String fileString = "";
-        try{
-            fileString = new String(Files.readAllBytes(Paths.get(fileName)), StandardCharsets.UTF_8);
-        }
-        catch (IOException e){
-            e.printStackTrace();
-            return(null);
-        }
-        catch (NullPointerException ex){
-            return(null);
-        }
-        return fileString;
-    }
 }

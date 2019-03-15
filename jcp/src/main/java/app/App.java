@@ -3,8 +3,13 @@
  */
 package app;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class App {
     //jcp main
@@ -14,9 +19,12 @@ public class App {
         This is the main point of entry for JCP request
         The object is a singleton and will persist through the life of JCP
          */
+        String config_file = "config/stalkers.txt";
+        List<String> s_list = NetworkUtils.listFromJson(NetworkUtils.fileToString(config_file));
+
         RequestSender requestSender = RequestSender.getInstance();
         //ip of stalker
-        String stalkerip = "127.0.0.1";
+        String stalkerip = s_list.get(0);
         //port to connect to
         int port = 11111;
         Socket socket = requestSender.connect(stalkerip, port);
@@ -38,4 +46,9 @@ public class App {
         }
 
     }
+
+
+//
+//    //load a config (stalker ip) from file while we get network discovery working
+
 }

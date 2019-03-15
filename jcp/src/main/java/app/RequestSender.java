@@ -36,7 +36,6 @@ public class RequestSender {
         return  RequestSenderHolder.requestSender;
     }
 
-
     /**
      * This is the method that connects to a given host and port
      *
