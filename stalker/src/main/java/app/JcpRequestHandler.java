@@ -1,14 +1,11 @@
 package app;
 
 import app.chunk_utils.IndexFile;
-import app.CommsHandler;
 import app.handlers.ServiceHandlerFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -49,7 +46,7 @@ public class JcpRequestHandler implements Runnable {
                 Socket client = server.accept();
                 System.out.println("Accepted connection : " + client);
                 // receive packet on the socket link
-                TcpPacket req = commLink.recievePacket(client);
+                TcpPacket req = commLink.receivePacket(client);
 
                 //creating a specific type of service handler using factory method
                 //Submit a task to the handler queue and move on

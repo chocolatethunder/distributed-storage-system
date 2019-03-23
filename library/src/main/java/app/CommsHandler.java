@@ -39,9 +39,8 @@ public class CommsHandler {
         return response;
     }
 
-
     //function for recieving a TCP packet once a connection has been established
-    public TcpPacket recievePacket(Socket socket) throws IOException {
+    public TcpPacket receivePacket(Socket socket) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         Optional<TcpPacket> receivedPacket = Optional.empty();
 
@@ -73,5 +72,27 @@ public class CommsHandler {
         return(true);
     }
 
+    public boolean sendRequestToLeader(MessageType m){
+        try{
+            //connect to leader and send request
+            Socket leader = NetworkUtils.createConnection("192.168.1.123", 11112);
+            if (!(sendPacket(leader, m, "") == MessageType.ACK)){
+                return false;
+            }
+            else {
+                //everything worked out
+                //close the connection
+                leader.close();
+                return true;
+            }
+        }
+        catch (IOException e){
+            e.printStackTrace();
+            //should have another way to deal with failure here...
+            return false;
+        }
+        ///////////////////////////////
+        //Wait for leader to grant permission to start
+    }
 
 }

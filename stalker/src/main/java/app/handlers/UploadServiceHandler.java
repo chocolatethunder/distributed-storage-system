@@ -1,14 +1,12 @@
 package app.handlers;
 
-import app.CommsHandler;
-import app.MessageType;
-import app.Request;
+import app.*;
 import app.chunk_utils.FileChunker;
 import app.chunk_utils.IndexEntry;
-import app.ChunkDistributor;
 import app.chunk_utils.IndexFile;
 import app.chunk_utils.Indexer;
 
+import java.net.ServerSocket;
 import java.util.List;
 import java.io.*;
 import java.net.Socket;
@@ -39,13 +37,17 @@ public class UploadServiceHandler implements Runnable {
 
         CommsHandler commsLink = new CommsHandler();
 //        1. get permissions from leader
-//
-//
-//
-//
-//        /////////////////////////////
+//------------------------------------------------------------
+        //going to need IP of leader
+        if(!commsLink.sendRequestToLeader(MessageType.UPLOAD)){
+            System.out.println("Could not connect to leader!");
+            commsLink.sendResponse(socket, MessageType.ERROR);
+            return;
+        }
+///------------------------------------------------------------
 
-//        2. ACK request and perform download of file
+//        2. ACK request from JCP and perform download of file
+///------------------------------------------------------------
         commsLink.sendResponse(socket, MessageType.ACK);
         byte[] chunkArray = new byte[1024];
         int bytesRead = 0;
@@ -67,7 +69,8 @@ public class UploadServiceHandler implements Runnable {
         }catch (IOException e){
             e.printStackTrace();
         }
-        ///////////
+///------------------------------------------------------------
+        
         //////////////////////////////File Chunking section
 //       distribute to harm targets
         List<String> harm_list = getHarms();
@@ -94,6 +97,8 @@ public class UploadServiceHandler implements Runnable {
         // UPDATE REMAINING STALKERS
     }
 
+
+    public boolean
 
     public List<String>getHarms(){
         List<String> temp = new ArrayList<String>();

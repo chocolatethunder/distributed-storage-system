@@ -93,13 +93,3 @@ public class App {
 
 }
 
-
-// "chunks/test_files/000_mp4_test.mp4",
-//                    "chunks/test_files/001_jpg_test.jpg",
-//                    "chunks/test_files/002_png_test.png",
-//                    "chunks/test_files/003_txt_test.txt",
-//                    "chunks/test_files/004_mov_test.mov",
-//                    "chunks/test_files/005_zip_test.zip",
-//                    "chunks/test_files/006_rar_test.rar",
-//                    "chunks/test_files/007_docx_test.docx",
-//                    "chunks/test_files/008_pdf_test.pdf"));

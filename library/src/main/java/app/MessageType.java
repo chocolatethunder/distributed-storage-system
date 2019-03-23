@@ -16,6 +16,7 @@ public enum MessageType {
         HEAD,
         DONE,
         DISCOVER,
-        START
+        START,
+        ERROR
 
 }

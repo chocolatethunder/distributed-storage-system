@@ -3,11 +3,8 @@
  */
 package app;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.*;
 import java.net.*;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +40,7 @@ public class App {
                 socket = server.accept();
                 System.out.println("Accepted connection : " + socket);
 
-                TcpPacket packet = commLink.recievePacket(socket);
+                TcpPacket packet = commLink.receivePacket(socket);
                 System.out.println(socket.isClosed());
                 Handler h = new Handler(socket, packet, macID);
                 h.run();

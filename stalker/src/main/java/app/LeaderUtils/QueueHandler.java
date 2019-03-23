@@ -43,10 +43,12 @@ public class QueueHandler implements  Runnable {
         Socket worker;
         try{
             worker = NetworkUtils.createConnection(q.getInetAddr().getHostAddress(), 11113);
+            //connect and grant permission to edit file
             commLink.sendPacket(worker, MessageType.START, "");
-            TcpPacket response = commLink.recievePacket(worker);
-
+            //get ack that job is done
+            TcpPacket response = commLink.receivePacket(worker);
             if (response.getMessageType() == MessageType.DONE){
+                //send permission to worker
                 commLink.sendPacket(worker, MessageType.ACK, "");
             }
         }
