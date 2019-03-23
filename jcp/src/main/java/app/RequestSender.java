@@ -14,8 +14,6 @@ import org.apache.commons.io.*;
 public class RequestSender {
 
     Socket socket = null;
-    DataOutputStream out = null;
-    NetworkUtils networkUtils = null;
     CommsHandler commLink;
     /**
      * Single Instance of RequestSender Holder
@@ -24,12 +22,9 @@ public class RequestSender {
 
         static final RequestSender requestSender = new RequestSender();
     }
-
-
     private RequestSender(){
         commLink = new CommsHandler();
     }
-
     public static RequestSender getInstance(){
         return  RequestSenderHolder.requestSender;
     }
@@ -67,7 +62,6 @@ public class RequestSender {
             }
         }
     }
-
     /**
      * This will delete a file with the filename in the system
      * @param fileName actual file name (not path)

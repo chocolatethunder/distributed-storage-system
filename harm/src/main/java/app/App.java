@@ -17,7 +17,6 @@ public class App {
     public static void main(String[] args) {
         int macID = NetworkUtils.getMacID();
         System.out.println("" + macID);
-
         CommsHandler commLink = new CommsHandler();
         boolean cont = false;
         if (!cont){
@@ -28,11 +27,8 @@ public class App {
         ServerSocket server = null;
         DataInputStream in = null;
         DataOutputStream out = null;
-
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
-
-
         try {
             //initializing harm server  // add a modifier from the args
             //currently only supports modifiers 0 - 4 SOOOOORRy
@@ -46,15 +42,11 @@ public class App {
 
         // will keep on listening for requests from STALKERs
         while (true) {
-
             try {
                 socket = server.accept();
                 System.out.println("Accepted connection : " + socket);
 
-
                 TcpPacket packet = commLink.recievePacket(socket);
-
-
                 System.out.println(socket.isClosed());
                 Handler h = new Handler(socket, packet, macID);
                 h.run();
@@ -66,20 +58,13 @@ public class App {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-
                 try {
-
                     // waiting until all thread tasks are done before closing the resources
                     awaitTerminationAfterShutdown(executorService);
-                    //WARNING: Closing the in and out put stream also closes the socket, therefore can't do it here
-//                    in.close();
-//                    out.close();
-//                    socket.close();   // closing the socket from here, may be should be closed from STALKER after request is completed?
                 } catch (Exception i) {
                     i.printStackTrace();
                 }
             }
-
         }
     }
 
@@ -99,35 +84,35 @@ public class App {
         }
 
     }
-    /**
-     *This execute handshake between STALKER and HARM target
-     *
-     * @param in DatainputStream
-     * @param out DataoutputStream
-     * @return Optional<TcpPacket> that has been received from STALKER
-     * @throws IOException
-     */
-    private static Optional<TcpPacket> executeHandshake(DataInputStream in, DataOutputStream out) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        Optional<TcpPacket> receivedPacket = Optional.empty();
-
-        try {
-            String rec = in.readUTF();
-            receivedPacket = Optional.of(mapper.readValue(rec, TcpPacket.class));
-
-        } catch (EOFException e) {
-        }
-
-        //TO:Do need actual logic here if the HARM server is busy or available depending on the type of Request
-
-        TcpPacket sendAvail = new TcpPacket(MessageType.ACK, "AVAIL");
-
-        //writing as json string
-        String jsonInString = mapper.writeValueAsString(sendAvail);
-        System.out.println(jsonInString);
-        out.writeUTF(jsonInString);
-
-
-        return receivedPacket;
-    }
+//    /**
+//     *This execute handshake between STALKER and HARM target
+//     *
+//     * @param in DatainputStream
+//     * @param out DataoutputStream
+//     * @return Optional<TcpPacket> that has been received from STALKER
+//     * @throws IOException
+//     */
+//    private static Optional<TcpPacket> executeHandshake(DataInputStream in, DataOutputStream out) throws IOException {
+//        ObjectMapper mapper = new ObjectMapper();
+//        Optional<TcpPacket> receivedPacket = Optional.empty();
+//
+//        try {
+//            String rec = in.readUTF();
+//            receivedPacket = Optional.of(mapper.readValue(rec, TcpPacket.class));
+//
+//        } catch (EOFException e) {
+//        }
+//
+//        //TO:Do need actual logic here if the HARM server is busy or available depending on the type of Request
+//
+//        TcpPacket sendAvail = new TcpPacket(MessageType.ACK, "AVAIL");
+//
+//        //writing as json string
+//        String jsonInString = mapper.writeValueAsString(sendAvail);
+//        System.out.println(jsonInString);
+//        out.writeUTF(jsonInString);
+//
+//
+//        return receivedPacket;
+//    }
 }
