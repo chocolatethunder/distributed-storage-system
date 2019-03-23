@@ -12,11 +12,13 @@ public class DiscoveryReply implements Runnable {
     private byte[] req = new byte[1024];
     private static int STALKERPORT = 10000;
     private static int JCPPORT = 11000;
+    private static int listening_timeout;
     Module module;
 
 
-    public DiscoveryReply(Module module) {
+    public DiscoveryReply(Module module, int listening_timeout) {
         this.module = module;
+        this.listening_timeout = listening_timeout;
         try {
             socket = new DatagramSocket(STALKERPORT);
         } catch (Exception e) {
@@ -33,7 +35,7 @@ public class DiscoveryReply implements Runnable {
             System.out.println("Waiting for the Discover Packet");
             DatagramPacket packet = new DatagramPacket(req, req.length);
             try {
-                socket.setSoTimeout(15000);
+                socket.setSoTimeout(listening_timeout*1000);
                 socket.receive(packet);
             }catch (SocketTimeoutException e)
             {

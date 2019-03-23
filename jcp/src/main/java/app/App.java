@@ -15,14 +15,12 @@ public class App {
     //jcp main
     public static void main(String[] args) {
 
-        /*
         try {
-            Thread broadcaster = new Thread(new NetDiscovery(Module.STALKER,Module.STALKER));
+            Thread broadcaster = new Thread(new NetDiscovery(Module.STALKER,Module.STALKER,20));
             broadcaster.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        */
 
         /*
         This is the main point of entry for JCP request
