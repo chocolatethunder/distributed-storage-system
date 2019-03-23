@@ -44,36 +44,58 @@ public class UploadServiceHandler implements Runnable {
             //going to need IP of leader
             if(!commsLink.sendRequestToLeader(MessageType.UPLOAD)){
                 commsLink.sendResponse(socket, MessageType.ERROR);
-                throw new IOException("Could not connect to leader.");
+                throw new RuntimeException("Could not connect to leader.");
             }
 //          2. Wait for Leader to grant job permission
 ///------------------------------------------------------------
-            listener = new ServerSocket(server_port);
-            Socket leader = listener.accept();
-            TcpPacket req = commsLink.receivePacket(leader);
+            TcpPacket req;
+            Socket leader;
+            try{
+                listener = new ServerSocket(server_port);
+                leader = listener.accept();
+                req = commsLink.receivePacket(leader);
+            }
+            catch (IOException e){
+                e.printStackTrace();
+                throw new RuntimeException("Could not use server port");
+            }
             if (!(req.getMessageType() == MessageType.START)){
-                
+                throw new RuntimeException("Request denied by leader.");
             }
 ///------------------------------------------------------------
-
 
 //          3. ACK request from JCP and perform download of file
 ///------------------------------------------------------------
             commsLink.sendResponse(socket, MessageType.ACK);
             if (!getFileFromJCP()){
-                throw new IOException("Error when getting file from JCP.");
+                throw new RuntimeException("Error when getting file from JCP.");
             }
 ///------------------------------------------------------------
-            //////////////////////////////File Chunking section
-//          3. distribute to harm targets
-            if(!distributeToHarm()){
-                throw new IOException("Error when Distributing to Harm Target.");
+//          4. distribute to harm targets
+            IndexEntry update = distributeToHarm();
+            if(update == null){
+                throw new RuntimeException("Error when Distributing to Harm Target.");
+            }
+///------------------------------------------------------------
+//          5. Send done status to leader
+            commsLink.sendResponse(leader, MessageType.DONE);
+
+            try {
+                if(commsLink.receivePacket(leader).getMessageType() == MessageType.ACK){
+                    //we are done with the connection to the leader
+                    leader.close();
+                    //then update index
+                    updateIndex(update);
+                }
+            }
+            catch(IOException e){
+
             }
 
 
 
         }
-        catch(IOException e){
+        catch(RuntimeException e){
             try{
                 socket.close();
             }
@@ -117,7 +139,7 @@ public class UploadServiceHandler implements Runnable {
         return true;
     }
 
-    public boolean distributeToHarm(){
+    public IndexEntry distributeToHarm(){
         List<String> harm_list = getHarms();
         FileChunker f = new FileChunker(chunk_dir);
         ChunkDistributor cd = new ChunkDistributor(chunk_dir, harm_list);
@@ -132,15 +154,22 @@ public class UploadServiceHandler implements Runnable {
         if(cd.distributeChunks(entry, 3)){
             entry.cleanLocalChunks();
             entry.summary();
-            Indexer.addEntry(index, entry);
-            /////////Save that shit
-            Indexer.saveToFile(index);
+            return entry;
         }
         else{
-            return false;
+            return null;
         }
+    }
+
+
+    //in the future will update other harms
+    public boolean updateIndex(IndexEntry entry){
+        Indexer.addEntry(index, entry);
+        /////////Save that shit
+        Indexer.saveToFile(index);
         return true;
     }
+
 
 
     public List<String>getHarms(){
