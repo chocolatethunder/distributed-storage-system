@@ -99,10 +99,9 @@ public class UploadServiceHandler implements Runnable {
 
     public List<String>getHarms(){
         List<String> temp = new ArrayList<String>();
-        temp.add("127.0.0.1");
-        temp.add("127.0.0.1");
-        temp.add("127.0.0.1");
-        temp.add("127.0.0.1");
+        temp.add("192.168.1.131");
+        temp.add("192.168.1.107");
+        temp.add("192.168.1.146");
         return temp;
     }
 
