@@ -5,53 +5,43 @@ package app;
 import java.io.*;
 import java.util.*;
 
+import app.LeaderUtils.QueueEntry;
 import app.chunk_utils.*;
-
+import app.TcpPacket;
+import java.net.Socket;
 public class Tester {
     //temp function for testing the fileDistributor
-    public Tester(){}
-    public List<String> harmList() {
-
-        List<String> h = new ArrayList();
-        h.add("harm_targets/00/");
-        h.add("harm_targets/01/");
-        h.add("harm_targets/02/");
-        h.add("harm_targets/03/");
-        h.add("harm_targets/04/");
-        h.add("harm_targets/05/");
-        h.add("harm_targets/06/");
-        h.add("harm_targets/07/");
-        h.add("harm_targets/08/");
-        return(h);
-    }
 
     public void test() {
-        String input_file = "temp/temp/000_mp4_test.mp4";
-        String chunk_dir = "temp/chunked/";
-        String ass_dir = "temp/reassembled/";
-        List<String> harm_list = harmList();
-        FileChunker f = new FileChunker(chunk_dir);
-        ChunkDistributor cd = new ChunkDistributor(chunk_dir, harm_list);
-        ChunkRetriever cr = new ChunkRetriever(chunk_dir);
-        ChunkAssembler ca = new ChunkAssembler(chunk_dir, ass_dir);
-        //clean chunks first
-        cleanChunks(harm_list, chunk_dir);
-        //chunk file
-        IndexEntry entry = f.chunkFile(input_file, 3);
-        entry.summary();
-        //distribute file
-        if(cd.distributeChunks(entry, 3)){
-            entry.cleanLocalChunks();
-        }
-        //retrieve chunks
-        cr.retrieveChunks(entry);
-        //assemble the chunks
-        if(ca.assembleChunks(entry)){
-            System.out.println("Test passed without fail");
-        }
+        //create a priority comparator for the queue
+        Comparator<QueueEntry> entryPriorityComparator = new Comparator<QueueEntry>() {
+            @Override
+            public int compare(QueueEntry q1, QueueEntry q2) {
+                return q1.getPriority() - q2.getPriority();
+            }
+        };
+        PriorityQueue<QueueEntry> syncQueue = new PriorityQueue<>(entryPriorityComparator);
+
+        Socket s1 = new Socket();
+        TcpPacket t1 = new TcpPacket(MessageType.UPLOAD, "upload 1");
+        TcpPacket t2 = new TcpPacket(MessageType.UPLOAD, "upload 2");
+        TcpPacket t3 = new TcpPacket(MessageType.DOWNLOAD, "Down 1");
+        TcpPacket t4 = new TcpPacket(MessageType.DOWNLOAD, "Down 2");
+        TcpPacket t5 = new TcpPacket(MessageType.DELETE, "Del 1");
+        TcpPacket t6 = new TcpPacket(MessageType.DELETE, "del 2");
+
+        syncQueue.add(new QueueEntry(t6, s1));
+        syncQueue.add(new QueueEntry(t3, s1));
+        syncQueue.add(new QueueEntry(t1, s1));
+        syncQueue.add(new QueueEntry(t5, s1));
+        syncQueue.add(new QueueEntry(t4, s1));
+        syncQueue.add(new QueueEntry(t2, s1));
 
 
-        entry.summary();
+        while (!syncQueue.isEmpty()){
+            System.out.println(syncQueue.remove().messageString());
+        }
+
     }
 
     public void cleanChunks(List<String> h_list, String chunk_dir) {

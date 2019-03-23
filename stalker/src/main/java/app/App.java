@@ -3,25 +3,59 @@
  */
 package app;
 
+import app.LeaderUtils.QueueEntry;
 import app.chunk_utils.Indexer;
 import app.chunk_utils.IndexFile;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FilenameUtils;
-
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Optional;
+import java.util.PriorityQueue;
+import java.util.Comparator;
 
 public class App {
 
     public static void main(String[] args) {
+        int test = 0;
         initStalker();
         IndexFile ind = Indexer.loadFromFile();
         ind.summary();
         System.out.println("Stalker Online");
-        JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
-        jcpRequestHandler.run();
+
+        //testing
+        Tester tester = new Tester();
+        tester.test();
+
+
+
+        //networkDiscovery
+        int role = getRole();
+
+        if (test == 0){
+            return;
+        }
+        switch (role){
+            case 0:
+                //create a priority comparator for the queue
+                Comparator<QueueEntry> entryPriorityComparator = new Comparator<QueueEntry>() {
+                    @Override
+                    public int compare(QueueEntry q1, QueueEntry q2) {
+                        return q1.getPriority() - q2.getPriority();
+                    }
+                };
+                PriorityQueue<QueueEntry> syncQueue = new PriorityQueue<>(entryPriorityComparator);
+                StalkerRequestHandler stalkerCoordinator = new StalkerRequestHandler(syncQueue);
+                stalkerCoordinator.run();
+                break;
+            case 1:
+                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
+                jcpRequestHandler.run();
+                break;
+            case 2:
+                break;
+        }
+    }
+
+    public static int getRole(){
+        return(1);
     }
 
     public static void initStalker(){

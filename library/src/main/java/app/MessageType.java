@@ -11,5 +11,6 @@ public enum MessageType {
         LIST,
         ACK,
         COMPLETE,
-        BUSY
+        BUSY,
+        KILL
 }
