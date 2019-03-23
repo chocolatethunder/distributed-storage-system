@@ -14,7 +14,7 @@ public enum MessageType {
         BUSY,
         KILL,
         HEAD,
-        DONE
+        DONE,
         DISCOVER,
         START
 
