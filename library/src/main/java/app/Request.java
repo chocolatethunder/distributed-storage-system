@@ -4,13 +4,15 @@ public class Request {
 
     private String fileName;
     private int fileSize;
-    private String requestType;
-    public Request(String fileName){
+    private MessageType requestType;
+    public Request(String fileName, MessageType r){
         this.fileName = fileName;
+        this.requestType = r;
     }
-    public Request(String fileName, int fileSize){
+    public Request(String fileName, MessageType r, int fileSize){
         this.fileName = fileName;
         this.fileSize = fileSize;
+        this.requestType = r;
     }
 
     public String getFileName() {
@@ -25,10 +27,10 @@ public class Request {
     public void setFileSize(int fileSize) {
         this.fileSize = fileSize;
     }
-    public String getRequestType() {
+    public MessageType getRequestType() {
         return requestType;
     }
-    public void setRequestType(String requestType) {
+    public void setRequestType(MessageType requestType) {
         this.requestType = requestType;
     }
 

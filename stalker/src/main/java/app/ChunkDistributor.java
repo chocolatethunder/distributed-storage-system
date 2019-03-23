@@ -15,10 +15,10 @@ import org.apache.commons.io.FilenameUtils;
 public class ChunkDistributor {
     private boolean debug = false;
     private String chunkDir;
+    private CommsHandler commLink;
 
     //we are going to hard code this for now
     private int harm_count = 4;
-
     //for now this will be a set of directories of "harm targets"
     //in the future these will be some sort of address
     List<String> harm_list;
@@ -28,6 +28,7 @@ public class ChunkDistributor {
         //this list will contain harm id and ip in the future...
         harm_list = h_list;
         harm_count = h_list.size();
+        commLink = new CommsHandler();
     }
 
     //take an index entry object and process distribute
@@ -39,11 +40,12 @@ public class ChunkDistributor {
         for (Chunk c : iEnt.getChunkList()){
             //for each replica
             for (int i = 0; i < num_reps; i++){
+                //get target ip from harm list
                 String target_path = harm_list.get(token);
                 //String target_ip = "127.0.0.1";
 
                 if(sendChunk(c, target_path)) {
-                    //add the address to the replica list if success
+                    //add the address to the replica list if OK
                     //for now the port number is the identifier
                     c.addReplica("" + (6665 + token));
                     token++;
@@ -74,11 +76,12 @@ public class ChunkDistributor {
                 //old way
                 //FileUtils.copyFile(new File(c.path()),new File(target));
                 System.out.println("Sending chunk");
-                //make a connection to the harm target using the port modifier
-                NetworkUtils networkUtils = new NetworkUtils();
-                Socket harmServer = networkUtils.createConnection("127.0.0.1", 22222);
+                //make a connection to the harm target
+                Socket harmServer = NetworkUtils.createConnection(target, 22222);
                 //if everything went well then we can send the damn file
-                if(handShakeSuccess(MessageType.UPLOAD, c.getChunk_path(), harmServer)){
+
+                //send the packet to thee harm
+                if(commLink.sendPacket(harmServer, MessageType.UPLOAD, NetworkUtils.createSerializedRequest(c.getChunk_path(), MessageType.UPLOAD)) == MessageType.ACK){
                     FileStreamer fileStreamer = new FileStreamer(harmServer);
                     fileStreamer.sendFileToSocket(c.getChunk_path());
                     harmServer.close();
@@ -129,8 +132,6 @@ public class ChunkDistributor {
             //Object to JSON in String
             String jsonInString = mapper.writeValueAsString(initialPacket);
             out.writeUTF(jsonInString);
-
-
             try {
 
                 // receiving packet back from STALKER

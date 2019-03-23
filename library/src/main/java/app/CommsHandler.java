@@ -12,7 +12,7 @@ public class CommsHandler {
     public CommsHandler(){}
     //Send a tcp packet on a designated socket
     //if a request is being made it should be serialized JSON string of a request
-    private MessageType sendPacket(Socket socket, MessageType messageType, String content){
+    public MessageType sendPacket(Socket socket, MessageType messageType, String content){
         TcpPacket receivedPacket = null;
         MessageType response = null;
         try {

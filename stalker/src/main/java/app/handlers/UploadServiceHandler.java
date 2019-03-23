@@ -85,7 +85,6 @@ public class UploadServiceHandler implements Runnable {
             entry.cleanLocalChunks();
         }
 
-
         //       3. confirm completion
         entry.summary();
         Indexer.addEntry(index, entry);
@@ -95,10 +94,6 @@ public class UploadServiceHandler implements Runnable {
         /////////////////////////
         /////////////////////////
         // UPDATE REMAINING STALKERS
-
-
-
-
     }
 
 

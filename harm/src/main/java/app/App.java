@@ -17,16 +17,12 @@ public class App {
     public static void main(String[] args) {
         int macID = NetworkUtils.getMacID();
         System.out.println("" + macID);
+
+        CommsHandler commLink = new CommsHandler();
         boolean cont = false;
         if (!cont){
             return;
         }
-//        return;
-//        if (args.length > 0){
-//            port_modifier = new Integer(args[0]);
-//            System.out.println("Harm " + port_modifier + " running!");
-//        }
-
         //initialize socket and input stream
         Socket socket = null;
         ServerSocket server = null;
@@ -54,14 +50,13 @@ public class App {
             try {
                 socket = server.accept();
                 System.out.println("Accepted connection : " + socket);
-                in = new DataInputStream(socket.getInputStream());
-                out = new DataOutputStream(socket.getOutputStream());
 
 
-                Optional<TcpPacket> packet = executeHandshake(in, out);
+                TcpPacket packet = commLink.recievePacket(socket);
+
 
                 System.out.println(socket.isClosed());
-                Handler h = new Handler(socket, packet.get(), macID);
+                Handler h = new Handler(socket, packet, macID);
                 h.run();
                 // creating a runnable task for each request from the same socket connection
                 //executorService.execute();

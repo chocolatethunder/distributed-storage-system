@@ -9,14 +9,16 @@ public class Handler implements Runnable {
 
     private final Socket socket;
     private final MessageType requestType;
-    private final String filename;
+    private final Request request;
     private String storage_path;
+    private CommsHandler commLink;
 
     public Handler(Socket socket, TcpPacket packet, int harm_id) {
         this.socket = socket;
-        this.requestType = MessageType.valueOf(packet.getRequestType());
-        this.filename = packet.getFileName();
+        this.requestType = packet.getMessageType();
+        this.request = NetworkUtils.getPacketContents(packet);
         this.storage_path = "../../storage/";
+        commLink = new CommsHandler();
     }
 
     @Override
@@ -26,14 +28,15 @@ public class Handler implements Runnable {
 
         // depending on the request type, it call appropriate method from streamer class
         if (requestType == MessageType.UPLOAD) {
-            streamer.receiveFileFromSocket(storage_path + filename);
+            commLink.sendResponse(socket, MessageType.ACK);
+            streamer.receiveFileFromSocket(storage_path + request.getFileName());
         } else if (requestType == MessageType.DOWNLOAD) {
-            streamer.sendFileToSocket(storage_path + filename);
+            commLink.sendResponse(socket, MessageType.ACK);
+            streamer.sendFileToSocket(storage_path + request.getFileName());
 
         } else {
             //delete logic here
         }
-
     }
 
 

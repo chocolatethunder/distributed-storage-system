@@ -1,7 +1,6 @@
 package app;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -24,7 +23,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
  */
 public class NetworkUtils {
 
-    public Socket createConnection(String host, int port) throws IOException {
+    public static Socket createConnection(String host, int port) throws IOException {
         Socket socket = null;
 
         // establish a connection
@@ -156,9 +155,29 @@ public class NetworkUtils {
             e.printStackTrace();
         }
         return r.get();
-
     }
 
+    //Create a serialized request to be sent with a TCP packet
+    public static String createSerializedRequest(String filename, MessageType m){
+        String serialRequest = null;
+        ObjectMapper mapper = new ObjectMapper();
+        Request r;
+        if (m == MessageType.UPLOAD){
+            File f = new File(filename);
+            int fileSize = (int) f.length();
+            r = new Request(filename,m, fileSize);
+        }
+        else{
+            r = new Request(filename,m);
+        }
+        try{
+            serialRequest =  mapper.writeValueAsString(r);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        return serialRequest;
+    }
 
 
 }

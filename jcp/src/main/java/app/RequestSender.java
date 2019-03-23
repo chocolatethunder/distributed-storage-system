@@ -16,8 +16,7 @@ public class RequestSender {
     Socket socket = null;
     DataOutputStream out = null;
     NetworkUtils networkUtils = null;
-
-
+    CommsHandler commLink;
     /**
      * Single Instance of RequestSender Holder
      */
@@ -28,9 +27,8 @@ public class RequestSender {
 
 
     private RequestSender(){
-        networkUtils = new NetworkUtils();
+        commLink = new CommsHandler();
     }
-
 
     public static RequestSender getInstance(){
         return  RequestSenderHolder.requestSender;
@@ -44,7 +42,7 @@ public class RequestSender {
         try {
 
             //TO:DO modify this to connect to STALKER in a round robin fashion
-            this.socket = networkUtils.createConnection(host, port);
+            this.socket = NetworkUtils.createConnection(host, port);
         } catch (IOException e) {
             //Could not connect , need another STALKER here
         }
@@ -56,34 +54,18 @@ public class RequestSender {
      * @param fileName absolute file path
      */
     public void sendFile(String fileName){
-        // TO:DO need logic to verify file size here
-        // we make the handshake first
-
+        MessageType m = MessageType.UPLOAD;
         if(NetworkUtils.checkFile(fileName)){
-            if(handShakeSuccess(MessageType.UPLOAD, fileName)) {
+            //send a request and wait for ACK before proceeding
+            if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m)) == MessageType.ACK) {
                 FileStreamer fileStreamer = new FileStreamer(socket);
                 fileStreamer.sendFileToSocket(fileName);
-
             }else{
                 //need a way to connect to another STALKER
                 //DEBUG
                 System.out.println("SERVER BUSY");
             }
         }
-
-    }
-
-    /**
-     * This will fetch a list of all file names in the system
-     * @return list of filenames
-     */
-    public List<String> getFileList(){
-
-
-        if(handShakeSuccess(MessageType.LIST)) {
-
-        }
-        return null;
     }
 
     /**
@@ -92,79 +74,36 @@ public class RequestSender {
      */
     public void deleteFile(String fileName){
 
-        if(handShakeSuccess(MessageType.DELETE)) {
+        MessageType m = MessageType.DELETE;
+        if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m)) == MessageType.ACK) {
         }
     }
     /**
      * This will download a file given the filename
      *
-     * @param filePath
+     * @param fileName
      */
-    public void getFile(String filePath){
+    public void getFile(String fileName){
+        MessageType m = MessageType.DOWNLOAD;
         // TO:DO need logic to verify file size  here
-        if(handShakeSuccess(MessageType.DOWNLOAD, filePath)) {
-
+        if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m)) == MessageType.ACK) {
             FileStreamer fileStreamer = new FileStreamer(socket);
-            fileStreamer.receiveFileFromSocket(filePath);
+            fileStreamer.receiveFileFromSocket(fileName);
 
         }
 
     }
 
-
-    //just incase no file is specified
-    /**
-     * This is the handshake logic between JCP and STALKER
-     * Occurs in 2 steps  HELLO_INIT -> AVAIL | BUSY
-     * @param requestType  UPLOAD,
-     *                     DOWNLOAD,
-     *                     DELETE,
-     *                     LIST
-     * @return  true if handshake was successfull, false otherwise
-     */
-    private boolean handShakeSuccess(MessageType requestType){
-        return(handShakeSuccess(requestType, ""));
-    }
-
-
-    //resposnible for making a request to the STALKER
-    private boolean handShakeSuccess(MessageType requestType, String toSend){
-        TcpPacket receivedPacket = null;
-        try {
-            TcpPacket initialPacket = new TcpPacket(requestType, "HELLO_INIT");
-            // in the case that we are sending a file we need to also
-            // send the name of the file as well as the file size
-            //The request will not be sent if the file doesn't exist...
-            File f = new File(toSend);
-            if (f.exists()){
-                initialPacket.setFile(FilenameUtils.getName(toSend), (int) f.length());
-            }
-            else{
-                throw new FileNotFoundException("The file specified does not exist!");
-            }
-            out = new DataOutputStream(socket.getOutputStream());
-            DataInputStream  in = new DataInputStream((socket.getInputStream()));
-            ObjectMapper mapper = new ObjectMapper();
-
-            //DEBUG : Object to JSON in file
-            //mapper.writeValue(new File("file.json"), initialPacket);
-            //Object to JSON in String
-            String jsonInString = mapper.writeValueAsString(initialPacket);
-            out.writeUTF(jsonInString);
-            try {
-
-                // receiving packet back from STALKER
-                String received = in.readUTF();
-                System.out.println("rec " + received);
-                receivedPacket = mapper.readValue(received, TcpPacket.class);
-
-            } catch (EOFException e) {
-                // do nothing end of packet
-            }
-        } catch (IOException  e) {
-            e.printStackTrace();
-        }
-        return receivedPacket != null && receivedPacket.getMessage().equals("AVAIL");
-    }
-
+    //    /**
+//     * This will fetch a list of all file names in the system
+//     * @return list of filenames
+//     */
+//    public List<String> getFileList(){
+//
+//
+//        if(handShakeSuccess(MessageType.LIST)) {
+//
+//        }
+//        return null;
+//    }
 }

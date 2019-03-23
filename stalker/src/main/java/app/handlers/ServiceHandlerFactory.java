@@ -15,9 +15,9 @@ public class ServiceHandlerFactory {
 
     /**
      * Factory method to create Service Handler Thread for specific request type
-     * @param requestType
+     * @param request
      * @param socket
-     * @param fileName
+     * @param socket
      * @param index
      * @return
      */

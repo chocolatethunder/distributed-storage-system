@@ -47,8 +47,7 @@ public class ChunkRetriever {
                 try{
                     System.out.println("SOCKET: " + Integer.valueOf(s));
                     int port = Integer.valueOf(s);
-                    NetworkUtils networkUtils = new NetworkUtils();
-                    Socket harmServer = networkUtils.createConnection("127.0.0.1", port);
+                    Socket harmServer = NetworkUtils.createConnection("127.0.0.1", port);
                     //FileUtils.copyFile(new File(s),new File(chunkDir + c.getHash()));
                     if(handShakeSuccess(MessageType.DOWNLOAD, c.getHash(), harmServer)){
                         FileStreamer fileStreamer = new FileStreamer(harmServer);
