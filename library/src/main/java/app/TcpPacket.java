@@ -1,15 +1,21 @@
 package app;
 
-import java.io.Serializable;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 
 /**
+ * TCP packets will only be used to send content if the message type requires it
  *
  */
+
 public class TcpPacket {
 
 
-    private String requestType;
+    private MessageType messageType;
     private String message;
+
+
 
     private String fileName;
     private int fileSize;
@@ -17,14 +23,14 @@ public class TcpPacket {
     // need default for Jackson
     public TcpPacket(){}
 
-    public TcpPacket(RequestType requestType, String message){
+    public TcpPacket(MessageType requestType, String message){
 
-        this.requestType = requestType.name();
+        this.messageType = requestType;
         this.message =  message;
     }
 
-    public String getRequestType(){
-        return this.requestType;
+    public MessageType getMessageType(){
+        return this.messageType;
     }
 
     public String getMessage(){

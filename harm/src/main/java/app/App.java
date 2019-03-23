@@ -4,13 +4,10 @@
 package app;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.graph.Network;
 
 import java.io.*;
 import java.net.*;
-import java.util.Enumeration;
 import java.util.Optional;
-import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -128,7 +125,7 @@ public class App {
 
         //TO:Do need actual logic here if the HARM server is busy or available depending on the type of Request
 
-        TcpPacket sendAvail = new TcpPacket(RequestType.ACK, "AVAIL");
+        TcpPacket sendAvail = new TcpPacket(MessageType.ACK, "AVAIL");
 
         //writing as json string
         String jsonInString = mapper.writeValueAsString(sendAvail);

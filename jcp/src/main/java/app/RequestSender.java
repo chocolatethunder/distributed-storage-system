@@ -44,14 +44,11 @@ public class RequestSender {
         try {
 
             //TO:DO modify this to connect to STALKER in a round robin fashion
-
             this.socket = networkUtils.createConnection(host, port);
         } catch (IOException e) {
             //Could not connect , need another STALKER here
         }
-
         return this.socket;
-
     }
     /**
      * This is the request for uploading file
@@ -59,18 +56,21 @@ public class RequestSender {
      * @param fileName absolute file path
      */
     public void sendFile(String fileName){
-
         // TO:DO need logic to verify file size here
         // we make the handshake first
-        if(handShakeSuccess(RequestType.UPLOAD, fileName)) {
-            FileStreamer fileStreamer = new FileStreamer(socket);
-            fileStreamer.sendFileToSocket(fileName);
 
-        }else{
-            //need a way to connect to another STALKER
-            //DEBUG
-            System.out.println("SERVER BUSY");
+        if(NetworkUtils.checkFile(fileName)){
+            if(handShakeSuccess(MessageType.UPLOAD, fileName)) {
+                FileStreamer fileStreamer = new FileStreamer(socket);
+                fileStreamer.sendFileToSocket(fileName);
+
+            }else{
+                //need a way to connect to another STALKER
+                //DEBUG
+                System.out.println("SERVER BUSY");
+            }
         }
+
     }
 
     /**
@@ -80,7 +80,7 @@ public class RequestSender {
     public List<String> getFileList(){
 
 
-        if(handShakeSuccess(RequestType.LIST)) {
+        if(handShakeSuccess(MessageType.LIST)) {
 
         }
         return null;
@@ -92,7 +92,7 @@ public class RequestSender {
      */
     public void deleteFile(String fileName){
 
-        if(handShakeSuccess(RequestType.DELETE)) {
+        if(handShakeSuccess(MessageType.DELETE)) {
         }
     }
     /**
@@ -102,13 +102,16 @@ public class RequestSender {
      */
     public void getFile(String filePath){
         // TO:DO need logic to verify file size  here
-        if(handShakeSuccess(RequestType.DOWNLOAD, filePath)) {
+        if(handShakeSuccess(MessageType.DOWNLOAD, filePath)) {
 
             FileStreamer fileStreamer = new FileStreamer(socket);
             fileStreamer.receiveFileFromSocket(filePath);
 
         }
+
     }
+
+
     //just incase no file is specified
     /**
      * This is the handshake logic between JCP and STALKER
@@ -119,13 +122,13 @@ public class RequestSender {
      *                     LIST
      * @return  true if handshake was successfull, false otherwise
      */
-    private boolean handShakeSuccess(RequestType requestType){
+    private boolean handShakeSuccess(MessageType requestType){
         return(handShakeSuccess(requestType, ""));
     }
 
 
     //resposnible for making a request to the STALKER
-    private boolean handShakeSuccess(RequestType requestType, String toSend){
+    private boolean handShakeSuccess(MessageType requestType, String toSend){
         TcpPacket receivedPacket = null;
         try {
             TcpPacket initialPacket = new TcpPacket(requestType, "HELLO_INIT");

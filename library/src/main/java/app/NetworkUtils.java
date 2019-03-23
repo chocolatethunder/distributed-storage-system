@@ -1,5 +1,7 @@
 package app;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -109,5 +111,31 @@ public class NetworkUtils {
             value = (value << 8) | b[i];
         return value;
     }
+
+    public static boolean checkFile(String filename){
+        File f = new File(filename);
+        if (f.exists()){
+            return(true);
+        }
+        else{
+            return(false);
+        }
+    }
+
+    //returns a request from the tcp packet contents
+    public static Request getPacketContents(TcpPacket t){
+        ObjectMapper mapper = new ObjectMapper();
+        Optional<Request> r = Optional.empty();
+        try{
+            r =  Optional.of(mapper.readValue(t.getMessage(), Request.class));
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        return r.get();
+
+    }
+
+
 
 }

@@ -7,10 +7,6 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 
-import app.FileStreamer;
-import app.NetworkUtils;
-import app.RequestType;
-import app.TcpPacket;
 import app.chunk_utils.Chunk;
 import app.chunk_utils.IndexEntry;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -82,7 +78,7 @@ public class ChunkDistributor {
                 NetworkUtils networkUtils = new NetworkUtils();
                 Socket harmServer = networkUtils.createConnection("127.0.0.1", 22222);
                 //if everything went well then we can send the damn file
-                if(handShakeSuccess(RequestType.UPLOAD, c.getChunk_path(), harmServer)){
+                if(handShakeSuccess(MessageType.UPLOAD, c.getChunk_path(), harmServer)){
                     FileStreamer fileStreamer = new FileStreamer(harmServer);
                     fileStreamer.sendFileToSocket(c.getChunk_path());
                     harmServer.close();
@@ -108,7 +104,7 @@ public class ChunkDistributor {
     //YEAH I KNOW MORE REUSED CODE
     //WILL CLEAN IN THE FUTURE
     //resposnible for making a request to the STALKER
-    private boolean handShakeSuccess(RequestType requestType, String toSend, Socket socket){
+    private boolean handShakeSuccess(MessageType requestType, String toSend, Socket socket){
         TcpPacket receivedPacket = null;
         try {
 

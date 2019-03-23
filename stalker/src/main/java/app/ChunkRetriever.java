@@ -7,15 +7,9 @@ package app;
 import java.io.*;
 import java.net.Socket;
 
-import app.FileStreamer;
-import app.NetworkUtils;
-import app.RequestType;
-import app.TcpPacket;
 import app.chunk_utils.Chunk;
 import app.chunk_utils.IndexEntry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 
 public class ChunkRetriever {
     private boolean debug = false;
@@ -56,7 +50,7 @@ public class ChunkRetriever {
                     NetworkUtils networkUtils = new NetworkUtils();
                     Socket harmServer = networkUtils.createConnection("127.0.0.1", port);
                     //FileUtils.copyFile(new File(s),new File(chunkDir + c.getHash()));
-                    if(handShakeSuccess(RequestType.DOWNLOAD, c.getHash(), harmServer)){
+                    if(handShakeSuccess(MessageType.DOWNLOAD, c.getHash(), harmServer)){
                         FileStreamer fileStreamer = new FileStreamer(harmServer);
                         fileStreamer.receiveFileFromSocket(chunkDir + c.getHash());
                         harmServer.close();
@@ -76,7 +70,7 @@ public class ChunkRetriever {
     }
 
     //sepcialized request for getting a file
-    private boolean handShakeSuccess(RequestType requestType, String toGet, Socket socket){
+    private boolean handShakeSuccess(MessageType requestType, String toGet, Socket socket){
         TcpPacket receivedPacket = null;
         try {
 

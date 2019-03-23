@@ -1,6 +1,9 @@
 package app.handlers;
 
-import app.RequestType;
+import app.MessageType;
+import app.Request;
+import app.NetworkUtils;
+import app.TcpPacket;
 import app.chunk_utils.IndexFile;
 
 import java.net.Socket;
@@ -18,14 +21,17 @@ public class ServiceHandlerFactory {
      * @param index
      * @return
      */
-    public static Runnable getServiceHandler(RequestType requestType, Socket socket, String fileName, IndexFile index) {
+    public static Runnable getServiceHandler(TcpPacket request, Socket socket, IndexFile index) {
+
+        MessageType requestType = request.getMessageType();
+        Request toProcess = NetworkUtils.getPacketContents(request);
         switch (requestType) {
             case DOWNLOAD:
-                return new DownloadServiceHandler(socket, fileName, index);
+                return new DownloadServiceHandler(socket, toProcess, index);
             case UPLOAD:
-                return new UploadServiceHandler(socket, fileName, index);
+                return new UploadServiceHandler(socket, toProcess, index);
             case DELETE:
-                return new DeleteServiceHandler(socket, fileName, index);
+                return new DeleteServiceHandler(socket, toProcess, index);
             case LIST:
                 return new FileListServiceHandler(socket, index);
             default:

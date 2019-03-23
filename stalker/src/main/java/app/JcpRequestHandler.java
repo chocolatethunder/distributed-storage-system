@@ -1,11 +1,9 @@
 package app;
 
-import app.RequestType;
-import app.TcpPacket;
 import app.chunk_utils.IndexFile;
+import app.CommsHandler;
 import app.handlers.ServiceHandlerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -33,25 +31,25 @@ public class JcpRequestHandler implements Runnable {
      * @throws IOException
      */
 
-    private static TcpPacket executeHandshake(DataInputStream in, DataOutputStream out) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        Optional<TcpPacket> receivedPacket = Optional.empty();
-
-        try {
-            String rec = in.readUTF();
-            // reading the packet as object from json string
-            receivedPacket = Optional.of(mapper.readValue(rec, TcpPacket.class));
-
-        } catch (EOFException e) {
-        }
-        //TO:Do need actual logic here if the server is busy or available depending on the type of Request
-        TcpPacket sendAvail = new TcpPacket(RequestType.UPLOAD, "AVAIL");
-
-        String jsonInString = mapper.writeValueAsString(sendAvail);
-        System.out.println(jsonInString);
-        out.writeUTF(jsonInString);
-        return receivedPacket.get();
-    }
+//    private static TcpPacket executeHandshake(DataInputStream in, DataOutputStream out) throws IOException {
+//        ObjectMapper mapper = new ObjectMapper();
+//        Optional<TcpPacket> receivedPacket = Optional.empty();
+//
+//        try {
+//            String rec = in.readUTF();
+//            // reading the packet as object from json string
+//            receivedPacket = Optional.of(mapper.readValue(rec, TcpPacket.class));
+//
+//        } catch (EOFException e) {
+//        }
+//        //TO:Do need actual logic here if the server is busy or available depending on the type of Request
+//        TcpPacket sendAvail = new TcpPacket(MessageType.UPLOAD, "AVAIL");
+//
+//        String jsonInString = mapper.writeValueAsString(sendAvail);
+//        System.out.println(jsonInString);
+//        out.writeUTF(jsonInString);
+//        return receivedPacket.get();
+//    }
 
     /**
      *This is the main run method for this thread. It run in a while loop to receive connections from
@@ -61,10 +59,14 @@ public class JcpRequestHandler implements Runnable {
     public void run() {
 
         //initialize socket and input stream
-        Socket socket = null;
+        //Socket socket = null;
         ServerSocket server = null;
-        DataInputStream in = null;
-        DataOutputStream out = null;
+        CommsHandler commLink = new CommsHandler();
+
+//        DataInputStream in = null;
+//        DataOutputStream out = null;
+
+
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
@@ -74,21 +76,18 @@ public class JcpRequestHandler implements Runnable {
             e.printStackTrace();
         }
         System.out.println("Waiting...");
-        String fname = "";
         // will keep on listening for requests
         while (true) {
-
             try {
-                socket = server.accept();
+                //accept connection from a JCP
+                Socket socket = server.accept();
                 System.out.println("Accepted connection : " + socket);
-                in = new DataInputStream(socket.getInputStream());
-                out = new DataOutputStream(socket.getOutputStream());
-                TcpPacket req = executeHandshake(in, out);
-                // receive file in chunks
+                // receive packet on the socket link
+                TcpPacket req = commLink.recievePacket(socket);
+
                 //creating a specific type of service handler using factory method
-                executorService.execute(ServiceHandlerFactory.getServiceHandler(RequestType.valueOf(req.getRequestType()),
-                        socket,
-                        req.getFileName(), index));
+                //Submit a task to the handler queue and move on
+                executorService.submit(ServiceHandlerFactory.getServiceHandler(req, socket, index));
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

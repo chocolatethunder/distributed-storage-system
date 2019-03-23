@@ -1,6 +1,5 @@
 package app;
 
-import java.io.*;
 import java.net.Socket;
 
 /**
@@ -9,13 +8,13 @@ import java.net.Socket;
 public class Handler implements Runnable {
 
     private final Socket socket;
-    private final RequestType requestType;
+    private final MessageType requestType;
     private final String filename;
     private String storage_path;
 
     public Handler(Socket socket, TcpPacket packet, int harm_id) {
         this.socket = socket;
-        this.requestType = RequestType.valueOf(packet.getRequestType());
+        this.requestType = MessageType.valueOf(packet.getRequestType());
         this.filename = packet.getFileName();
         this.storage_path = "../../storage/";
     }
@@ -26,9 +25,9 @@ public class Handler implements Runnable {
         FileStreamer streamer = new FileStreamer(this.socket);
 
         // depending on the request type, it call appropriate method from streamer class
-        if (requestType == RequestType.UPLOAD) {
+        if (requestType == MessageType.UPLOAD) {
             streamer.receiveFileFromSocket(storage_path + filename);
-        } else if (requestType == RequestType.DOWNLOAD) {
+        } else if (requestType == MessageType.DOWNLOAD) {
             streamer.sendFileToSocket(storage_path + filename);
 
         } else {

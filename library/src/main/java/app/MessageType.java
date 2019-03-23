@@ -3,11 +3,13 @@ package app;
 /**
  *
  */
-public enum RequestType {
+public enum MessageType {
 
         UPLOAD,
         DOWNLOAD,
         DELETE,
         LIST,
-        ACK
+        ACK,
+        COMPLETE,
+        BUSY
 }

@@ -1,5 +1,8 @@
 package app.handlers;
 
+import app.CommsHandler;
+import app.MessageType;
+import app.Request;
 import app.chunk_utils.FileChunker;
 import app.chunk_utils.IndexEntry;
 import app.ChunkDistributor;
@@ -24,19 +27,27 @@ public class UploadServiceHandler implements Runnable {
     private String filePath;
     private IndexFile index;
 
-    public UploadServiceHandler(Socket socket, String fname, IndexFile ind){
+    public UploadServiceHandler(Socket socket, Request req, IndexFile ind){
          this.socket = socket;
-         this.filePath = temp_dir + fname;
+         this.filePath = temp_dir + req.getFileName();
          this.index = ind;
     }
 
     @Override
     public void run() {
 
-        
 
+        CommsHandler commsLink = new CommsHandler();
+//        1. get permissions from leader
+//
+//
+//
+//
+//        /////////////////////////////
+
+//        2. ACK request and perform download of file
+        commsLink.sendResponse(socket, MessageType.ACK);
         byte[] chunkArray = new byte[1024];
-        //get file from jcp
         int bytesRead = 0;
         try {
             in = new DataInputStream(socket.getInputStream());
@@ -53,14 +64,13 @@ public class UploadServiceHandler implements Runnable {
                         + " downloaded (" + bytesRead + " bytes read)");
             }
             bufferedOutputStream.close();
-
-        ////////////////////////////////////////File Chunking section
         }catch (IOException e){
             e.printStackTrace();
         }
+        ///////////
+        //////////////////////////////File Chunking section
+//       distribute to harm targets
         List<String> harm_list = getHarms();
-
-
         FileChunker f = new FileChunker(chunk_dir);
         ChunkDistributor cd = new ChunkDistributor(chunk_dir, harm_list);
         ///////////////////////chunk file and get the index entry object
@@ -74,10 +84,21 @@ public class UploadServiceHandler implements Runnable {
         if(cd.distributeChunks(entry, 3)){
             entry.cleanLocalChunks();
         }
+
+
+        //       3. confirm completion
         entry.summary();
         Indexer.addEntry(index, entry);
         /////////Save that shit
         Indexer.saveToFile(index);
+
+        /////////////////////////
+        /////////////////////////
+        // UPDATE REMAINING STALKERS
+
+
+
+
     }
 
 

@@ -3,6 +3,7 @@ package app.handlers;
 import app.ChunkRetriever;
 import app.chunk_utils.IndexEntry;
 import app.chunk_utils.IndexFile;
+import app.Request;
 
 import java.net.Socket;
 
@@ -17,9 +18,9 @@ public class DownloadServiceHandler implements Runnable {
     private final String c_dir = "temp/chunks/";
     private final String ass_dir = "temp/assembled/";
 
-    public DownloadServiceHandler(Socket socket, String fname, IndexFile ind){
+    public DownloadServiceHandler(Socket socket, Request req, IndexFile ind){
         this.socket = socket;
-        this.fileName = fname;
+        this.fileName = req.getFileName();
         this.index = ind;
     }
 

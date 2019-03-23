@@ -1,7 +1,7 @@
 package app.handlers;
 
 import app.chunk_utils.IndexFile;
-
+import app.Request;
 import java.net.Socket;
 
 /**
@@ -13,9 +13,9 @@ public class DeleteServiceHandler implements Runnable {
     private String fileName;
     private IndexFile index;
 
-    public DeleteServiceHandler(Socket socket, String fname, IndexFile ind){
+    public DeleteServiceHandler(Socket socket, Request req, IndexFile ind){
         this.socket = socket;
-        this.fileName = fname;
+        this.fileName = req.getFileName();
         this.index = ind;
     }
 
