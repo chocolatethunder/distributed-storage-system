@@ -27,14 +27,12 @@ public class NetDiscovery implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("My address is " + NetworkUtils.getIP());
         ArrayList<InetAddress> listOfAddrs =  null;
         try {
             listOfAddrs = broadcast(MessageType.DISCOVER,sender,target);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(listOfAddrs.size());
         // Print the name from the list....
         for(InetAddress addr : listOfAddrs) {
             System.out.println(addr.toString());
@@ -67,7 +65,6 @@ public class NetDiscovery implements Runnable{
         long t= System.currentTimeMillis();
         long end = t+ (discovery_timeout*1000);
         while(System.currentTimeMillis() < end) {
-            System.out.println("Waiting for response");
             byte[] buf = new byte[1024];
             packet = new DatagramPacket(buf, buf.length);
             // set socket timeout to 1 sec
@@ -80,7 +77,6 @@ public class NetDiscovery implements Runnable{
                 continue;
             }
             String received = new String(packet.getData(), 0, packet.getLength());
-            System.out.println("Packet Content:");
             System.out.println(received);
 
             // parse the packet content
@@ -90,8 +86,6 @@ public class NetDiscovery implements Runnable{
             InetAddress replyAddress =  InetAddress.getByName(discoverReply.get("address").textValue());
             listOfAddrs.add(replyAddress);
         }
-
-        System.out.println("Out of the loop!!!");
 
         socket.close();
         return listOfAddrs;

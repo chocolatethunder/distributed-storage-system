@@ -110,13 +110,11 @@ public class NetworkUtils {
             while (e.hasMoreElements())
             {
                 NetworkInterface next = e.nextElement();
-                System.out.println(next.toString());    // prints the interface
 
                 byte[] bytes = next.getHardwareAddress();
                 if( bytes != null)
                 {
                     mac_addr = convertByteToInt(bytes);
-                    System.out.println(mac_addr);
                     break;
                 }
             }
@@ -127,7 +125,6 @@ public class NetworkUtils {
         catch (IOException e){
             e.printStackTrace();
         }
-        System.out.println("Harm ID: " + mac_addr);
         return(mac_addr);
     }
 

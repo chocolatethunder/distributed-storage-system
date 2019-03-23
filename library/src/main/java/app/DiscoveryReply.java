@@ -32,7 +32,6 @@ public class DiscoveryReply implements Runnable {
         // runs for 15 sec for a udp broadcast
         while (true)
         {
-            System.out.println("Waiting for the Discover Packet");
             DatagramPacket packet = new DatagramPacket(req, req.length);
             try {
                 socket.setSoTimeout(listening_timeout*1000);
@@ -91,7 +90,6 @@ public class DiscoveryReply implements Runnable {
                     e.printStackTrace();
                 }
 
-                System.out.println("Send the packet!");
             }
 
         }
