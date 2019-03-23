@@ -67,8 +67,6 @@ public class JcpRequestHandler implements Runnable {
                     running = false;
                     client.close();
                 }
-
-
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {

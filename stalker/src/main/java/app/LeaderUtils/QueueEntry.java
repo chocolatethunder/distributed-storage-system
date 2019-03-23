@@ -3,17 +3,18 @@ package app.LeaderUtils;
 import app.TcpPacket;
 import java.net.Socket;
 import app.MessageType;
+import java.net.InetAddress;
 
 public class QueueEntry {
     private TcpPacket req;
-    Socket worker;
-    public QueueEntry(TcpPacket t, Socket s){
+    InetAddress inetAddr;
+    public QueueEntry(TcpPacket t, InetAddress s){
         req = t;
-        worker = s;
+        inetAddr = s;
     }
 
-    public Socket getWorker() {
-        return worker;
+    public InetAddress getWorker() {
+        return inetAddr;
     }
 
     public TcpPacket getReq() {

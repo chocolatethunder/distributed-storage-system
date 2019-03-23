@@ -31,8 +31,8 @@ public class QueueHandler implements  Runnable {
         pQueue.add(q);
     }
     //remove entry from queue
-    public synchronized QueueEntry getJob(){
-        return pQueue.remove();
+    public synchronized void getJob(){
+        q = pQueue.remove();
     }
 
 }

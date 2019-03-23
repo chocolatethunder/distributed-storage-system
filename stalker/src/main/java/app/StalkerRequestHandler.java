@@ -42,7 +42,11 @@ public class StalkerRequestHandler implements Runnable {
                 System.out.println("Accepted connection : " + client);
                 // receive packet on the socket link
                 TcpPacket req = commLink.recievePacket(client);
-                QueueEntry toPut = new QueueEntry(req, client);
+                //Acknowlegde that the request has been recieved and that
+                //the socket can be closed client side
+                commLink.sendPacket(client, MessageType.ACK, "");
+                //make a queueEntry with the request and Inet addr for later connection
+                QueueEntry toPut = new QueueEntry(req, client.getInetAddress());
                 executorService.submit(new QueueHandler(0, toPut, pQueue));
             }
             catch (IOException e){
