@@ -106,11 +106,20 @@ public class NetworkUtils {
             NetworkInterface network = NetworkInterface.getByInetAddress(ip);
 
             Enumeration<NetworkInterface> e = network.getNetworkInterfaces();
-            NetworkInterface next = e.nextElement();
-            System.out.println(next.toString());
-            byte[] bytes = next.getHardwareAddress();
-            System.out.println(mac_addr);
-            mac_addr = convertByteToInt(bytes);
+
+            while (e.hasMoreElements())
+            {
+                NetworkInterface next = e.nextElement();
+                System.out.println(next.toString());    // prints the interface
+
+                byte[] bytes = next.getHardwareAddress();
+                if( bytes != null)
+                {
+                    mac_addr = convertByteToInt(bytes);
+                    System.out.println(mac_addr);
+                    break;
+                }
+            }
         }
         catch (NullPointerException ex){
             ex.printStackTrace();
