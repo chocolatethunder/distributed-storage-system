@@ -14,14 +14,13 @@ import java.util.Comparator;
 public class App {
 
     public static void main(String[] args) {
-        /*
+
         try {
-            Thread listener = new Thread(new DiscoveryReply(Module.STALKER));
+            Thread listener = new Thread(new DiscoveryReply(Module.STALKER,20));
             listener.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        */
 
 
         int test = 0;

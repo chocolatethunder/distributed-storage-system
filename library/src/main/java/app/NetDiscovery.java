@@ -16,10 +16,12 @@ public class NetDiscovery implements Runnable{
 
     private String sender;
     private String target;
+    private static int discovery_timeout = 0;
 
-    public NetDiscovery(Module sender, Module target) {
+    public NetDiscovery(Module sender, Module target, int discovery_timeout) {
         this.sender = sender.name();
         this.target = target.name();
+        this.discovery_timeout = discovery_timeout;
     }
 
 
@@ -63,7 +65,7 @@ public class NetDiscovery implements Runnable{
 
         // waits for 5 sec to get response from the LAN
         long t= System.currentTimeMillis();
-        long end = t+ (5*1000);
+        long end = t+ (discovery_timeout*1000);
         while(System.currentTimeMillis() < end) {
             System.out.println("Waiting for response");
             byte[] buf = new byte[1024];
