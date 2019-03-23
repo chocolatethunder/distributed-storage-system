@@ -13,7 +13,12 @@ import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Optional;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+
+
 /**
  *
  */
@@ -60,8 +65,25 @@ public class NetworkUtils {
         return list.get();
     }
 
+    //load a config (stalker ip) from file while we get network discovery working
+    public static Map<String, String> mapFromJson(String s){
+        ObjectMapper mapper = new ObjectMapper();
+
+        //Optional<List<String>> list = Optional.empty();
+        Map<String, String> list = new HashMap<>();
+        try {
+
+            TypeReference<HashMap<String,Object>> typeRef = new TypeReference<HashMap<String,Object>>() {};
+            list = mapper.readValue(s, typeRef);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     //print an object to a file as json
-    public static boolean toFile(String path, List<String> s){
+    public static boolean toFile(String path, Object s){
         ObjectMapper mapper = new ObjectMapper();
         try {
             String jsonInString = mapper.writeValueAsString(s);
@@ -75,6 +97,7 @@ public class NetworkUtils {
         }
         return true;
     }
+
 
     public static int getMacID(){    //get the mac ID of the current device
         int mac_addr = Integer.MAX_VALUE;
