@@ -10,3 +10,4 @@ build
 .idea/workspace.xml
 *.xml
 .idea/workspace.xml
+local.properties
