@@ -19,9 +19,6 @@ public class App {
         System.out.println("" + macID);
         CommsHandler commLink = new CommsHandler();
         boolean cont = false;
-        if (!cont){
-            return;
-        }
         //initialize socket and input stream
         Socket socket = null;
         ServerSocket server = null;

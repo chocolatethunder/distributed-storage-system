@@ -19,7 +19,7 @@ public class App {
         This is the main point of entry for JCP request
         The object is a singleton and will persist through the life of JCP
          */
-        String config_file = "config/stalkers.txt";
+        String config_file = "config/stalkers.list";
         List<String> s_list = NetworkUtils.listFromJson(NetworkUtils.fileToString(config_file));
 
         RequestSender requestSender = RequestSender.getInstance();
@@ -28,12 +28,12 @@ public class App {
         //port to connect to
         int port = 11111;
         Socket socket = requestSender.connect(stalkerip, port);
-        String req = "download";
+        String req = "upload";
         switch (req){
-            case("download"):
+            case("upload"):
                 requestSender.sendFile("temp\\003_txt_test.txt");
                 break;
-            case("uplodad"):
+            case("download"):
                 requestSender.getFile("temp\\003_txt_test.txt");
                 break;
 
