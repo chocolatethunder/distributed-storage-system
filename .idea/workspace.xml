@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d283698d-ac06-432a-b590-11a741c5e976" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/harm/src/main/java/app/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/harm/src/main/java/app/App.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/harm/src/main/java/app/Handler.java" beforeDir="false" afterPath="$PROJECT_DIR$/harm/src/main/java/app/Handler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jcp/src/main/java/app/RequestSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/jcp/src/main/java/app/RequestSender.java" afterDir="false" />
@@ -16,6 +17,9 @@
       <change beforePath="$PROJECT_DIR$/stalker/src/main/java/app/handlers/DownloadServiceHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/stalker/src/main/java/app/handlers/DownloadServiceHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stalker/src/main/java/app/handlers/ServiceHandlerFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/stalker/src/main/java/app/handlers/ServiceHandlerFactory.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stalker/src/main/java/app/handlers/UploadServiceHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/stalker/src/main/java/app/handlers/UploadServiceHandler.java" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/library/src/main/java/app/NetworkUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/library/src/main/java/app/NetworkUtils.java" afterDir="false" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -45,6 +49,7 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
+<<<<<<< HEAD
         <entry file="file://$PROJECT_DIR$/library/src/main/java/app/NetworkUtils.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1259">
@@ -52,15 +57,28 @@
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+=======
+        <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/ChunkRetriever.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="663">
+              <caret line="56" column="87" selection-start-line="56" selection-start-column="87" selection-end-line="56" selection-end-column="87" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+<<<<<<< HEAD
         <entry file="file://$PROJECT_DIR$/jcp/src/main/java/app/App.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="391">
               <caret line="25" column="23" lean-forward="true" selection-start-line="25" selection-start-column="23" selection-end-line="25" selection-end-column="23" />
+=======
+        <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/handlers/UploadServiceHandler.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="510">
+              <caret line="39" column="26" selection-start-line="39" selection-start-column="26" selection-end-line="39" selection-end-column="26" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -68,6 +86,7 @@
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/JcpRequestHandler.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -76,15 +95,30 @@
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+=======
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/handlers/DownloadServiceHandler.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="442">
+              <caret line="30" column="29" selection-start-line="30" selection-start-column="29" selection-end-line="30" selection-end-column="29" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/handlers/ServiceHandlerFactory.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="442">
               <caret line="26" column="68" lean-forward="true" selection-start-line="26" selection-start-column="68" selection-end-line="26" selection-end-column="68" />
+=======
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/library/src/main/java/app/NetworkUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1360">
+              <caret line="80" column="5" lean-forward="true" selection-start-line="80" selection-start-column="5" selection-end-line="80" selection-end-column="5" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -93,6 +127,7 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+<<<<<<< HEAD
         <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/handlers/DeleteServiceHandler.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="340">
@@ -100,11 +135,18 @@
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+=======
+        <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/chunk_utils/Chunk.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="221">
+              <caret line="20" column="24" lean-forward="true" selection-start-line="20" selection-start-column="24" selection-end-line="20" selection-end-column="24" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+<<<<<<< HEAD
         <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/handlers/UploadServiceHandler.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="306">
@@ -112,15 +154,28 @@
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+=======
+        <entry file="file://$PROJECT_DIR$/jcp/src/main/java/app/App.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="306">
+              <caret line="26" column="41" selection-start-line="26" selection-start-column="41" selection-end-line="26" selection-end-column="41" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+<<<<<<< HEAD
         <entry file="file://$PROJECT_DIR$/library/src/main/java/app/CommsHandler.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="765">
               <caret line="45" column="11" selection-start-line="45" selection-start-column="11" selection-end-line="45" selection-end-column="11" />
+=======
+        <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/App.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="18" column="22" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -131,8 +186,13 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/library/src/main/java/app/TcpPacket.java">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="510">
               <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
+=======
+            <state relative-caret-position="595">
+              <caret line="44" selection-start-line="44" selection-end-line="44" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#442#443#0" expanded="true" />
@@ -157,6 +217,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/library/src/main/java/app/Request.java">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="204">
               <caret line="12" column="33" lean-forward="true" selection-start-line="12" selection-start-column="33" selection-end-line="12" selection-end-column="33" />
               <folding>
@@ -175,6 +236,10 @@
                 <element signature="e#499#500#0" expanded="true" />
                 <element signature="e#545#546#0" expanded="true" />
               </folding>
+=======
+            <state relative-caret-position="561">
+              <caret line="45" column="36" selection-start-line="45" selection-start-column="36" selection-end-line="45" selection-end-column="36" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
             </state>
           </provider>
         </entry>
@@ -222,6 +287,7 @@
         <option value="$PROJECT_DIR$/stalker/src/main/java/app/ChunkRetriever.java" />
         <option value="$PROJECT_DIR$/stalker/src/main/java/app/chunk_utils/Indexer.java" />
         <option value="$PROJECT_DIR$/jcp/src/main/java/app/App.java" />
+<<<<<<< HEAD
         <option value="$PROJECT_DIR$/stalker/src/main/java/app/chunk_utils/Chunk.java" />
         <option value="$PROJECT_DIR$/harm/src/main/java/app/App.java" />
         <option value="$PROJECT_DIR$/library/src/main/java/app/RequestType.java" />
@@ -236,6 +302,9 @@
         <option value="$PROJECT_DIR$/stalker/src/main/java/app/handlers/DownloadServiceHandler.java" />
         <option value="$PROJECT_DIR$/stalker/src/main/java/app/handlers/DeleteServiceHandler.java" />
         <option value="$PROJECT_DIR$/stalker/src/main/java/app/JcpRequestHandler.java" />
+=======
+        <option value="$PROJECT_DIR$/library/src/main/java/app/NetworkUtils.java" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
       </list>
     </option>
   </component>
@@ -250,6 +319,10 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+<<<<<<< HEAD
+=======
+      <pane id="PackagesPane" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -260,6 +333,7 @@
             <path>
               <item name="CPSC559DS" type="b2602c69:ProjectViewProjectNode" />
               <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+<<<<<<< HEAD
               <item name="jcp" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
             <path>
@@ -330,6 +404,8 @@
             <path>
               <item name="CPSC559DS" type="b2602c69:ProjectViewProjectNode" />
               <item name="distributed-storage-system" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+=======
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
               <item name="stalker" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
             <path>
@@ -370,13 +446,20 @@
               <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
+<<<<<<< HEAD
               <item name="handlers" type="462c0819:PsiDirectoryNode" />
+=======
+              <item name="chunk_utils" type="462c0819:PsiDirectoryNode" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+<<<<<<< HEAD
       <pane id="PackagesPane" />
+=======
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
       <pane id="Scope" />
     </panes>
   </component>
@@ -409,21 +492,35 @@
       <option name="presentableId" value="Default" />
       <updated>1552426165241</updated>
       <workItem from="1552614267056" duration="1385000" />
+<<<<<<< HEAD
       <workItem from="1552616849411" duration="1608000" />
       <workItem from="1552664977937" duration="4972000" />
       <workItem from="1552799422573" duration="2221000" />
       <workItem from="1553297244944" duration="11077000" />
+=======
+      <workItem from="1552616849411" duration="341000" />
+      <workItem from="1552679926020" duration="286000" />
+      <workItem from="1552760789973" duration="1285000" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
+<<<<<<< HEAD
     <option name="totallyTimeSpent" value="21263000" />
+=======
+    <option name="totallyTimeSpent" value="3297000" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="2576" height="1416" extended-state="6" />
+    <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
     <editor active="true" />
     <layout>
+<<<<<<< HEAD
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1526232" />
+=======
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19919518" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -565,6 +662,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/library/src/main/java/app/FileStreamer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
@@ -573,6 +671,9 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/App.java">
+=======
+    <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/chunk_utils/ChunkAssembler.java">
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="357">
           <caret line="23" column="32" selection-start-line="23" selection-start-column="32" selection-end-line="23" selection-end-column="32" />
@@ -592,6 +693,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/ChunkRetriever.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="256">
@@ -614,6 +716,9 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/library/src/main/java/app/MessageType.java">
+=======
+    <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/JcpRequestHandler.java">
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
           <caret line="13" column="12" lean-forward="true" selection-start-line="13" selection-start-column="12" selection-end-line="13" selection-end-column="12" />
@@ -632,8 +737,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/library/src/main/java/app/TcpPacket.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="510">
           <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
+=======
+        <state relative-caret-position="1139">
+          <caret line="81" column="63" selection-start-line="81" selection-start-column="63" selection-end-line="81" selection-end-column="63" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#442#443#0" expanded="true" />
@@ -654,8 +764,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/handlers/UploadServiceHandler.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="306">
           <caret line="27" column="28" lean-forward="true" selection-start-line="27" selection-start-column="28" selection-end-line="27" selection-end-column="28" />
+=======
+        <state relative-caret-position="510">
+          <caret line="39" column="26" selection-start-line="39" selection-start-column="26" selection-end-line="39" selection-end-column="26" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -685,10 +800,24 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/library/src/main/java/app/CommsHandler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="765">
           <caret line="45" column="11" selection-start-line="45" selection-start-column="11" selection-end-line="45" selection-end-column="11" />
+=======
+    <entry file="file://$PROJECT_DIR$/jcp/src/main/java/app/App.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="26" column="41" selection-start-line="26" selection-start-column="41" selection-end-line="26" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/App.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="18" column="22" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -697,8 +826,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/handlers/DownloadServiceHandler.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="255">
           <caret line="15" column="28" lean-forward="true" selection-start-line="15" selection-start-column="28" selection-end-line="15" selection-end-column="28" />
+=======
+        <state relative-caret-position="595">
+          <caret line="44" selection-start-line="44" selection-end-line="44" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -717,6 +851,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/handlers/ServiceHandlerFactory.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="442">
           <caret line="26" column="68" lean-forward="true" selection-start-line="26" selection-start-column="68" selection-end-line="26" selection-end-column="68" />
           <folding>
@@ -729,6 +864,24 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="324">
           <caret line="33" selection-start-line="33" selection-start-column="2" selection-end-line="51" selection-end-column="7" />
+=======
+        <state relative-caret-position="561">
+          <caret line="45" column="36" selection-start-line="45" selection-start-column="36" selection-end-line="45" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/stalker/src/main/java/app/chunk_utils/Chunk.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="20" column="24" lean-forward="true" selection-start-line="20" selection-start-column="24" selection-end-line="20" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/library/src/main/java/app/NetworkUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1360">
+          <caret line="80" column="5" lean-forward="true" selection-start-line="80" selection-start-column="5" selection-end-line="80" selection-end-column="5" />
+>>>>>>> a86d4048d64e0a96c67cd104d7910444367e42bf
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
