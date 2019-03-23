@@ -1,5 +1,12 @@
 package app.LeaderUtils;
 
+import app.CommsHandler;
+import app.MessageType;
+import app.NetworkUtils;
+import app.TcpPacket;
+
+import java.io.IOException;
+import java.net.Socket;
 import java.util.PriorityQueue;
 
 public class QueueHandler implements  Runnable {
@@ -22,9 +29,34 @@ public class QueueHandler implements  Runnable {
                 break;
             case 1:
                 getJob();
-
+                if (!processJob()){
+                    //if it fails we'll put it back in the queue
+                    //queueJob();
+                }
                 break;
         }
+    }
+
+
+    public boolean processJob(){
+        CommsHandler commLink = new CommsHandler();
+        Socket worker;
+        try{
+            worker = NetworkUtils.createConnection(q.getInetAddr().getHostAddress(), 11113);
+            commLink.sendPacket(worker, MessageType.START, "");
+            TcpPacket response = commLink.recievePacket(worker);
+
+            if (response.getMessageType() == MessageType.DONE){
+                commLink.sendPacket(worker, MessageType.ACK, "");
+            }
+        }
+        catch (IOException e){
+            e.printStackTrace();
+            return(false);
+        }
+
+
+        return true;
     }
     //put an entry into the queue
     public synchronized void queueJob(){

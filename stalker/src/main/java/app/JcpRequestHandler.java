@@ -30,15 +30,8 @@ public class JcpRequestHandler implements Runnable {
      */
     @Override
     public void run() {
-
-        //initialize socket and input stream
-        //Socket socket = null;
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
-
-//        DataInputStream in = null;
-//        DataOutputStream out = null;
-
 
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);

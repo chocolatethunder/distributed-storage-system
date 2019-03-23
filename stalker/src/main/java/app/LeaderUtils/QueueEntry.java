@@ -1,13 +1,13 @@
 package app.LeaderUtils;
 
 import app.TcpPacket;
-import java.net.Socket;
 import app.MessageType;
 import java.net.InetAddress;
 
 public class QueueEntry {
     private TcpPacket req;
-    InetAddress inetAddr;
+
+    private InetAddress inetAddr;
     public QueueEntry(TcpPacket t, InetAddress s){
         req = t;
         inetAddr = s;
@@ -24,6 +24,13 @@ public class QueueEntry {
         return(req.getMessageType());
     }
 
+    public InetAddress getInetAddr() {
+        return inetAddr;
+    }
+
+    public void setInetAddr(InetAddress inetAddr) {
+        this.inetAddr = inetAddr;
+    }
     public String messageString(){
         return(req.getMessage());
     }

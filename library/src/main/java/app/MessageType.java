@@ -12,5 +12,7 @@ public enum MessageType {
         ACK,
         COMPLETE,
         BUSY,
-        KILL
+        KILL,
+        START,
+        DONE
 }
