@@ -5,7 +5,7 @@ import app.chunk_utils.FileChunker;
 import app.chunk_utils.IndexEntry;
 import app.chunk_utils.IndexFile;
 import app.chunk_utils.Indexer;
-
+import java.net.ServerSocket;
 import java.net.ServerSocket;
 import java.util.List;
 import java.io.*;
@@ -17,6 +17,7 @@ import java.util.ArrayList;
  */
 public class UploadServiceHandler implements Runnable {
 
+    private final int server_port = 11113;
     private final Socket socket;
     private DataInputStream in = null;
     private BufferedOutputStream bufferedOutputStream = null;
@@ -36,19 +37,61 @@ public class UploadServiceHandler implements Runnable {
 
 
         CommsHandler commsLink = new CommsHandler();
-//        1. get permissions from leader
+        ServerSocket listener;
+        try{
+//          1. get permissions from leader
 //------------------------------------------------------------
-        //going to need IP of leader
-        if(!commsLink.sendRequestToLeader(MessageType.UPLOAD)){
-            System.out.println("Could not connect to leader!");
-            commsLink.sendResponse(socket, MessageType.ERROR);
-            return;
-        }
+            //going to need IP of leader
+            if(!commsLink.sendRequestToLeader(MessageType.UPLOAD)){
+                commsLink.sendResponse(socket, MessageType.ERROR);
+                throw new IOException("Could not connect to leader.");
+            }
+//          2. Wait for Leader to grant job permission
+///------------------------------------------------------------
+            listener = new ServerSocket(server_port);
+            Socket leader = listener.accept();
+            TcpPacket req = commsLink.receivePacket(leader);
+            if (!(req.getMessageType() == MessageType.START)){
+                
+            }
 ///------------------------------------------------------------
 
-//        2. ACK request from JCP and perform download of file
+
+//          3. ACK request from JCP and perform download of file
 ///------------------------------------------------------------
-        commsLink.sendResponse(socket, MessageType.ACK);
+            commsLink.sendResponse(socket, MessageType.ACK);
+            if (!getFileFromJCP()){
+                throw new IOException("Error when getting file from JCP.");
+            }
+///------------------------------------------------------------
+            //////////////////////////////File Chunking section
+//          3. distribute to harm targets
+            if(!distributeToHarm()){
+                throw new IOException("Error when Distributing to Harm Target.");
+            }
+
+
+
+        }
+        catch(IOException e){
+            try{
+                socket.close();
+            }
+            catch(IOException ex){
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            return;
+        }
+
+        //       3. confirm completion
+        /////////////////////////
+        /////////////////////////
+        // UPDATE REMAINING STALKERS
+    }
+
+
+    public boolean getFileFromJCP(){
         byte[] chunkArray = new byte[1024];
         int bytesRead = 0;
         try {
@@ -56,6 +99,7 @@ public class UploadServiceHandler implements Runnable {
             bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(filePath));
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
         try {
             while ((bytesRead = in.read(chunkArray)) != -1) {
@@ -68,11 +112,12 @@ public class UploadServiceHandler implements Runnable {
             bufferedOutputStream.close();
         }catch (IOException e){
             e.printStackTrace();
+            return false;
         }
-///------------------------------------------------------------
-        
-        //////////////////////////////File Chunking section
-//       distribute to harm targets
+        return true;
+    }
+
+    public boolean distributeToHarm(){
         List<String> harm_list = getHarms();
         FileChunker f = new FileChunker(chunk_dir);
         ChunkDistributor cd = new ChunkDistributor(chunk_dir, harm_list);
@@ -91,14 +136,12 @@ public class UploadServiceHandler implements Runnable {
             /////////Save that shit
             Indexer.saveToFile(index);
         }
-        //       3. confirm completion
-        /////////////////////////
-        /////////////////////////
-        // UPDATE REMAINING STALKERS
+        else{
+            return false;
+        }
+        return true;
     }
 
-
-    public boolean
 
     public List<String>getHarms(){
         List<String> temp = new ArrayList<String>();
