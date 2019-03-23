@@ -4,6 +4,7 @@
 package app;
 
 import app.LeaderUtils.QueueEntry;
+import app.LeaderUtils.RequestAdministrator;
 import app.chunk_utils.Indexer;
 import app.chunk_utils.IndexFile;
 import org.apache.commons.io.FilenameUtils;
@@ -21,8 +22,6 @@ public class App {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
         int test = 0;
         initStalker();
         IndexFile ind = Indexer.loadFromFile();
@@ -32,9 +31,6 @@ public class App {
         //testing
         Tester tester = new Tester();
         tester.test();
-
-
-
         //networkDiscovery
         int role = getRole();
 
@@ -52,7 +48,9 @@ public class App {
                 };
                 PriorityQueue<QueueEntry> syncQueue = new PriorityQueue<>(entryPriorityComparator);
                 StalkerRequestHandler stalkerCoordinator = new StalkerRequestHandler(syncQueue);
+                RequestAdministrator reqAdmin = new RequestAdministrator(syncQueue);
                 stalkerCoordinator.run();
+                reqAdmin.run();
                 break;
             case 1:
                 JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
