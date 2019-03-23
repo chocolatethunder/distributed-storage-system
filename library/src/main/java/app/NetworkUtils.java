@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -49,9 +50,7 @@ public class NetworkUtils {
         return fileString;
     }
 
-
-
-        //load a config (stalker ip) from file while we get network discovery working
+    //load a config (stalker ip) from file while we get network discovery working
     public static List<String> listFromJson(String s){
         ObjectMapper mapper = new ObjectMapper();
         Optional<List<String>> list = Optional.empty();
@@ -97,7 +96,7 @@ public class NetworkUtils {
         return true;
     }
 
-
+    // gets the MAC address of the System
     public static int getMacID(){    //get the mac ID of the current device
         int mac_addr = Integer.MAX_VALUE;
         //use the argvalues to add a port modifier to the HARM to differentiate it from the others
@@ -122,8 +121,6 @@ public class NetworkUtils {
         System.out.println("Harm ID: " + mac_addr);
         return(mac_addr);
     }
-
-
 
     ///get an integer from a MAC addr
     public static int convertByteToInt(byte[] b) throws NullPointerException
@@ -179,5 +176,17 @@ public class NetworkUtils {
         return serialRequest;
     }
 
+    // returns the IP of the System
+    public static String getIP() {
+        InetAddress inetAddress;
+        String myIP = null;
+        try {
+            inetAddress = InetAddress.getLocalHost();
+            myIP = inetAddress.getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        return myIP;
+    }
 
 }

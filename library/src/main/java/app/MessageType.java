@@ -13,6 +13,9 @@ public enum MessageType {
         COMPLETE,
         BUSY,
         KILL,
-        START,
+        HEAD,
         DONE
+        DISCOVER,
+        START
+
 }

@@ -14,6 +14,16 @@ import java.util.Comparator;
 public class App {
 
     public static void main(String[] args) {
+        /*
+        try {
+            Thread listener = new Thread(new DiscoveryReply(Module.STALKER));
+            listener.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        */
+
+
         int test = 0;
         initStalker();
         IndexFile ind = Indexer.loadFromFile();
@@ -52,6 +62,7 @@ public class App {
             case 2:
                 break;
         }
+
     }
 
     public static int getRole(){
