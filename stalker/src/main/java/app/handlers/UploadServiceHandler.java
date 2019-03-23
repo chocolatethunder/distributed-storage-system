@@ -83,14 +83,12 @@ public class UploadServiceHandler implements Runnable {
         ////////////////distribute file
         if(cd.distributeChunks(entry, 3)){
             entry.cleanLocalChunks();
+            entry.summary();
+            Indexer.addEntry(index, entry);
+            /////////Save that shit
+            Indexer.saveToFile(index);
         }
-
         //       3. confirm completion
-        entry.summary();
-        Indexer.addEntry(index, entry);
-        /////////Save that shit
-        Indexer.saveToFile(index);
-
         /////////////////////////
         /////////////////////////
         // UPDATE REMAINING STALKERS
