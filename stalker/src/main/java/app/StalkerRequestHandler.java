@@ -1,9 +1,7 @@
 package app;
 
 import app.LeaderUtils.QueueEntry;
-import app.LeaderUtils.RequestCoordinator;
-import app.handlers.ServiceHandlerFactory;
-import javafx.scene.layout.Priority;
+import app.LeaderUtils.QueueHandler;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -45,7 +43,7 @@ public class StalkerRequestHandler implements Runnable {
                 // receive packet on the socket link
                 TcpPacket req = commLink.recievePacket(client);
                 QueueEntry toPut = new QueueEntry(req, client);
-                executorService.submit(RequestCoordinator.RequestManagerFactory(toPut));
+                executorService.submit(new QueueHandler(0, toPut, pQueue));
             }
             catch (IOException e){
                 e.printStackTrace();
