@@ -16,9 +16,19 @@ public class App {
     public static void main(String[] args) {
 
         /*
+        try {
+            Thread broadcaster = new Thread(new NetDiscovery(Module.STALKER,Module.STALKER));
+            broadcaster.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        */
+
+        /*
         This is the main point of entry for JCP request
         The object is a singleton and will persist through the life of JCP
          */
+
         String config_file = "config/stalkers.list";
         List<String> s_list = NetworkUtils.listFromJson(NetworkUtils.fileToString(config_file));
 
@@ -44,6 +54,8 @@ public class App {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
 
     }
 

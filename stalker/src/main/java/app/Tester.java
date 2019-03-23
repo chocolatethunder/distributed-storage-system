@@ -3,6 +3,7 @@
  */
 package app;
 import java.io.*;
+import java.net.InetAddress;
 import java.util.*;
 
 import app.LeaderUtils.QueueEntry;
@@ -30,12 +31,13 @@ public class Tester {
         TcpPacket t5 = new TcpPacket(MessageType.DELETE, "Del 1");
         TcpPacket t6 = new TcpPacket(MessageType.DELETE, "del 2");
 
-        syncQueue.add(new QueueEntry(t6, s1));
-        syncQueue.add(new QueueEntry(t3, s1));
-        syncQueue.add(new QueueEntry(t1, s1));
-        syncQueue.add(new QueueEntry(t5, s1));
-        syncQueue.add(new QueueEntry(t4, s1));
-        syncQueue.add(new QueueEntry(t2, s1));
+        InetAddress i = null;
+        syncQueue.add(new QueueEntry(t6, i));
+        syncQueue.add(new QueueEntry(t3, i));
+        syncQueue.add(new QueueEntry(t1, i));
+        syncQueue.add(new QueueEntry(t5, i));
+        syncQueue.add(new QueueEntry(t4, i));
+        syncQueue.add(new QueueEntry(t2, i));
 
 
         while (!syncQueue.isEmpty()){
