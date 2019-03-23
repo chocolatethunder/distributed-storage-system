@@ -74,7 +74,7 @@ public class ChunkRetriever {
         try {
 
             TcpPacket initialPacket = new TcpPacket(requestType, "HELLO_INIT");
-            initialPacket.setFile(toGet, 0);
+            //initialPacket.setFile(toGet, 0);
 
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             DataInputStream  in = new DataInputStream((socket.getInputStream()));

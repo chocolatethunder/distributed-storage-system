@@ -6,7 +6,9 @@ public class QueueHandler implements  Runnable {
 
     private int mode;
     private QueueEntry q;
-    public QueueHandler(int mode, QueueEntry q){
+    private PriorityQueue<QueueEntry> pQueue;
+    public QueueHandler(int mode, QueueEntry q, PriorityQueue<QueueEntry> pQueue){
+        this.pQueue = pQueue;
         this.mode = mode;
         this.q = q;
     }
@@ -19,15 +21,18 @@ public class QueueHandler implements  Runnable {
                 queueJob();
                 break;
             case 1:
-                dispatchJob();
+                getJob();
+
                 break;
         }
     }
+    //put an entry into the queue
     public synchronized void queueJob(){
-
+        pQueue.add(q);
+    }
+    //remove entry from queue
+    public synchronized QueueEntry getJob(){
+        return pQueue.remove();
     }
 
-    public synchronized void dispatchJob(){
-
-    }
 }
