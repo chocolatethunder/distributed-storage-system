@@ -50,15 +50,17 @@ public class NetDiscovery implements Runnable{
         //the ports must be specific to target/origin
         int[] ports = NetworkUtils.getPortTargets(origin, target);
 
-        // socket to broadcast request
-        DatagramSocket receiverSocket = new DatagramSocket(ports[0]);    // socket to receive replys
+
+        //port we are receiving on
+        DatagramSocket receiverSocket = new DatagramSocket(ports[1]);    // socket to receive replies
 
         // create a discover request packet and broadcast it
         UDPPacket discovery = new UDPPacket(request, String.valueOf(NetworkUtils.getMacID()), target, NetworkUtils.getIP());
         ObjectMapper mapper = new ObjectMapper();
         System.out.println("Sending out broadcast with signature: " + mapper.writeValueAsString(discovery) + "\n");
         byte[] req = mapper.writeValueAsString(discovery).getBytes();
-        DatagramPacket packet = new DatagramPacket(req, req.length, address, ports[1]);
+        //the port we are sending on
+        DatagramPacket packet = new DatagramPacket(req, req.length, address, ports[0]);
         socket.send(packet);
 
         // waits for 5 sec to get response from the LAN
