@@ -21,11 +21,14 @@ public class App {
 
         Thread stalkerFinder;
         Thread harmFinder;
-        Thread listener;
+        Thread JCPlistener;
+        Thread STALKERlistener;
         try {
             //listen for incoming requests first and foremost
-            listener = new Thread(new DiscoveryReply(Module.STALKER, Module.JCP,20));
-            listener.start();
+            JCPlistener = new Thread(new DiscoveryReply(Module.STALKER, Module.JCP,20));
+            STALKERlistener = new Thread(new DiscoveryReply(Module.STALKER, Module.JCP,20));
+            JCPlistener.start();
+            STALKERlistener.start();
             //time out for a bit before sending out your own requests
             try {
                 System.out.println("Waiting before sending out broadcast...");
@@ -40,7 +43,8 @@ public class App {
             harmFinder.start();
             stalkerFinder.start();
             stalkerFinder.join();
-            listener.join();
+            JCPlistener.join();
+            STALKERlistener.join();
         } catch (Exception e) {
             e.printStackTrace();
         }
