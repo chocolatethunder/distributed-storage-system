@@ -28,7 +28,7 @@ public class DiscoveryReply implements Runnable {
         this.listening_timeout = listening_timeout;
         try {
             //where to listen
-            socket = new DatagramSocket();
+            socket = new DatagramSocket(ports[0]);
         } catch (Exception e) {
             e.printStackTrace();
         }
