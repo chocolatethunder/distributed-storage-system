@@ -13,7 +13,7 @@ public class App {
 
     public static void main(String[] args) {
 
-        DiscoveryManager DM = new DiscoveryManager(Module.STALKER, 35);
+        DiscoveryManager DM = new DiscoveryManager(Module.HARM, 35);
         int macID = NetworkUtils.getMacID();
         CommsHandler commLink = new CommsHandler();
         //initialize socket and input stream
