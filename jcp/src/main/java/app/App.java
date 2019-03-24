@@ -29,9 +29,6 @@ public class App {
         This is the main point of entry for JCP request
         The object is a singleton and will persist through the life of JCP
          */
-        if (test == 0){
-            return;
-        }
         String config_file = "config/stalkers.list";
         List<String> s_list = NetworkUtils.listFromJson(NetworkUtils.fileToString(config_file));
 
