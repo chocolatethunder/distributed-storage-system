@@ -12,13 +12,10 @@ public class NetDiscovery implements Runnable{
     private static DatagramSocket socket = null;
     private static int STALKERPORT = 10000;
     private static int JCPPORT = 11000;
-
-    private String sender;
     private String target;
     private static int discovery_timeout = 0;
 
-    public NetDiscovery(Module sender, Module target, int discovery_timeout) {
-        this.sender = sender.name();
+    public NetDiscovery(Module target, int discovery_timeout) {
         this.target = target.name();
         this.discovery_timeout = discovery_timeout;
     }
@@ -28,7 +25,7 @@ public class NetDiscovery implements Runnable{
     public void run() {
         HashMap<Integer,InetAddress> listOfAddrs =  null;
         try {
-            listOfAddrs = broadcast(MessageType.DISCOVER,sender,target);
+            listOfAddrs = broadcast(MessageType.DISCOVER,target);
             NetworkUtils.toFile("config/stalkers.list", listOfAddrs);
         } catch (IOException e) {
             e.printStackTrace();
@@ -40,20 +37,16 @@ public class NetDiscovery implements Runnable{
      * broadcasts a UDP packet over a LAN network
      * @return list of address of the modules that repllied
      */
-    public static HashMap<Integer, InetAddress> broadcast(MessageType request, String sender,String target) throws IOException {
+    public static HashMap<Integer, InetAddress> broadcast(MessageType request,String target) throws IOException {
         // To broadcast change this to 255.255.255.255
         InetAddress address = InetAddress.getByName("192.168.1.255");       // broadcast address
-
-        //ArrayList<InetAddress> listOfAddrs = new ArrayList<>();        // list of the ip of the modules that replied
         //we want a map of MAC -> ip
         HashMap<Integer, InetAddress> stalkerMap = new HashMap<>();
-
         socket = new DatagramSocket();                                  // socket to broadcast request
         DatagramSocket receiverSocket = new DatagramSocket(JCPPORT);    // socket to receive replys
 
-
         // create a discover request packet and broadcast it
-        UDPPacket discovery = new UDPPacket(request, sender,target, NetworkUtils.getIP());
+        UDPPacket discovery = new UDPPacket(request, String.valueOf(NetworkUtils.getMacID()), target, NetworkUtils.getIP());
         ObjectMapper mapper = new ObjectMapper();
         System.out.println(mapper.writeValueAsString(discovery));
         byte[] req = mapper.writeValueAsString(discovery).getBytes();
@@ -76,13 +69,10 @@ public class NetDiscovery implements Runnable{
                 continue;
             }
             String received = new String(packet.getData(), 0, packet.getLength());
-            System.out.println(received);
-
+            System.out.println("A target has responded: " + received);
             // parse the packet content
             JsonNode discoverReply = mapper.readTree(received);
-            String module = discoverReply.get("sender").textValue();
             String uuid = discoverReply.get("uuid").textValue();
-            System.out.println(uuid);
             InetAddress replyAddress =  InetAddress.getByName(discoverReply.get("address").textValue());
             stalkerMap.put(Integer.valueOf(uuid), replyAddress);
         }

@@ -23,14 +23,10 @@ public class App {
             listener = new Thread(new DiscoveryReply(Module.STALKER,20));
             listener.start();
 
-
             listener.join();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-
         int test = 0;
         initStalker();
         IndexFile ind = Indexer.loadFromFile();
