@@ -193,18 +193,24 @@ public class NetworkUtils {
         try {
             inetAddress = InetAddress.getLocalHost();
             myIP = inetAddress.getHostAddress();
-
+            boolean found = false;
             InetAddress ip = InetAddress.getLocalHost();
-            System.out.println("IP:   " + ip);
+
             NetworkInterface network = NetworkInterface.getByInetAddress(ip);
-            Enumeration<InetAddress> e = network.getInetAddresses();
-            while (e.hasMoreElements())
+            Enumeration<NetworkInterface> e = network.getNetworkInterfaces();
+            while (e.hasMoreElements() || !found)
             {
-                InetAddress next = e.nextElement();
-                if(!next.getHostAddress().startsWith("127"))
-                {
-                    myIP = next.getHostAddress();
-                    break;
+                NetworkInterface next = e.nextElement();
+                Enumeration<InetAddress> i = next.getInetAddresses();
+                while (i.hasMoreElements()){
+                    InetAddress n = i.nextElement();
+                    System.out.println("IP:   " + n.getHostAddress());
+                    if(!n.getHostAddress().startsWith("192"))
+                    {
+                        myIP = n.getHostAddress();
+                        found = true;
+                        break;
+                    }
                 }
             }
 
