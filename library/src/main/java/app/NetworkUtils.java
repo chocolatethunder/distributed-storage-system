@@ -195,6 +195,7 @@ public class NetworkUtils {
             myIP = inetAddress.getHostAddress();
 
             InetAddress ip = InetAddress.getLocalHost();
+            System.out.println("IP:   " + ip);
             NetworkInterface network = NetworkInterface.getByInetAddress(ip);
             Enumeration<InetAddress> e = network.getInetAddresses();
             while (e.hasMoreElements())
