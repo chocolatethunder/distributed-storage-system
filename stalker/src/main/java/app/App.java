@@ -28,9 +28,8 @@ public class App {
         //ind.summary();
         System.out.println(NetworkUtils.timeStamp(1) + "Stalker Online");
         //testing
-        Tester tester = new Tester();
-        tester.test();
-        //networkDiscovery
+
+        //election based on networkDiscovery
         int role = getRole();
 
         switch (role){
