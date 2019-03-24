@@ -49,14 +49,12 @@ public class DiscoveryReply implements Runnable {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode request = null;
             String req_type = null;
-            String req_sender = null;
             String req_target = null;
             String req_address = null;
             try {
                 request = mapper.readTree(received);
                 req_type = request.get("type").textValue();
                 req_target = request.get("target").textValue();
-                req_sender = request.get("sender").textValue();
                 req_address = request.get("address").textValue();
 
             } catch (IOException e) {
