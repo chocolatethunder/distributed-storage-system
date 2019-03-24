@@ -17,14 +17,12 @@ public class App {
     //jcp main
     public static void main(String[] args) {
         int test  = 0;
-        Thread broadcaster;
-        try {
-            broadcaster = new Thread(new NetDiscovery(Module.STALKER, Module.JCP,20));
-            broadcaster.start();
-            broadcaster.join();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        //make a discoverymanager and start it, prints results to file
+        DiscoveryManager DM = new DiscoveryManager(Module.JCP);
+        DM.start();
+
+        //get the stalkers from file
         HashMap<Integer, InetAddress> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
 
         /*
@@ -51,7 +49,6 @@ public class App {
             case("download"):
                 requestSender.getFile("temp\\003_txt_test.txt");
                 break;
-
         }
         // should close socket from main calling method, otherwise threads giving null pointer exception
         try {

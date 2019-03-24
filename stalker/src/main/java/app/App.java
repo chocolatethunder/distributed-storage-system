@@ -19,39 +19,13 @@ public class App {
         //First thing to do is locate all other stalkers and print the stalkers to file
 
 
-        Thread stalkerFinder;
-        Thread harmFinder;
-        Thread JCPlistener;
-        Thread STALKERlistener;
-        try {
-            //listen for incoming requests first and foremost
-            JCPlistener = new Thread(new DiscoveryReply(Module.STALKER, Module.JCP,20));
-            STALKERlistener = new Thread(new DiscoveryReply(Module.STALKER, Module.STALKER,20));
-            JCPlistener.start();
-            STALKERlistener.start();
-            //time out for a bit before sending out your own requests
-            try {
-                System.out.println("Waiting before sending out broadcast...");
-                Thread.sleep(5000);
-            }
-            catch(InterruptedException e){
-                e.printStackTrace();
-            }
-            stalkerFinder = new Thread(new NetDiscovery(Module.STALKER, Module.STALKER,20));
-            harmFinder = new Thread(new NetDiscovery(Module.HARM, Module.STALKER,20));
+        DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
+        DM.start();
 
-            harmFinder.start();
-            stalkerFinder.start();
-            stalkerFinder.join();
-            JCPlistener.join();
-            STALKERlistener.join();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         int test = 0;
         initStalker();
         IndexFile ind = Indexer.loadFromFile();
-        ind.summary();
+        //ind.summary();
         System.out.println("Stalker Online");
 
         //testing

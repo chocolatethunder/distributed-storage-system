@@ -13,25 +13,14 @@ public class App {
 
     public static void main(String[] args) {
 
-        Thread listener;
-        try{
-            //listen for incoming requests first and foremost
-            listener = new Thread(new DiscoveryReply(Module.HARM, Module.STALKER, 20));
-            listener.start();
-            listener.join();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
+        DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
         int macID = NetworkUtils.getMacID();
-        System.out.println("" + macID);
+        //System.out.println("" + macID);
+
         CommsHandler commLink = new CommsHandler();
-        boolean cont = false;
         //initialize socket and input stream
         Socket socket = null;
         ServerSocket server = null;
-        DataInputStream in = null;
-        DataOutputStream out = null;
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
@@ -50,12 +39,13 @@ public class App {
             try {
                 socket = server.accept();
                 System.out.println("Accepted connection : " + socket);
-
+                //get packet from the link
                 TcpPacket packet = commLink.receivePacket(socket);
                 System.out.println(socket.isClosed());
                 Handler h = new Handler(socket, packet, macID);
                 h.run();
                 // creating a runnable task for each request from the same socket connection
+                //not working right now
                 //executorService.execute();
 
             } catch (FileNotFoundException e) {
@@ -89,35 +79,4 @@ public class App {
         }
 
     }
-//    /**
-//     *This execute handshake between STALKER and HARM target
-//     *
-//     * @param in DatainputStream
-//     * @param out DataoutputStream
-//     * @return Optional<TcpPacket> that has been received from STALKER
-//     * @throws IOException
-//     */
-//    private static Optional<TcpPacket> executeHandshake(DataInputStream in, DataOutputStream out) throws IOException {
-//        ObjectMapper mapper = new ObjectMapper();
-//        Optional<TcpPacket> receivedPacket = Optional.empty();
-//
-//        try {
-//            String rec = in.readUTF();
-//            receivedPacket = Optional.of(mapper.readValue(rec, TcpPacket.class));
-//
-//        } catch (EOFException e) {
-//        }
-//
-//        //TO:Do need actual logic here if the HARM server is busy or available depending on the type of Request
-//
-//        TcpPacket sendAvail = new TcpPacket(MessageType.ACK, "AVAIL");
-//
-//        //writing as json string
-//        String jsonInString = mapper.writeValueAsString(sendAvail);
-//        System.out.println(jsonInString);
-//        out.writeUTF(jsonInString);
-//
-//
-//        return receivedPacket;
-//    }
 }

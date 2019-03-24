@@ -33,6 +33,7 @@ public class NetworkUtils {
     private static int STK_STK_S = 10002;
     private static int STK_STK_R = 11002;
 
+    //gets ports based on target and origin
     public static int[] getPortTargets(String origin, String target){
         int[] ports;
         if (origin == "STALKER" && target == "STALKER"){
