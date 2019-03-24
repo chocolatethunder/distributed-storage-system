@@ -24,6 +24,33 @@ import com.fasterxml.jackson.core.type.TypeReference;
  */
 public class NetworkUtils {
 
+    private static int STK_JCP = 10000;
+    private static int JCP_STK = 11000;
+
+    private static int STK_HARM = 10001;
+    private static int HARM_STK = 11001;
+
+    private static int STK_STK_S = 10002;
+    private static int STK_STK_R = 11002;
+
+    public static int[] getPortTargets(String origin, String target){
+        int[] ports;
+        if (origin == "STALKER" && target == "STALKER"){
+            ports = new int[]{STK_STK_S, STK_STK_R};
+
+        }
+        else if (origin == "STALKER" && target == "HARM"){
+            ports = new int[]{STK_HARM, HARM_STK};
+        }
+        else if (origin == "JCP" && target == "STALKER"){
+            ports = new int[]{STK_JCP, JCP_STK};
+        }
+        else{
+            ports = new int[]{0,0};
+        }
+        return ports;
+    }
+
     public static Socket createConnection(String host, int port) throws IOException {
         Socket socket = null;
 

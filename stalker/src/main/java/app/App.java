@@ -24,7 +24,7 @@ public class App {
         Thread listener;
         try {
             //listen for incoming requests first and foremost
-            listener = new Thread(new DiscoveryReply(Module.STALKER,20));
+            listener = new Thread(new DiscoveryReply(Module.STALKER, Module.JCP,20));
             listener.start();
             //time out for a bit before sending out your own requests
             try {
@@ -34,8 +34,8 @@ public class App {
             catch(InterruptedException e){
                 e.printStackTrace();
             }
-            stalkerFinder = new Thread(new NetDiscovery(Module.STALKER,20));
-            harmFinder = new Thread(new NetDiscovery(Module.HARM,20));
+            stalkerFinder = new Thread(new NetDiscovery(Module.STALKER, Module.STALKER,20));
+            harmFinder = new Thread(new NetDiscovery(Module.HARM, Module.STALKER,20));
 
             harmFinder.start();
             stalkerFinder.start();

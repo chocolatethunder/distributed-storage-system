@@ -19,7 +19,7 @@ public class App {
         int test  = 0;
         Thread broadcaster;
         try {
-            broadcaster = new Thread(new NetDiscovery(Module.STALKER,20));
+            broadcaster = new Thread(new NetDiscovery(Module.STALKER, Module.JCP,20));
             broadcaster.start();
             broadcaster.join();
         } catch (Exception e) {

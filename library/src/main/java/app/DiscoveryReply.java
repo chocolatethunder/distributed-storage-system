@@ -10,17 +10,25 @@ public class DiscoveryReply implements Runnable {
 
     private DatagramSocket socket;
     private byte[] req = new byte[1024];
-    private static int STALKERPORT = 10000;
-    private static int JCPPORT = 11000;
+    private final int STK_JCP = 10000;
+    private final int JCP_STK = 11000;
+
+    private final int STK_HARM = 10001;
+    private final int HARM_STK = 11001;
+
     private static int listening_timeout;
     Module module;
+    private int[] ports;
 
-
-    public DiscoveryReply(Module module, int listening_timeout) {
+    //listen for packets from a certain module
+    //module is listening module, expected is the one being listened for
+    public DiscoveryReply(Module module, Module expected, int listening_timeout) {
         this.module = module;
+        this.ports = NetworkUtils.getPortTargets(expected.name(), module.name());
         this.listening_timeout = listening_timeout;
         try {
-            socket = new DatagramSocket(STALKERPORT);
+            //where to listen
+            socket = new DatagramSocket(ports[0]);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -89,7 +97,7 @@ public class DiscoveryReply implements Runnable {
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
-                DatagramPacket replyPkt = new DatagramPacket(req, req.length, address, JCPPORT);
+                DatagramPacket replyPkt = new DatagramPacket(req, req.length, address, ports[1]);
                 try {
                     socket.send(replyPkt);
                 } catch (IOException e) {

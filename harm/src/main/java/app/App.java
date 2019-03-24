@@ -16,7 +16,7 @@ public class App {
         Thread listener;
         try{
             //listen for incoming requests first and foremost
-            listener = new Thread(new DiscoveryReply(Module.STALKER,20));
+            listener = new Thread(new DiscoveryReply(Module.HARM, Module.STALKER, 20));
             listener.start();
             listener.join();
         }

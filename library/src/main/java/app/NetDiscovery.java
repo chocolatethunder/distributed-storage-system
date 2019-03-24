@@ -10,16 +10,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class NetDiscovery implements Runnable{
     private static DatagramSocket socket = null;
-    private static int STALKERPORT = 10000;
-    private static int JCPPORT = 11000;
     private String target;
+    private String origin;
     private static int discovery_timeout = 0;
 
-    public NetDiscovery(Module target, int discovery_timeout) {
+    public NetDiscovery(Module target, Module origin, int discovery_timeout) {
         this.target = target.name();
+        this.origin = origin.name();
         this.discovery_timeout = discovery_timeout;
     }
-
 
     @Override
     public void run() {
@@ -32,7 +31,6 @@ public class NetDiscovery implements Runnable{
             else{
                 NetworkUtils.toFile("config/harm.list", listOfAddrs);
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -43,20 +41,24 @@ public class NetDiscovery implements Runnable{
      * broadcasts a UDP packet over a LAN network
      * @return list of address of the modules that repllied
      */
-    public static HashMap<Integer, InetAddress> broadcast(MessageType request,String target) throws IOException {
+    public HashMap<Integer, InetAddress> broadcast(MessageType request,String target) throws IOException {
         // To broadcast change this to 255.255.255.255
         InetAddress address = InetAddress.getByName("192.168.1.255");       // broadcast address
         //we want a map of MAC -> ip
         HashMap<Integer, InetAddress> stalkerMap = new HashMap<>();
-        socket = new DatagramSocket();                                  // socket to broadcast request
-        DatagramSocket receiverSocket = new DatagramSocket(JCPPORT);    // socket to receive replys
+        socket = new DatagramSocket();
+        //the ports must be specific to target/origin
+        int[] ports = NetworkUtils.getPortTargets(origin, target);
+
+        // socket to broadcast request
+        DatagramSocket receiverSocket = new DatagramSocket(ports[0]);    // socket to receive replys
 
         // create a discover request packet and broadcast it
         UDPPacket discovery = new UDPPacket(request, String.valueOf(NetworkUtils.getMacID()), target, NetworkUtils.getIP());
         ObjectMapper mapper = new ObjectMapper();
         System.out.println("Sending out broadcast with signature: " + mapper.writeValueAsString(discovery) + "\n");
         byte[] req = mapper.writeValueAsString(discovery).getBytes();
-        DatagramPacket packet = new DatagramPacket(req, req.length, address, STALKERPORT);
+        DatagramPacket packet = new DatagramPacket(req, req.length, address, ports[1]);
         socket.send(packet);
 
         // waits for 5 sec to get response from the LAN
@@ -86,6 +88,4 @@ public class NetDiscovery implements Runnable{
         socket.close();
         return stalkerMap;
     }
-
-
 }
