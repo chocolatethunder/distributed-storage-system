@@ -13,21 +13,17 @@ public class App {
 
     public static void main(String[] args) {
 
-        DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
+        DiscoveryManager DM = new DiscoveryManager(Module.STALKER, 35);
         int macID = NetworkUtils.getMacID();
-        //System.out.println("" + macID);
-
         CommsHandler commLink = new CommsHandler();
         //initialize socket and input stream
-        Socket socket = null;
-        ServerSocket server = null;
+        Socket STALKER_Client = null;
+        ServerSocket HARM_server = null;
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            //initializing harm server  // add a modifier from the args
-            //currently only supports modifiers 0 - 4 SOOOOORRy
-            //in the future the port will stay constant and IP will change
-            server = new ServerSocket(22222);
+            //initializing harm server
+            HARM_server = new ServerSocket(22222);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -37,14 +33,15 @@ public class App {
         // will keep on listening for requests from STALKERs
         while (true) {
             try {
-                socket = server.accept();
-                System.out.println("Accepted connection : " + socket);
-                //get packet from the link
-                TcpPacket packet = commLink.receivePacket(socket);
-                System.out.println(socket.isClosed());
-                Handler h = new Handler(socket, packet, macID);
+                STALKER_Client = HARM_server.accept();
+                System.out.println("Accepted connection : " + STALKER_Client);
+                //get packet from the link and handle it
+                TcpPacket STALKER_Request = commLink.receivePacket(STALKER_Client);
+                Handler h = new Handler(STALKER_Client, STALKER_Request, macID);
                 h.run();
+
                 // creating a runnable task for each request from the same socket connection
+                //probably not even necessary
                 //not working right now
                 //executorService.execute();
 
@@ -55,6 +52,7 @@ public class App {
             } finally {
                 try {
                     // waiting until all thread tasks are done before closing the resources
+
                     awaitTerminationAfterShutdown(executorService);
                 } catch (Exception i) {
                     i.printStackTrace();

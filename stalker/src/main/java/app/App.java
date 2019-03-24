@@ -39,7 +39,8 @@ public class App {
         }
         switch (role){
             case 0:
-                //create a priority comparator for the queue
+                //This means that this STK is the leader
+                //create a priority comparator for the Priority queue
                 Comparator<QueueEntry> entryPriorityComparator = new Comparator<QueueEntry>() {
                     @Override
                     public int compare(QueueEntry q1, QueueEntry q2) {
@@ -47,6 +48,7 @@ public class App {
                     }
                 };
                 PriorityQueue<QueueEntry> syncQueue = new PriorityQueue<>(entryPriorityComparator);
+
                 StalkerRequestHandler stalkerCoordinator = new StalkerRequestHandler(syncQueue);
                 RequestAdministrator reqAdmin = new RequestAdministrator(syncQueue);
                 stalkerCoordinator.run();
@@ -65,6 +67,7 @@ public class App {
         return(1);
     }
 
+    //cleans chunk folders on startup
     public static void initStalker(){
         //clear chunk folder
         File chunk_folder = new File("temp/chunks/");

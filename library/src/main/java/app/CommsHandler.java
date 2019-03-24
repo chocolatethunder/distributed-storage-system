@@ -75,7 +75,8 @@ public class CommsHandler {
     public boolean sendRequestToLeader(MessageType m){
         try{
             //connect to leader and send request
-            Socket leader = NetworkUtils.createConnection("192.168.1.123", 11112);
+            //currently hard coded
+            Socket leader = NetworkUtils.createConnection("192.168.1.121", 11112);
             if (!(sendPacket(leader, m, "") == MessageType.ACK)){
                 return false;
             }

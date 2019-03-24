@@ -5,8 +5,11 @@ import app.chunk_utils.FileChunker;
 import app.chunk_utils.IndexEntry;
 import app.chunk_utils.IndexFile;
 import app.chunk_utils.Indexer;
+
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.ServerSocket;
+import java.util.HashMap;
 import java.util.List;
 import java.io.*;
 import java.net.Socket;
@@ -91,9 +94,6 @@ public class UploadServiceHandler implements Runnable {
             catch(IOException e){
 
             }
-
-
-
         }
         catch(RuntimeException e){
             try{
@@ -140,7 +140,7 @@ public class UploadServiceHandler implements Runnable {
     }
 
     public IndexEntry distributeToHarm(){
-        List<String> harm_list = getHarms();
+        List<String> harm_list = getHarms(0);
         FileChunker f = new FileChunker(chunk_dir);
         ChunkDistributor cd = new ChunkDistributor(chunk_dir, harm_list);
         ///////////////////////chunk file and get the index entry object
@@ -171,12 +171,22 @@ public class UploadServiceHandler implements Runnable {
     }
 
 
-
+    //temp hard code function
     public List<String>getHarms(){
         List<String> temp = new ArrayList<String>();
         temp.add("192.168.1.131");
         temp.add("192.168.1.107");
         temp.add("192.168.1.146");
+        return temp;
+    }
+
+    //temp hard code function
+    public List<String>getHarms(int i){
+        List<String> temp = new ArrayList<String>();
+        HashMap<Integer, InetAddress> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
+        for (Integer key : m.keySet()) {
+            temp.add(m.get(key).getHostAddress());
+        }
         return temp;
     }
 
