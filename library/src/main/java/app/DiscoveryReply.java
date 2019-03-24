@@ -82,7 +82,7 @@ public class DiscoveryReply implements Runnable {
                         m = MessageType.ERROR;
                         break;
                 }
-                reply = new UDPPacket(m, module.name(),String.valueOf(NetworkUtils.getMacID()), NetworkUtils.getIP());
+                reply = new UDPPacket(m, String.valueOf(NetworkUtils.getMacID()), module.name(), NetworkUtils.getIP());
                 byte[] req = new byte[0];
                 try {
                     req = mapper.writeValueAsString(reply).getBytes();
@@ -95,7 +95,6 @@ public class DiscoveryReply implements Runnable {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
 
         }
