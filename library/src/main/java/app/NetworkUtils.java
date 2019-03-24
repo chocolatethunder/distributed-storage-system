@@ -205,7 +205,7 @@ public class NetworkUtils {
                 while (i.hasMoreElements()){
                     InetAddress n = i.nextElement();
                     System.out.println("IP:   " + n.getHostAddress());
-                    if(!n.getHostAddress().startsWith("192"))
+                    if(n.getHostAddress().startsWith("192"))
                     {
                         myIP = n.getHostAddress();
                         found = true;
