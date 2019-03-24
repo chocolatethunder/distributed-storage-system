@@ -16,12 +16,21 @@ public class App {
 
     public static void main(String[] args) {
 
+        //First thing to do is locate all other stalkers and print the stalkers to file
+
+        Thread listener;
         try {
-            Thread listener = new Thread(new DiscoveryReply(Module.STALKER,20));
+            listener = new Thread(new DiscoveryReply(Module.STALKER,20));
             listener.start();
+
+
+            listener.join();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+
         int test = 0;
         initStalker();
         IndexFile ind = Indexer.loadFromFile();

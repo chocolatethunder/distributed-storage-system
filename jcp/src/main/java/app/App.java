@@ -6,27 +6,34 @@ package app;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 public class App {
     //jcp main
     public static void main(String[] args) {
-
+        int test  = 0;
+        Thread broadcaster;
         try {
-            Thread broadcaster = new Thread(new NetDiscovery(Module.STALKER,Module.STALKER,20));
+            broadcaster = new Thread(new NetDiscovery(Module.STALKER,Module.STALKER,20));
             broadcaster.start();
+            broadcaster.join();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        HashMap<Integer, InetAddress> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
 
         /*
         This is the main point of entry for JCP request
         The object is a singleton and will persist through the life of JCP
          */
-
+        if (test == 0){
+            return;
+        }
         String config_file = "config/stalkers.list";
         List<String> s_list = NetworkUtils.listFromJson(NetworkUtils.fileToString(config_file));
 
@@ -52,9 +59,6 @@ public class App {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
     }
 
 

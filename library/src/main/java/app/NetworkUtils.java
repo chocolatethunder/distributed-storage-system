@@ -64,14 +64,14 @@ public class NetworkUtils {
     }
 
     //load a config (stalker ip) from file while we get network discovery working
-    public static Map<String, String> mapFromJson(String s){
+    public static HashMap<Integer, InetAddress> mapFromJson(String s){
         ObjectMapper mapper = new ObjectMapper();
 
         //Optional<List<String>> list = Optional.empty();
-        Map<String, String> list = new HashMap<>();
+        HashMap<Integer, InetAddress> list = new HashMap<>();
         try {
 
-            TypeReference<HashMap<String,Object>> typeRef = new TypeReference<HashMap<String,Object>>() {};
+            TypeReference<HashMap<Integer,Object>> typeRef = new TypeReference<HashMap<Integer,Object>>() {};
             list = mapper.readValue(s, typeRef);
         }
         catch (IOException e){
