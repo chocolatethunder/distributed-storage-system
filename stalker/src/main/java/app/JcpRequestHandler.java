@@ -27,9 +27,9 @@ public class JcpRequestHandler implements Runnable {
      */
     @Override
     public void run() {
+
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
-
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
@@ -38,13 +38,13 @@ public class JcpRequestHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("Waiting...");
+        System.out.println(NetworkUtils.timeStamp(1) + "Waiting...");
         // will keep on listening for requests
         while (running) {
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();
-                System.out.println("Accepted connection : " + client);
+                System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + client);
                 // receive packet on the socket link
                 TcpPacket req = commLink.receivePacket(client);
 

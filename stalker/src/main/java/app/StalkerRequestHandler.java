@@ -36,12 +36,13 @@ public class StalkerRequestHandler implements Runnable {
             e.printStackTrace();
             return;
         }
+        System.out.println(NetworkUtils.timeStamp(1) + "Leader is now taking requests...");
         while(running){
             try{
                 client = server.accept();
-                System.out.println("Accepted connection : " + client);
                 // receive packet on the socket link
                 TcpPacket req = commLink.receivePacket(client);
+                System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + client + ", Request type: " + req.getMessageType().name() + ".");
                 //Acknowlegde that the request has been recieved and that
                 //the socket can be closed client side
                 commLink.sendPacket(client, MessageType.ACK, "");

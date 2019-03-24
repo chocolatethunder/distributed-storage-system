@@ -26,17 +26,13 @@ public class App {
         initStalker();
         IndexFile ind = Indexer.loadFromFile();
         //ind.summary();
-        System.out.println("Stalker Online");
-
+        System.out.println(NetworkUtils.timeStamp(1) + "Stalker Online");
         //testing
         Tester tester = new Tester();
         tester.test();
         //networkDiscovery
         int role = getRole();
 
-        if (test == 0){
-            return;
-        }
         switch (role){
             case 0:
                 //This means that this STK is the leader

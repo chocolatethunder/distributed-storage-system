@@ -6,18 +6,19 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Optional;
 import java.util.List;
-import java.util.Map;
 import java.util.HashMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  *
@@ -50,6 +51,25 @@ public class NetworkUtils {
             ports = new int[]{0,0};
         }
         return ports;
+    }
+
+    public static String timeStamp(int option){
+        Calendar cal = Calendar.getInstance();
+        Date date=cal.getTime();
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        String formattedDate = dateFormat.format(date);
+        switch (option){
+            case 0:
+                formattedDate =  "---__--__--__--__--> " + formattedDate;
+                break;
+            case 1:
+                formattedDate =  formattedDate + " ---------------->>>";
+                break;
+            default:
+                break;
+        }
+
+        return formattedDate;
     }
 
     public static Socket createConnection(String host, int port) throws IOException {

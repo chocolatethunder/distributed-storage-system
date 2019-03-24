@@ -47,7 +47,7 @@ public class UploadServiceHandler implements Runnable {
             //going to need IP of leader
             if(!commsLink.sendRequestToLeader(MessageType.UPLOAD)){
                 commsLink.sendResponse(socket, MessageType.ERROR);
-                throw new RuntimeException("Could not connect to leader.");
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Could not connect to leader.");
             }
 //          2. Wait for Leader to grant job permission
 ///------------------------------------------------------------
@@ -60,10 +60,10 @@ public class UploadServiceHandler implements Runnable {
             }
             catch (IOException e){
                 e.printStackTrace();
-                throw new RuntimeException("Could not use server port");
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Could not use server port");
             }
             if (!(req.getMessageType() == MessageType.START)){
-                throw new RuntimeException("Request denied by leader.");
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Request denied by leader.");
             }
 ///------------------------------------------------------------
 
@@ -71,13 +71,13 @@ public class UploadServiceHandler implements Runnable {
 ///------------------------------------------------------------
             commsLink.sendResponse(socket, MessageType.ACK);
             if (!getFileFromJCP()){
-                throw new RuntimeException("Error when getting file from JCP.");
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error when getting file from JCP.");
             }
 ///------------------------------------------------------------
 //          4. distribute to harm targets
             IndexEntry update = distributeToHarm();
             if(update == null){
-                throw new RuntimeException("Error when Distributing to Harm Target.");
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error when Distributing to Harm Target.");
             }
 ///------------------------------------------------------------
 //          5. Send done status to leader

@@ -36,8 +36,6 @@ public class QueueHandler implements  Runnable {
                 break;
         }
     }
-
-
     public boolean processJob(){
         CommsHandler commLink = new CommsHandler();
         Socket worker;

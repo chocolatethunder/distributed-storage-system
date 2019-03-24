@@ -27,7 +27,7 @@ public class CommsHandler {
             try {
                 // receiving packet back from STALKER
                 String received = in.readUTF();
-                System.out.println("rec " + received);
+                System.out.println(NetworkUtils.timeStamp(1) + "rec " + received);
                 receivedPacket = mapper.readValue(received, TcpPacket.class);
                 response = receivedPacket.getMessageType();
             } catch (EOFException e) {

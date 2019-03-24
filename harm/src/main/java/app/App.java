@@ -28,13 +28,13 @@ public class App {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("Waiting...");
+        System.out.println(NetworkUtils.timeStamp(1) + "Waiting...");
 
         // will keep on listening for requests from STALKERs
         while (true) {
             try {
                 STALKER_Client = HARM_server.accept();
-                System.out.println("Accepted connection : " + STALKER_Client);
+                System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + STALKER_Client);
                 //get packet from the link and handle it
                 TcpPacket STALKER_Request = commLink.receivePacket(STALKER_Client);
                 Handler h = new Handler(STALKER_Client, STALKER_Request, macID);
