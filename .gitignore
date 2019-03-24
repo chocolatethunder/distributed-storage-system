@@ -11,3 +11,4 @@ build
 *.xml
 .idea/workspace.xml
 local.properties
+.list
