@@ -186,10 +186,29 @@ public class NetworkUtils {
     public static String getIP() {
         InetAddress inetAddress;
         String myIP = null;
+
+
+
+
         try {
             inetAddress = InetAddress.getLocalHost();
             myIP = inetAddress.getHostAddress();
-        } catch (UnknownHostException e) {
+
+            InetAddress ip = InetAddress.getLocalHost();
+            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+            Enumeration<InetAddress> e = network.getInetAddresses();
+            while (e.hasMoreElements())
+            {
+                InetAddress next = e.nextElement();
+                if(!next.getHostAddress().startsWith("127"))
+                {
+                    myIP = next.getHostAddress();
+                    break;
+                }
+            }
+
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return myIP;
