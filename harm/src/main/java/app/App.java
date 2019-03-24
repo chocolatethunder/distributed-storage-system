@@ -14,6 +14,8 @@ public class App {
     public static void main(String[] args) {
 
         DiscoveryManager DM = new DiscoveryManager(Module.HARM, 35);
+        DM.start();
+
         int macID = NetworkUtils.getMacID();
         CommsHandler commLink = new CommsHandler();
         //initialize socket and input stream
