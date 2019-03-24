@@ -1,12 +1,12 @@
 package app;
 
-public class DiscoverPkt {
+public class UDPPacket {
     private String type;
     private String sender;
     private String target;
     private String address;
 
-    public DiscoverPkt(MessageType requestType, String sender,String target, String address){
+    public UDPPacket(MessageType requestType, String sender, String target, String address){
 
         this.type = requestType.name();
         this.sender = sender;

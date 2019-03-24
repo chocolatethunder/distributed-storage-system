@@ -26,7 +26,6 @@ public class DiscoveryReply implements Runnable {
         }
     }
 
-
     @Override
     public void run() {
         // runs for 15 sec for a udp broadcast
@@ -46,7 +45,7 @@ public class DiscoveryReply implements Runnable {
 
             // parse the packet
             String received = new String(packet.getData(), 0, packet.getLength());
-            System.out.println(received);
+            System.out.println("A discovery probe was received: " + received);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode request = null;
             String req_type = null;
@@ -64,19 +63,28 @@ public class DiscoveryReply implements Runnable {
                 e.printStackTrace();
             }
 
-            // request by JCP discovery
+            // Make sure the broadcast is targeting this module
             if(req_target.equals(module.name()))
             {
                 // get Info about the packet
                 InetAddress address = packet.getAddress();
 
                 // make the response JSON
-                DiscoverReplyPkt reply = null;
-                try {
-                    reply = new DiscoverReplyPkt("Discover_Reply", module.name(),String.valueOf(NetworkUtils.getMacID()), InetAddress.getByName(NetworkUtils.getIP()));
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
+                UDPPacket reply = null;
+                //we must designate what type of device is responding to the message
+                MessageType m;
+                switch(module){
+                    case HARM:
+                        m = MessageType.DISC_HARM_R;
+                        break;
+                    case STALKER:
+                        m = MessageType.DISC_STK_R;
+                        break;
+                    default:
+                        m = MessageType.ERROR;
+                        break;
                 }
+                reply = new UDPPacket(m, module.name(),String.valueOf(NetworkUtils.getMacID()), NetworkUtils.getIP());
                 byte[] req = new byte[0];
                 try {
                     req = mapper.writeValueAsString(reply).getBytes();

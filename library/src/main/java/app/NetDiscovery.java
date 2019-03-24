@@ -2,10 +2,7 @@ package app;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
-import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +42,7 @@ public class NetDiscovery implements Runnable{
      */
     public static HashMap<Integer, InetAddress> broadcast(MessageType request, String sender,String target) throws IOException {
         // To broadcast change this to 255.255.255.255
-        InetAddress address = InetAddress.getByName("127.0.0.1");       // broadcast address
+        InetAddress address = InetAddress.getByName("192.168.1.255");       // broadcast address
 
         //ArrayList<InetAddress> listOfAddrs = new ArrayList<>();        // list of the ip of the modules that replied
         //we want a map of MAC -> ip
@@ -56,7 +53,7 @@ public class NetDiscovery implements Runnable{
 
 
         // create a discover request packet and broadcast it
-        DiscoverPkt discovery = new DiscoverPkt(request, sender,target, NetworkUtils.getIP());
+        UDPPacket discovery = new UDPPacket(request, sender,target, NetworkUtils.getIP());
         ObjectMapper mapper = new ObjectMapper();
         System.out.println(mapper.writeValueAsString(discovery));
         byte[] req = mapper.writeValueAsString(discovery).getBytes();
@@ -85,9 +82,11 @@ public class NetDiscovery implements Runnable{
             JsonNode discoverReply = mapper.readTree(received);
             String module = discoverReply.get("sender").textValue();
             String uuid = discoverReply.get("uuid").textValue();
+            System.out.println(uuid);
             InetAddress replyAddress =  InetAddress.getByName(discoverReply.get("address").textValue());
             stalkerMap.put(Integer.valueOf(uuid), replyAddress);
         }
+        System.out.println("Discovery complete.");
         socket.close();
         return stalkerMap;
     }

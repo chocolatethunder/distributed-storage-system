@@ -17,6 +17,9 @@ public enum MessageType {
         DONE,
         DISCOVER,
         START,
-        ERROR
+        ERROR,
+        DISC_HARM_R,
+        DISC_STK_R
+
 
 }

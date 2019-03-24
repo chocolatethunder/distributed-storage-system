@@ -6,9 +6,9 @@ public class DiscoverReplyPkt {
     private String type;
     private String sender;
     private String uuid;
-    private InetAddress address;
+    private String address;
 
-    public DiscoverReplyPkt(String type, String sender, String uuid, InetAddress address) {
+    public DiscoverReplyPkt(String type, String sender, String uuid, String address) {
         this.type    = type;
         this.address = address;
         this.sender  = sender;
@@ -39,11 +39,11 @@ public class DiscoverReplyPkt {
         this.uuid = uuid;
     }
 
-    public InetAddress getAddress() {
+    public String getAddress() {
         return address;
     }
 
-    public void setAddress(InetAddress address) {
+    public void setAddress(String address) {
         this.address = address;
     }
 }
