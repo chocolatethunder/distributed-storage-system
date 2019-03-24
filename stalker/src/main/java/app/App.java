@@ -18,11 +18,28 @@ public class App {
 
         //First thing to do is locate all other stalkers and print the stalkers to file
 
+
+        Thread stalkerFinder;
+        Thread harmFinder;
         Thread listener;
         try {
+            //listen for incoming requests first and foremost
             listener = new Thread(new DiscoveryReply(Module.STALKER,20));
             listener.start();
+            //time out for a bit before sending out your own requests
+            try {
+                System.out.println("Waiting before sending out broadcast...");
+                Thread.sleep(5000);
+            }
+            catch(InterruptedException e){
+                e.printStackTrace();
+            }
+            stalkerFinder = new Thread(new NetDiscovery(Module.STALKER,20));
+            harmFinder = new Thread(new NetDiscovery(Module.HARM,20));
 
+            harmFinder.start();
+            stalkerFinder.start();
+            stalkerFinder.join();
             listener.join();
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,7 +81,6 @@ public class App {
             case 2:
                 break;
         }
-
     }
 
     public static int getRole(){

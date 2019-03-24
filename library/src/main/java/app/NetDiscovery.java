@@ -26,7 +26,13 @@ public class NetDiscovery implements Runnable{
         HashMap<Integer,InetAddress> listOfAddrs =  null;
         try {
             listOfAddrs = broadcast(MessageType.DISCOVER,target);
-            NetworkUtils.toFile("config/stalkers.list", listOfAddrs);
+            if (target == Module.STALKER.name()){
+                NetworkUtils.toFile("config/stalkers.list", listOfAddrs);
+            }
+            else{
+                NetworkUtils.toFile("config/harm.list", listOfAddrs);
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }

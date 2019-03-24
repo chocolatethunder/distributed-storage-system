@@ -12,6 +12,17 @@ import java.util.concurrent.TimeUnit;
 public class App {
 
     public static void main(String[] args) {
+
+        Thread listener;
+        try{
+            //listen for incoming requests first and foremost
+            listener = new Thread(new DiscoveryReply(Module.STALKER,20));
+            listener.start();
+            listener.join();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
         int macID = NetworkUtils.getMacID();
         System.out.println("" + macID);
         CommsHandler commLink = new CommsHandler();
