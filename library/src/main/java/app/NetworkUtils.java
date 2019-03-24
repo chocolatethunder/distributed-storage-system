@@ -182,14 +182,10 @@ public class NetworkUtils {
         return serialRequest;
     }
 
-    // returns the IP of the System
+    // returns the IP of the System that can be used for internet packet transfer
     public static String getIP() {
         InetAddress inetAddress;
         String myIP = null;
-
-
-
-
         try {
             inetAddress = InetAddress.getLocalHost();
             myIP = inetAddress.getHostAddress();
@@ -204,7 +200,7 @@ public class NetworkUtils {
                 Enumeration<InetAddress> i = next.getInetAddresses();
                 while (i.hasMoreElements()){
                     InetAddress n = i.nextElement();
-                    System.out.println("IP:   " + n.getHostAddress());
+                    //System.out.println("IP:   " + n.getHostAddress());
                     if(n.getHostAddress().startsWith("192"))
                     {
                         myIP = n.getHostAddress();

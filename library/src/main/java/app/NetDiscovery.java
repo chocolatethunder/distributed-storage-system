@@ -48,7 +48,7 @@ public class NetDiscovery implements Runnable{
         // create a discover request packet and broadcast it
         UDPPacket discovery = new UDPPacket(request, String.valueOf(NetworkUtils.getMacID()), target, NetworkUtils.getIP());
         ObjectMapper mapper = new ObjectMapper();
-        System.out.println(mapper.writeValueAsString(discovery));
+        System.out.println("Sending out broadcast with signature: " + mapper.writeValueAsString(discovery) + "\n");
         byte[] req = mapper.writeValueAsString(discovery).getBytes();
         DatagramPacket packet = new DatagramPacket(req, req.length, address, STALKERPORT);
         socket.send(packet);
