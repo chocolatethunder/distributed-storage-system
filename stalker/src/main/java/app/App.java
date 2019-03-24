@@ -26,7 +26,7 @@ public class App {
         try {
             //listen for incoming requests first and foremost
             JCPlistener = new Thread(new DiscoveryReply(Module.STALKER, Module.JCP,20));
-            STALKERlistener = new Thread(new DiscoveryReply(Module.STALKER, Module.JCP,20));
+            STALKERlistener = new Thread(new DiscoveryReply(Module.STALKER, Module.STALKER,20));
             JCPlistener.start();
             STALKERlistener.start();
             //time out for a bit before sending out your own requests
