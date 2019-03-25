@@ -49,6 +49,7 @@ public class UploadServiceHandler implements Runnable {
                 commsLink.sendResponse(socket, MessageType.ERROR);
                 throw new RuntimeException(NetworkUtils.timeStamp(1) + "Could not connect to leader.");
             }
+            System.out.println("Request sent to leader");
 //          2. Wait for Leader to grant job permission
 ///------------------------------------------------------------
             TcpPacket req;
@@ -57,6 +58,7 @@ public class UploadServiceHandler implements Runnable {
                 listener = new ServerSocket(server_port);
                 leader = listener.accept();
                 req = commsLink.receivePacket(leader);
+                System.out.println("Permission from leader granted");
             }
             catch (IOException e){
                 e.printStackTrace();
@@ -183,9 +185,9 @@ public class UploadServiceHandler implements Runnable {
     //temp hard code function
     public List<String>getHarms(int i){
         List<String> temp = new ArrayList<String>();
-        HashMap<Integer, InetAddress> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
+        HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
         for (Integer key : m.keySet()) {
-            temp.add(m.get(key).getHostAddress());
+            temp.add(m.get(key));
         }
         return temp;
     }

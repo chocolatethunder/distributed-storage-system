@@ -17,24 +17,31 @@ public class App {
     //jcp main
     public static void main(String[] args) {
         int test  = 0;
+
+
         System.out.println(NetworkUtils.timeStamp(1) + "JCP online");
         //make a discoverymanager and start it, prints results to file
         DiscoveryManager DM = new DiscoveryManager(Module.JCP);
         DM.start();
 
         //get the stalkers from file
-        HashMap<Integer, InetAddress> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
+        HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
+        //get sorted list from targets
+        List<Integer> s_list = NetworkUtils.mapToSList(m);
 
-        /*
-        This is the main point of entry for JCP request
-        The object is a singleton and will persist through the life of JCP
-         */
-        String config_file = "config/stalkers.list";
-        List<String> s_list = NetworkUtils.listFromJson(NetworkUtils.fileToString(config_file));
+        System.out.println(" Ip ids" + (s_list));
+//        if (test == 0){
+//            return;
+//        }
+        for (Integer key : m.keySet()){
 
+        }
         RequestSender requestSender = RequestSender.getInstance();
-        //ip of stalker
-        String stalkerip = s_list.get(0);
+        //ip of stalker we'll just use the one at index 0 for now
+        String i =  m.get(s_list.get(0));
+        System.out.println(" dwdwdwdwddwwd" + i.toString());
+        String stalkerip =  m.get(s_list.get(1));
+
         //port to connect to
         int port = 11111;
         Socket socket = requestSender.connect(stalkerip, port);

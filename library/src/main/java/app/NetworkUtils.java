@@ -9,16 +9,12 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Enumeration;
-import java.util.Optional;
-import java.util.List;
-import java.util.HashMap;
+import java.util.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  *
@@ -53,6 +49,13 @@ public class NetworkUtils {
         return ports;
     }
 
+    public static List<Integer> mapToSList(HashMap<Integer, String> map){
+        List<Integer> ids = new ArrayList<>( map.keySet());
+        Collections.sort(ids);
+        return(ids);
+    }
+
+    //add a timestamp to a message
     public static String timeStamp(int option){
         Calendar cal = Calendar.getInstance();
         Date date=cal.getTime();
@@ -72,6 +75,9 @@ public class NetworkUtils {
         return formattedDate;
     }
 
+    //important for making new connections on a port
+    //////////////////////////////////////////
+    ////////////////////////////////////////
     public static Socket createConnection(String host, int port) throws IOException {
         Socket socket = null;
 
@@ -112,11 +118,11 @@ public class NetworkUtils {
     }
 
     //load a config (stalker ip) from file while we get network discovery working
-    public static HashMap<Integer, InetAddress> mapFromJson(String s){
+    public static HashMap<Integer, String> mapFromJson(String s){
         ObjectMapper mapper = new ObjectMapper();
 
         //Optional<List<String>> list = Optional.empty();
-        HashMap<Integer, InetAddress> list = new HashMap<>();
+        HashMap<Integer, String> list = new HashMap<>();
         try {
 
             TypeReference<HashMap<Integer,Object>> typeRef = new TypeReference<HashMap<Integer,Object>>() {};

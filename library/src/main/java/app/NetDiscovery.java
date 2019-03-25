@@ -22,7 +22,7 @@ public class NetDiscovery implements Runnable{
 
     @Override
     public void run() {
-        HashMap<Integer,InetAddress> listOfAddrs =  null;
+        HashMap<Integer,String> listOfAddrs =  null;
         try {
             listOfAddrs = broadcast(MessageType.DISCOVER,target);
             if (target == Module.STALKER.name()){
@@ -41,11 +41,11 @@ public class NetDiscovery implements Runnable{
      * broadcasts a UDP packet over a LAN network
      * @return list of address of the modules that repllied
      */
-    public HashMap<Integer, InetAddress> broadcast(MessageType request,String target) throws IOException {
+    public HashMap<Integer, String> broadcast(MessageType request,String target) throws IOException {
         // To broadcast change this to 255.255.255.255
         InetAddress address = InetAddress.getByName("192.168.1.255");       // broadcast address
         //we want a map of MAC -> ip
-        HashMap<Integer, InetAddress> stalkerMap = new HashMap<>();
+        HashMap<Integer, String> stalkerMap = new HashMap<>();
         socket = new DatagramSocket();
         //the ports must be specific to target/origin
         int[] ports = NetworkUtils.getPortTargets(origin, target);
@@ -84,7 +84,7 @@ public class NetDiscovery implements Runnable{
             JsonNode discoverReply = mapper.readTree(received);
             String uuid = discoverReply.get("uuid").textValue();
             InetAddress replyAddress =  InetAddress.getByName(discoverReply.get("address").textValue());
-            stalkerMap.put(Integer.valueOf(uuid), replyAddress);
+            stalkerMap.put(Integer.valueOf(uuid), replyAddress.getHostAddress());
         }
         System.out.println("Discovery complete.");
         socket.close();
