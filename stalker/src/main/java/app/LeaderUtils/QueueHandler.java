@@ -11,8 +11,8 @@ import java.util.PriorityQueue;
 
 public class QueueHandler implements  Runnable {
 
-    private static Object lock1 = new Object();
-    private static Object lock2 = new Object();
+    private static final Object lock1 = new Object();
+    private static final Object lock2 = new Object();
 
     private int mode;
     private QueueEntry q;
@@ -28,9 +28,7 @@ public class QueueHandler implements  Runnable {
         System.out.println("inside function");
         switch(mode){
             case 0:
-                System.out.println(NetworkUtils.timeStamp(1) + "Queuing job.");
                 queueJob();
-                System.out.println("Job Queued");
                 break;
             case 1:
                 getJob();
@@ -66,10 +64,11 @@ public class QueueHandler implements  Runnable {
     }
     //put an entry into the queue
     public void queueJob(){
+        System.out.println(NetworkUtils.timeStamp(1) + "Queuing job.");
         synchronized(lock1){
             pQueue.add(q);
+            System.out.println(NetworkUtils.timeStamp(1) + "Job Queued");
         }
-
     }
     //remove entry from queue
     public void getJob(){
