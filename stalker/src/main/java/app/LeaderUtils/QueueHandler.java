@@ -41,7 +41,7 @@ public class QueueHandler implements  Runnable {
         CommsHandler commLink = new CommsHandler();
         Socket worker;
         try{
-            System.out.println("Processing job...");
+            System.out.println(NetworkUtils.timeStamp(1) + " Processing job...");
             worker = NetworkUtils.createConnection(q.getInetAddr().getHostAddress(), 11113);
             //connect and grant permission to edit file
             commLink.sendPacket(worker, MessageType.START, "");

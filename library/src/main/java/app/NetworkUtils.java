@@ -66,7 +66,7 @@ public class NetworkUtils {
                 formattedDate =  "---__--__--__--__--> " + formattedDate;
                 break;
             case 1:
-                formattedDate =  formattedDate + " ---------------->>>";
+                formattedDate =  formattedDate + " ---------------->>>: ";
                 break;
             default:
                 break;

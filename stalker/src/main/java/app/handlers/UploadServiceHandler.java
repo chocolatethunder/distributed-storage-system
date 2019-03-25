@@ -57,8 +57,9 @@ public class UploadServiceHandler implements Runnable {
             try{
                 listener = new ServerSocket(server_port);
                 leader = listener.accept();
+                System.out.println(NetworkUtils.timeStamp(1) + "Connected to leader: ");
                 req = commsLink.receivePacket(leader);
-                System.out.println("Permission from leader granted");
+                System.out.println(NetworkUtils.timeStamp(1) + "Permission from leader granted");
             }
             catch (IOException e){
                 e.printStackTrace();
