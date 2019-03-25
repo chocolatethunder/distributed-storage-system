@@ -11,6 +11,9 @@ import java.util.PriorityQueue;
 
 public class QueueHandler implements  Runnable {
 
+    private static Object lock1 = new Object();
+    private static Object lock2 = new Object();
+
     private int mode;
     private QueueEntry q;
     private PriorityQueue<QueueEntry> pQueue;
@@ -62,12 +65,18 @@ public class QueueHandler implements  Runnable {
         return true;
     }
     //put an entry into the queue
-    public synchronized void queueJob(){
-        pQueue.add(q);
+    public void queueJob(){
+        synchronized(lock1){
+            pQueue.add(q);
+        }
+
     }
     //remove entry from queue
-    public synchronized void getJob(){
-        q = pQueue.remove();
+    public void getJob(){
+        synchronized(lock1){
+            q = pQueue.remove();
+        }
+
     }
 
 }
