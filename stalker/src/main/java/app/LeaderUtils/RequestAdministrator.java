@@ -1,5 +1,7 @@
 package app.LeaderUtils;
 
+import app.NetworkUtils;
+
 import java.util.PriorityQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,7 +18,7 @@ public class RequestAdministrator implements Runnable {
 
     @Override
     public void run(){
-
+        System.out.println(NetworkUtils.timeStamp(1) + "Administrator online.");
         ExecutorService executorService = Executors.newFixedThreadPool(5);
         while (true){
 

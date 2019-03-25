@@ -22,9 +22,10 @@ public class QueueHandler implements  Runnable {
 
     @Override
     public void run(){
-
+        System.out.println("inside function");
         switch(mode){
             case 0:
+                System.out.println(NetworkUtils.timeStamp(1) + "Queuing job.");
                 queueJob();
                 System.out.println("Job Queued");
                 break;
