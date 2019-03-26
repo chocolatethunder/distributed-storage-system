@@ -15,7 +15,9 @@ public class RequestSender {
 
     Socket socket = null;
     DataOutputStream out = null;
-	String lastIPAccessed = "127.0.0.1";
+	String lastIPAccessed = "0.0.0.0"
+	//change this to a json file?
+	String stalkerListFile = "STALKERs.txt";
 
 
 
@@ -169,8 +171,6 @@ public class RequestSender {
 	}
 	
 	public String getNextIP() {
-		//change this to a json file?
-		String stalkerListFile = "STALKERs.txt";
 		List<String> stalkerList = new ArrayList<String>();
 		
 		try {
@@ -183,12 +183,18 @@ public class RequestSender {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		int lastIPIndex = stalkerList.indexOf(lastIPAccessed);
+		if (stalkerList.contains(lastIPAccessed)) {
+			int lastIPIndex = stalkerList.indexOf(lastIPAccessed);
+		} else {
+			lastIPIndex = -1;
+		}
 		int nextIPIndex = lastIPIndex + 1;
 		if (nextIPIndex >= stalkerList.size()) {
 			nextIPIndex = 0;
 		}
 		String nextIP = stalkerList.get(nextIPIndex);
+		lastIPAccessed = nextIP;
+		lastIPIndex = nextIPIndex;
 		return nextIP;
 	}
 
