@@ -12,10 +12,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import javax.swing.*;
+import javax.swing.filechooser.*;
 
 public class App {
     //jcp main
     public static void main(String[] args) {
+		String request = null;
+		if (args.length >= 1) {
+			request = args[0];
+		}
+		String filename = null;
+		if (args.length >= 2) {
+			filename = args[1];
+		}
+		
+		if (args[0].equals("help") {
+			System.out.println("Use the commands upload or download followed by the filename to upload or download a file.");
+		}
+		
         int test  = 0;
 
 
@@ -45,13 +60,23 @@ public class App {
         //port to connect to
         int port = 11111;
         Socket socket = requestSender.connect(stalkerip, port);
-        String req = "upload";
+        //String req = "upload";
+		String req = request;
+		String file = filename;
         switch (req){
             case("upload"):
-                requestSender.sendFile("temp\\003_txt_test.txt");
+                //requestSender.sendFile("temp\\003_txt_test.txt");
+				JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+				int returnValue = jfc.showOpenDialog(null);
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					File selectedFile = jfc.getSelectedFile();
+					requestSender.sendFile(selectedFile.getAbsolutePath());
+				}
+				//requestSender.sendFile(file);
                 break;
             case("download"):
-                requestSender.getFile("temp\\003_txt_test.txt");
+                //requestSender.getFile("temp\\003_txt_test.txt");
+				requestSender.getFile(file);
                 break;
         }
         // should close socket from main calling method, otherwise threads giving null pointer exception
