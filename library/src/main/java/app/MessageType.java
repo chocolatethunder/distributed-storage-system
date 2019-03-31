@@ -20,7 +20,8 @@ public enum MessageType {
         ERROR,
         DISC_HARM_R,
         DISC_STK_R,
-        HEALTH_CHECK
+        HEALTH_CHECK,
+        ELECTION
 
 
 }
