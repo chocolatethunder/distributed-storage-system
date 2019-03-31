@@ -29,43 +29,49 @@ public class App {
         System.out.println(NetworkUtils.timeStamp(1) + "Stalker Online");
         //testing
 
+        // initial health checks and leadership election
+
         //starting health check listener
         ListenerThread healthCheckHandler = new ListenerThread();
         healthCheckHandler.run();
 
+        // call the leader election and wait until done
+        Election electionThread = new Election();
+        electionThread.holdElection();
 
-        //election based on networkDiscovery
-        int role = getRole();
+        while (true) {
 
-        switch (role){
-            case 0:
-                //This means that this STK is the leader
-                //create a priority comparator for the Priority queue
-                Comparator<QueueEntry> entryPriorityComparator = new Comparator<QueueEntry>() {
-                    @Override
-                    public int compare(QueueEntry q1, QueueEntry q2) {
-                        return q1.getPriority() - q2.getPriority();
-                    }
-                };
-                PriorityQueue<QueueEntry> syncQueue = new PriorityQueue<>(entryPriorityComparator);
+            int role = Election.getRole();
 
-                StalkerRequestHandler stalkerCoordinator = new StalkerRequestHandler(syncQueue);
-                RequestAdministrator reqAdmin = new RequestAdministrator(syncQueue);
-                stalkerCoordinator.run();
-                reqAdmin.run();
-                break;
-            case 1:
-                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
-                jcpRequestHandler.run();
-                break;
-            case 2:
-                break;
+            switch (role) {
+                case 0:
+                    //This means that this STK is the leader
+                    //create a priority comparator for the Priority queue
+                    Comparator<QueueEntry> entryPriorityComparator = new Comparator<QueueEntry>() {
+                        @Override
+                        public int compare(QueueEntry q1, QueueEntry q2) {
+                            return q1.getPriority() - q2.getPriority();
+                        }
+                    };
+                    PriorityQueue<QueueEntry> syncQueue = new PriorityQueue<>(entryPriorityComparator);
+
+                    StalkerRequestHandler stalkerCoordinator = new StalkerRequestHandler(syncQueue);
+                    RequestAdministrator reqAdmin = new RequestAdministrator(syncQueue);
+                    stalkerCoordinator.run();
+                    reqAdmin.run();
+                    break;
+                case 1:
+                    JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
+                    jcpRequestHandler.run();
+                    break;
+                case 2:
+                    break;
+            }
         }
+
     }
 
-    public static int getRole(){
-        return(1);
-    }
+
 
     //cleans chunk folders on startup
     public static void initStalker(){
