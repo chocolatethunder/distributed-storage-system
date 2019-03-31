@@ -98,17 +98,15 @@ public class Election implements Runnable {
 
         // broadcast this leader
         for(Map.Entry<Integer, String> entry : stalkerMap.entrySet()) {
-            entry.getValue(); // get the IP of the this UUID
-            entry.getKey();   // uuid;
+            // entry.getValue(); // get the IP of the this UUID
+            // entry.getKey();   // uuid;
 
-
-            int port = 1450;
+            int port = 11114;
             int timeoutForReply = 5;
 
             System.out.println("Election In Progress");
             Socket socket = null;
             try {
-
                 socket = NetworkUtils.createConnection(entry.getValue(), port);
                 //if server does not reply within 5 seconds, then SocketException will be thrown
                 socket.setSoTimeout(1000 * timeoutForReply);
