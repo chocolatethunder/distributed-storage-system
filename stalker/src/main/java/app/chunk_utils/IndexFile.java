@@ -6,8 +6,11 @@ import java.util.List;
 
 public class IndexFile {
     private Map<String,IndexEntry> entries;
+    //maps uuid to mac id list
+    private Map<String,List<String>> chunkIndex;
     public IndexFile(){
         entries = new HashMap<>();
+        chunkIndex = new HashMap<>();
     }
 
 
@@ -33,13 +36,16 @@ public class IndexFile {
     public void add(IndexEntry e){
         entries.put(e.fileName(), e);
     }
-
-
-
-    ////////////////////gettet/setter
+    public void indexChunks(IndexEntry e){
+        for (Chunk c : e.getChunkList()){
+            chunkIndex.put(c.getUuid(), c.getReplicas());
+        }
+    }
+    ////////////////////getter/setter
 
     public Map<String, IndexEntry> getEntries() {return entries; }
     public void setEntries(Map<String, IndexEntry> entries) { this.entries = entries; }
-
+    public Map<String, List<String>> getChunkIndex() { return chunkIndex; }
+    public void setChunkIndex(Map<String, List<String>> chunkIndex) { this.chunkIndex = chunkIndex; }
 
 }

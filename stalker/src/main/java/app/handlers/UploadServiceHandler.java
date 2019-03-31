@@ -82,6 +82,9 @@ public class UploadServiceHandler implements Runnable {
             if(update == null){
                 throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error when Distributing to Harm Target.");
             }
+            else {
+
+            }
 ///------------------------------------------------------------
 //          5. Send done status to leader
             commsLink.sendResponse(leader, MessageType.DONE);

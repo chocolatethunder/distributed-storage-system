@@ -4,12 +4,11 @@
 package app.chunk_utils;
 import java.io.*;
 import java.util.*;
-import org.apache.commons.io.FileUtils;
 import java.security.MessageDigest;
 
 public class Chunk {
     //private String chunkStatus;
-    private String hash;
+    private String uuid;
     //the index is stored for easy reassembly
     private int chunk_index;
     //holds the path to a chunk if it exists in local storage space, otherwise null
@@ -23,17 +22,11 @@ public class Chunk {
     public Chunk(){ }
 
     public Chunk(String c_path, int c_index, long c_size){
-        //temporary hash function for filenames
-        String toHash = c_path + Integer.toString(c_index);
-        try{
-            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-            messageDigest.update(toHash.getBytes());
-            hash = messageDigest.digest().toString();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        this.chunk_path = c_path + hash;
+        //temporary uuid function for filenames
+        //we will generate a UUID 
+        uuid = UUID.randomUUID().toString();
+
+        this.chunk_path = c_path + uuid;
         this.chunk_index = c_index;
         this.chunk_size = c_size;
         this.replicas = new ArrayList();
@@ -54,7 +47,7 @@ public class Chunk {
     @Override
     public String toString(){
         return("Chunk: " + Integer.toString(chunk_index) +", size: "
-                + Integer.toString((int)chunk_size) + "b, hash: " + hash
+                + Integer.toString((int)chunk_size) + "b, uuid: " + uuid
                 + ", Local Path: " + chunk_path);
     }
     public void printReplicas(){
@@ -68,8 +61,8 @@ public class Chunk {
 
 
     //////////////////////////////////-----------------------  Getter/Setters
-    public String getHash() { return hash; }
-    public void setHash(String hash) { this.hash = hash; }
+    public String getUuid() { return uuid; }
+    public void setUuid(String uuid) { this.uuid = uuid; }
     public int getChunk_index() { return chunk_index; }
     public void setChunk_index(int chunk_index) { this.chunk_index = chunk_index; }
     public String getChunk_path() { return chunk_path; }

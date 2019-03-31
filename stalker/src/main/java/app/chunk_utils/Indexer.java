@@ -101,6 +101,7 @@ public class Indexer {
     public static boolean addEntry(IndexFile ind, IndexEntry ent){
         //get consent then add
         ind.add(ent);
+        ind.indexChunks(ent);
         //-----------
         //update() file on disk
         return true;

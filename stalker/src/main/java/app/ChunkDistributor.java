@@ -79,7 +79,7 @@ public class ChunkDistributor {
                 //if everything went well then we can send the damn file
 
                 //send the packet to the harm target
-                if(commLink.sendPacket(harmServer, MessageType.UPLOAD, NetworkUtils.createSerializedRequest(c.getHash(), MessageType.UPLOAD)) == MessageType.ACK){
+                if(commLink.sendPacket(harmServer, MessageType.UPLOAD, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.UPLOAD)) == MessageType.ACK){
                     FileStreamer fileStreamer = new FileStreamer(harmServer);
                     fileStreamer.sendFileToSocket(c.getChunk_path());
                     harmServer.close();

@@ -48,14 +48,14 @@ public class ChunkRetriever {
                     System.out.println("SOCKET: " + Integer.valueOf(s));
                     int port = Integer.valueOf(s);
                     Socket harmServer = NetworkUtils.createConnection("127.0.0.1", port);
-                    //FileUtils.copyFile(new File(s),new File(chunkDir + c.getHash()));
-                    if(handShakeSuccess(MessageType.DOWNLOAD, c.getHash(), harmServer)){
+                    //FileUtils.copyFile(new File(s),new File(chunkDir + c.getUuid()));
+                    if(handShakeSuccess(MessageType.DOWNLOAD, c.getUuid(), harmServer)){
                         FileStreamer fileStreamer = new FileStreamer(harmServer);
-                        fileStreamer.receiveFileFromSocket(chunkDir + c.getHash());
+                        fileStreamer.receiveFileFromSocket(chunkDir + c.getUuid());
                         harmServer.close();
                         return true;
                     }
-                    c.setChunk_path(chunkDir + c.getHash());
+                    c.setChunk_path(chunkDir + c.getUuid());
                 }
                 catch(IOException e){
                     e.printStackTrace();
