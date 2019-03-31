@@ -4,151 +4,100 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.List;
+import org.apache.commons.io.*;
 
 /**
- *
+ *This is the singleton object that will do the round robin connection of
+ * STALKER unit and make requests to STALKER for download, upload, delete and filelist
  */
 public class RequestSender {
 
     Socket socket = null;
-    DataOutputStream out = null;
-
-
-
+    CommsHandler commLink;
+    /**
+     * Single Instance of RequestSender Holder
+     */
     private static class RequestSenderHolder{
 
         static final RequestSender requestSender = new RequestSender();
     }
-
     private RequestSender(){
-
-        try {
-
-            //TO:DO  need to implement the ROUND ROBIN logic to chose the STALKER to connect
-
-            socket = createConnection("127.0.0.1", 6553);
-        } catch (IOException e) {
-            //Could not connect , need another STALKER here
-        }
-
-
-
+        commLink = new CommsHandler();
     }
-
     public static RequestSender getInstance(){
         return  RequestSenderHolder.requestSender;
     }
 
-
-
-    public void sendFile(String fileName){
-
-        // TO:DO need logic to verify file size here
-
-        if(handShakeSuccess(RequestType.UPLOAD)) {
-            FileStreamer fileStreamer = new FileStreamer(socket);
-            fileStreamer.sendFile(fileName);
-
-        }else{
-            //need a way to connect to another STALKER
-            //DEBUG
-            System.out.println("SERVER BUSY");
-        }
-
-    }
-
-
-    public List<String> getFileList(){
-
-
-        if(handShakeSuccess(RequestType.LIST)) {
-
-
-
-        }
-
-        return null;
-
-    }
-
-
-    public void deleteFile(String fileName){
-
-        // TO:DO need logic to verify file size  here
-
-        if(handShakeSuccess(RequestType.DELETE)) {
-
-
-
-        }
-
-    }
-
-    public void getFile(String filePath){
-
-        // TO:DO need logic to verify file size  here
-
-        if(handShakeSuccess(RequestType.DOWNLOAD)) {
-
-            FileStreamer fileStreamer = new FileStreamer(socket);
-            fileStreamer.receiveFile(filePath);
-
-        }
-
-    }
-
-
-
-
-    private boolean handShakeSuccess(RequestType requestType){
-        TcpPacket receivedPacket = null;
+    /**
+     * This is the method that connects to a given host and port
+     *
+     */
+    public Socket connect(String host, int port){
         try {
 
-
-            out = new DataOutputStream(socket.getOutputStream());
-            DataInputStream  in = new DataInputStream((socket.getInputStream()));
-
-            TcpPacket initialPacket = new TcpPacket(requestType, "HELLO_INIT");
-
-            ObjectMapper mapper = new ObjectMapper();
-
-            //DEBUG : Object to JSON in file
-            //mapper.writeValue(new File("file.json"), initialPacket);
-
-            //Object to JSON in String
-            String jsonInString = mapper.writeValueAsString(initialPacket);
-            out.writeUTF(jsonInString);
-
-
-            try {
-
-                String received = in.readUTF();
-                System.out.println("rec " + received);
-                receivedPacket = mapper.readValue(received, TcpPacket.class);
-
-            } catch (EOFException e) {
-                // do nothing end of packet
+            //TO:DO modify this to connect to STALKER in a round robin fashion
+            this.socket = NetworkUtils.createConnection(host, port);
+        } catch (IOException e) {
+            //Could not connect , need another STALKER here
+        }
+        return this.socket;
+    }
+    /**
+     * This is the request for uploading file
+     *
+     * @param fileName absolute file path
+     */
+    public void sendFile(String fileName){
+        MessageType m = MessageType.UPLOAD;
+        if(NetworkUtils.checkFile(fileName)){
+            //send a request and wait for ACK before proceeding
+            if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m)) == MessageType.ACK) {
+                FileStreamer fileStreamer = new FileStreamer(socket);
+                fileStreamer.sendFileToSocket(fileName);
+            }else{
+                //need a way to connect to another STALKER
+                //DEBUG
+                System.out.println("SERVER BUSY");
             }
+        }
+    }
+    /**
+     * This will delete a file with the filename in the system
+     * @param fileName actual file name (not path)
+     */
+    public void deleteFile(String fileName){
 
-        } catch (IOException  e) {
-            e.printStackTrace();
+        MessageType m = MessageType.DELETE;
+        if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m)) == MessageType.ACK) {
+        }
+    }
+    /**
+     * This will download a file given the filename
+     *
+     * @param fileName
+     */
+    public void getFile(String fileName){
+        MessageType m = MessageType.DOWNLOAD;
+        // TO:DO need logic to verify file size  here
+        if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m)) == MessageType.ACK) {
+            FileStreamer fileStreamer = new FileStreamer(socket);
+            fileStreamer.receiveFileFromSocket(fileName);
+
         }
 
-        return receivedPacket != null && receivedPacket.getMessage().equals("AVAIL");
     }
 
-
-    private Socket createConnection(String host, int port) throws IOException {
-        Socket socket = null;
-
-        // establish a connection
-        //TO:DO Need logic for getting the stalker in round robin fashion
-            socket = new Socket(host, port);
-            System.out.println("Connected");
-        return socket;
-    }
-
-
+    //    /**
+//     * This will fetch a list of all file names in the system
+//     * @return list of filenames
+//     */
+//    public List<String> getFileList(){
+//
+//
+//        if(handShakeSuccess(MessageType.LIST)) {
+//
+//        }
+//        return null;
+//    }
 }
