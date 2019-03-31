@@ -90,4 +90,5 @@ public class NetDiscovery implements Runnable{
         socket.close();
         return stalkerMap;
     }
+
 }

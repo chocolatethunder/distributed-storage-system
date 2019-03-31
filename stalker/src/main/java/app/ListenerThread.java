@@ -58,6 +58,9 @@ public class ListenerThread implements Runnable{
                 //@Masroor add the Leader election logic here
                 else{
                     running = false;
+
+                    // call the leader election
+
                     client.close();
                 }
             } catch (IOException e) {

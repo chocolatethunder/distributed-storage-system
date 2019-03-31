@@ -19,7 +19,7 @@ public class App {
         //First thing to do is locate all other stalkers and print the stalkers to file
 
 
-       // DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
+        //DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
         //DM.start();
 
         int test = 0;
