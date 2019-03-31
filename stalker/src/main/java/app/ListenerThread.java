@@ -1,30 +1,24 @@
 package app;
 
-import app.chunk_utils.IndexFile;
 import app.handlers.ServiceHandlerFactory;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- *This is main thread that receives request through TCP from JCP
+ *
  */
-public class JcpRequestHandler implements Runnable {
+public class ListenerThread implements Runnable{
 
-     private final int serverPort = 11111;
-     private boolean running = true;
-     private IndexFile index;
-     public JcpRequestHandler(IndexFile ind){
-         this.index = ind;
-     }
+    private final int serverPort = 11114;
+    private boolean running = true;
 
-    /**
-     *This is the main start method for this thread. It start in a while loop to receive connections from
-     * JCP/s  and then executes handshake. Then it spawns a thread to handle the request.
-     */
+
+
     @Override
     public void run() {
 
@@ -38,33 +32,32 @@ public class JcpRequestHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(NetworkUtils.timeStamp(1) + "Waiting...");
+        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for health check or Leader Election request..");
         // will keep on listening for requests
         while (running) {
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();
                 System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + client);
+
                 // receive packet on the socket link
                 TcpPacket req = commLink.receivePacket(client);
 
-                //creating a specific type of service handler using factory method
-                //Submit a task to the handler queue and move on
-                if (req.getMessageType() != MessageType.KILL){
-                    executorService.submit(ServiceHandlerFactory.getServiceHandler(req, client, index));
+                //checking for request type if health check
+                if (req.getMessageType() == MessageType.HEALTH_CHECK){
+                    System.out.println("Received health Check request");
+                    executorService.submit(new HealthCheckReply(client));
                 }
+
+                //@Masroor add the Leader election logic here
                 else{
                     running = false;
                     client.close();
                 }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
     }
-
-
 }
-

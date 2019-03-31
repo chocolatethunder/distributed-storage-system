@@ -19,7 +19,8 @@ public enum MessageType {
         START,
         ERROR,
         DISC_HARM_R,
-        DISC_STK_R
+        DISC_STK_R,
+        HEALTH_CHECK
 
 
 }

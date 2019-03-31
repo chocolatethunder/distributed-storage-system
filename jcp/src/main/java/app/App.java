@@ -3,15 +3,10 @@
  */
 package app;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.*;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 public class App {
     //jcp main
@@ -22,7 +17,10 @@ public class App {
         System.out.println(NetworkUtils.timeStamp(1) + "JCP online");
         //make a discoverymanager and start it, prints results to file
         DiscoveryManager DM = new DiscoveryManager(Module.JCP);
-        DM.start();
+       // DM.start();
+
+        HealthChecker checker = new HealthChecker();
+        checker.start();
 
         //get the stalkers from file
         HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
@@ -48,7 +46,7 @@ public class App {
         String req = "upload";
         switch (req){
             case("upload"):
-                requestSender.sendFile("temp\\003_txt_test.txt");
+              //  requestSender.sendFile("temp\\003_txt_test.txt");
                 break;
             case("download"):
                 requestSender.getFile("temp\\003_txt_test.txt");

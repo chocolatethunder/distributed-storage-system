@@ -19,8 +19,8 @@ public class App {
         //First thing to do is locate all other stalkers and print the stalkers to file
 
 
-        DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
-        DM.start();
+       // DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
+        //DM.start();
 
         int test = 0;
         initStalker();
@@ -28,6 +28,11 @@ public class App {
         //ind.summary();
         System.out.println(NetworkUtils.timeStamp(1) + "Stalker Online");
         //testing
+
+        //starting health check listener
+        ListenerThread healthCheckHandler = new ListenerThread();
+        healthCheckHandler.run();
+
 
         //election based on networkDiscovery
         int role = getRole();
@@ -66,19 +71,25 @@ public class App {
     public static void initStalker(){
         //clear chunk folder
         File chunk_folder = new File("temp/chunks/");
+
         File[] chunk_folder_contents = chunk_folder.listFiles();
 
         File temp_folder = new File("temp/toChunk/");
         File[] temp_folder_contents = temp_folder.listFiles();
 
-        for(File f : chunk_folder_contents){
-            if (!FilenameUtils.getExtension(f.getName()).equals("empty")){
-                f.delete();
+        if(chunk_folder_contents != null) {
+            for (File f : chunk_folder_contents) {
+                if (!FilenameUtils.getExtension(f.getName()).equals("empty")) {
+                    f.delete();
+                }
             }
         }
-        for(File f : temp_folder_contents){
-            if (!FilenameUtils.getExtension(f.getName()).equals("empty")){
-                f.delete();
+
+        if(temp_folder_contents != null) {
+            for (File f : temp_folder_contents) {
+                if (!FilenameUtils.getExtension(f.getName()).equals("empty")) {
+                    f.delete();
+                }
             }
         }
 
