@@ -7,8 +7,12 @@ import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class App {
+
+    // to capture total disk space in the system and will be updated with each health check
+    public volatile int TotalDiskSpace = 0 ;
     //jcp main
     public static void main(String[] args) {
         int test  = 0;
@@ -16,16 +20,18 @@ public class App {
 
         System.out.println(NetworkUtils.timeStamp(1) + "JCP online");
         //make a discoverymanager and start it, prints results to file
-        DiscoveryManager DM = new DiscoveryManager(Module.JCP);
+       // DiscoveryManager DM = new DiscoveryManager(Module.JCP);
        // DM.start();
 
-        HealthChecker checker = new HealthChecker();
-        checker.start();
+
 
         //get the stalkers from file
         HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
         //get sorted list from targets
         List<Integer> s_list = NetworkUtils.mapToSList(m);
+
+        HealthChecker checker = new HealthChecker();
+        checker.start(m);
 
         System.out.println(" Ip ids" + (s_list));
 //        if (test == 0){
@@ -43,7 +49,7 @@ public class App {
         //port to connect to
         int port = 11111;
         Socket socket = requestSender.connect(stalkerip, port);
-        String req = "upload";
+        String req = "delete";
         switch (req){
             case("upload"):
               //  requestSender.sendFile("temp\\003_txt_test.txt");

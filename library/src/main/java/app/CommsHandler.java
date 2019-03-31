@@ -39,6 +39,33 @@ public class CommsHandler {
         return response;
     }
 
+
+    /**
+     * This method only sends a packet does not wait for reply
+     * @param socket
+     * @param messageType
+     * @param content
+     * @return
+     */
+    public MessageType sendPacketWithoutAck(Socket socket, MessageType messageType, String content){
+
+        MessageType response = null;
+        try {
+            TcpPacket initialPacket = new TcpPacket(messageType, content);
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            DataInputStream in = new DataInputStream((socket.getInputStream()));
+            ObjectMapper mapper = new ObjectMapper();
+
+
+            //Object to JSON in String
+            String jsonInString = mapper.writeValueAsString(initialPacket);
+            out.writeUTF(jsonInString);
+        } catch (IOException  e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
+
     //function for recieving a TCP packet once a connection has been established
     public TcpPacket receivePacket(Socket socket) throws IOException {
         ObjectMapper mapper = new ObjectMapper();

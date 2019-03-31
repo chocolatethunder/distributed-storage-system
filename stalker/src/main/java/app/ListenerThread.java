@@ -1,11 +1,17 @@
 package app;
 
 import app.handlers.ServiceHandlerFactory;
+import org.apache.commons.io.FileSystemUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.FileStore;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.NumberFormat;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -46,7 +52,7 @@ public class ListenerThread implements Runnable{
                 //checking for request type if health check
                 if (req.getMessageType() == MessageType.HEALTH_CHECK){
                     System.out.println("Received health Check request");
-                    executorService.submit(new HealthCheckReply(client));
+                    executorService.execute(new HealthCheckResponder(client, "SUCCESS", getAvailableDiskSpace()));
                 }
 
                 //@Masroor add the Leader election logic here
@@ -59,5 +65,24 @@ public class ListenerThread implements Runnable{
             }
         }
 
+    }
+
+    public long getAvailableDiskSpace(){
+        NumberFormat nf = NumberFormat.getNumberInstance();
+        long total = 0;
+        for (Path root : FileSystems.getDefault().getRootDirectories()) {
+
+            System.out.print(root + ": ");
+            try {
+                FileStore store = Files.getFileStore(root);
+                total += store.getUsableSpace();
+                System.out.println("available=" + nf.format(store.getUsableSpace())
+                        + ", total=" + nf.format(store.getTotalSpace()));
+            } catch (IOException e) {
+                System.out.println("error querying space: " + e.toString());
+            }
+        }
+
+        return total;
     }
 }

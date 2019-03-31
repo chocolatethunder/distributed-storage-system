@@ -1,21 +1,48 @@
 package app;
 
-import java.net.Socket;
+import java.util.Map;
 
 /**
- *
+ *This class is used for creating the Json String for health check reply content
  */
-public class HealthCheckReply implements Runnable {
+public class HealthCheckReply {
 
-    private final Socket client ;
+    private String status;
+    private long diskSpace;
+    private Map<Integer, Integer> corruptedChunks;
 
-    public HealthCheckReply(Socket socket){
-        client = socket;
+
+    public HealthCheckReply(){}
+
+    public HealthCheckReply(String status, long diskSpace, Map<Integer, Integer> corruptedChunks){
+
+        this.setStatus(status);
+        this.setDiskSpace(diskSpace);
+        this.setCorruptedChunks(corruptedChunks);
+
     }
-    @Override
-    public void run() {
 
-        CommsHandler commsHandler = new CommsHandler();
-        commsHandler.sendPacket(this.client, MessageType.HEALTH_CHECK, "success");
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public long getDiskSpace() {
+        return diskSpace;
+    }
+
+    public void setDiskSpace(long diskSpace) {
+        this.diskSpace = diskSpace;
+    }
+
+    public Map<Integer, Integer> getCorruptedChunks() {
+        return corruptedChunks;
+    }
+
+    public void setCorruptedChunks(Map<Integer, Integer> corruptedChunks) {
+        this.corruptedChunks = corruptedChunks;
     }
 }

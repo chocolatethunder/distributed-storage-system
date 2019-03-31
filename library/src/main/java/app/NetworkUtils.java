@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.text.DateFormat;
@@ -269,6 +270,33 @@ public class NetworkUtils {
             e.printStackTrace();
         }
         return myIP;
+    }
+
+
+    /**
+     * This method creates the JsonString for Health Check Reply Message Content
+     * @param status
+     * @param diskSpace
+     * @param corruptedChunks
+     * @return
+     */
+    public static String createHealthCheckReply(String status, long diskSpace, Map<Integer, Integer> corruptedChunks) {
+        String healthCheckContent = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        HealthCheckReply reply = new HealthCheckReply(status,
+                diskSpace,
+                corruptedChunks);
+
+
+        try {
+            healthCheckContent = mapper.writeValueAsString(reply);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return healthCheckContent;
+
+
     }
 
 }

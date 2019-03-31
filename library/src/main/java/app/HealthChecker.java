@@ -4,20 +4,25 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 /**
- *
+ *This class is responsible for scheduling task for doing health checks on all units in the config file
  */
 public class HealthChecker {
 
-    private final long interval = 1000 * 10;
+    // every 5 seconds for now
+    private final long interval = 1000 * 5;
 
-    public void start() {
+    public void start(HashMap<Integer, String> stalkers) {
 
         Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new HealthCheckerTask("127.0.0.1"), 0, interval);
+
+        // for each node in the list, scheduling a task to occur at interval
+        for(Map.Entry<Integer, String> entry : stalkers.entrySet()) {
+            System.out.println("Starting scheduled health task for node: " + entry.getValue());
+            timer.scheduleAtFixedRate(new HealthCheckerTask(entry.getValue()), 0, interval);
+        }
 
 
     }
@@ -39,24 +44,41 @@ public class HealthChecker {
             Socket socket = null;
             try {
 
-                socket = NetworkUtils.createConnection("127.0.0.1", port);
+                socket = NetworkUtils.createConnection(host, port);
+
+                //if server does not reply within 5 seconds, then SocketException will be thrown
                 socket.setSoTimeout(1000 * timeoutForReply);
 
-                CommsHandler commsHandler = new CommsHandler();
-                commsHandler.sendPacket(socket, MessageType.HEALTH_CHECK, "request");
 
+                CommsHandler commsHandler = new CommsHandler();
+                //sending the health check request
+                commsHandler.sendPacketWithoutAck(socket, MessageType.HEALTH_CHECK, "request");
+
+
+                //receive packet from node
                 TcpPacket tcpPacket = commsHandler.receivePacket(socket);
 
-                if (tcpPacket.getMessage() == "success") {
-                    System.out.println("health check was successfull");
-                }
+                String  content = tcpPacket.getMessage();
+
+                System.out.println(content);
+
+
 
             } catch (SocketException e) {
 
+
+
                 // server has not replied within expected timeoutTime
                 e.printStackTrace();
+                cancel();
             } catch (IOException e) {
                 e.printStackTrace();
+            }finally {
+                try{
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
