@@ -92,6 +92,12 @@ public class ChunkDistributor {
             catch(IOException e){
                 System.out.println("Attempt: " + attempts + " failed!");
                 //e.printStackTrace();
+                try{
+                    Thread.sleep((long)(Math.random() * 1000));
+                }
+                catch (InterruptedException ex){
+                    ex.printStackTrace();
+                }
                 attempts++;
             }
         }
