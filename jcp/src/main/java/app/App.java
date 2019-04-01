@@ -16,6 +16,7 @@ public class App {
 
         // to capture total disk space in the system and will be updated with each health check
         // AtomicLong is already synchronized
+        // value in bytes
         AtomicLong totalDiskSpace = new AtomicLong(0);
 
 
@@ -43,6 +44,13 @@ public class App {
 
         }
 
+        try {
+            Thread.sleep(1000 * 10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("total space in JCP " + totalDiskSpace.get() );
 
 //        RequestSender requestSender = RequestSender.getInstance();
 //        //ip of stalker we'll just use the one at index 0 for now

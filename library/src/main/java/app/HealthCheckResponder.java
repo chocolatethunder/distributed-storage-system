@@ -54,7 +54,6 @@ public class HealthCheckResponder implements Runnable {
     @Override
     public void run(){
 
-            System.out.println("Inside Health responder");
             CommsHandler commsHandler = new CommsHandler();
             commsHandler.sendPacketWithoutAck(this.socket, MessageType.HEALTH_CHECK,
                     NetworkUtils.createHealthCheckReply(this.sender,
@@ -63,7 +62,6 @@ public class HealthCheckResponder implements Runnable {
                     corruptedChunks ));
 
             try{
-                System.out.println("Closing connection..");
                 socket.close();
             } catch (IOException e) {
                 e.printStackTrace();

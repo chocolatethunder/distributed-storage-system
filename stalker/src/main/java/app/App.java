@@ -18,7 +18,7 @@ public class App {
 
         //First thing to do is locate all other stalkers and print the stalkers to file
 
-        //int port = Integer.valueOf(args[0]);
+    //   int port = Integer.valueOf(args[0]);
 
 
 
@@ -37,8 +37,10 @@ public class App {
         healthCheckthread.start();
 
         //starting task for health checks on STALKERS and HARM targets
-        HealthChecker checker = new HealthChecker(NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list")),
-                NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list")));
+        String stalkerList = NetworkUtils.fileToString("config/stalkers.list");
+        String harmlist = NetworkUtils.fileToString("config/harm.list");
+        HealthChecker checker = new HealthChecker(NetworkUtils.mapFromJson(stalkerList),
+                NetworkUtils.mapFromJson(harmlist));
         checker.startTask();
 
         //election based on networkDiscovery

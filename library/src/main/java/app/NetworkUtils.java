@@ -308,6 +308,11 @@ public class NetworkUtils {
     }
 
 
+    /**
+     * This is a thread safe method that removes an entry from Config file
+     * @param filePath
+     * @param nodeToRemove  uuid of the node
+     */
     public static synchronized void deleteNodeFromConfig(String filePath, String nodeToRemove) {
 
         ObjectMapper mapper = new ObjectMapper();
@@ -329,6 +334,13 @@ public class NetworkUtils {
         }
     }
 
+
+    /**
+     * This method is used for updating harm.list
+     * @param nodeUuid
+     * @param space
+     * @param isAlive
+     */
     public static synchronized void updateHarmList(String nodeUuid,
                                                    long space,
                                                    boolean isAlive) {
@@ -341,14 +353,18 @@ public class NetworkUtils {
 
         try {
             node = (ObjectNode) mapper.readTree(configStringContent);
-            NodeAttribute attributes = mapper.readValue(node.get(nodeUuid).asText(), NodeAttribute.class);
+            NodeAttribute oldAttributes = mapper.readValue(node.get(nodeUuid).asText(), NodeAttribute.class);
 
             NodeAttribute newAttributes = new NodeAttribute ();
-            newAttributes.setAddress(attributes.getAddress());
-            newAttributes.setSpace(space);
+            newAttributes.setAddress(oldAttributes.getAddress());
+            if(space >= 0) {
+                newAttributes.setSpace(space);
+            }else{
+                newAttributes.setSpace(oldAttributes.getSpace());
+            }
             newAttributes.setAlive(isAlive);
 
-           if(!Objects.equals(attributes, newAttributes)){
+           if(!Objects.equals(oldAttributes, newAttributes)){
 
                 //Update value in object
                 node.put(nodeUuid, mapper.writeValueAsString(newAttributes));

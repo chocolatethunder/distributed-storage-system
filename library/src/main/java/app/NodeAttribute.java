@@ -1,7 +1,7 @@
 package app;
 
 /**
- *
+ *This class should be used when creating entry for harm.list
  */
 public class NodeAttribute {
 

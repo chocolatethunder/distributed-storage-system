@@ -42,9 +42,9 @@ public class ListenerThread implements Runnable {
         // will keep on listening for requests
         while (running) {
             try {
-                //accept connection from a JCP
+                //accept connection from a STALKER
                 Socket client = server.accept();
-                System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + client);
+                System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection from stalker : " + client);
 
                 // receive packet on the socket link
                 TcpPacket req = commLink.receivePacket(client);

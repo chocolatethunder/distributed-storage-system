@@ -16,8 +16,9 @@ public class App {
 //        DiscoveryManager DM = new DiscoveryManager(Module.HARM, 35);
 //        DM.start();
 
-        ListenerThread listenerThread = new ListenerThread(11114);
-        listenerThread.run();
+        int port = Integer.valueOf(args[0]);
+        Thread listenerThread = new Thread(new ListenerThread(port));
+        listenerThread.start();
 
         int macID = NetworkUtils.getMacID();
         CommsHandler commLink = new CommsHandler();

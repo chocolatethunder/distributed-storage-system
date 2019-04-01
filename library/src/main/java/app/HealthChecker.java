@@ -56,7 +56,7 @@ public class HealthChecker {
         // for each node in the stalker list, scheduling a task to occur at interval
         if(stalkerList != null) {
             for (Map.Entry<Integer, String> entry : stalkerList.entrySet()) {
-                System.out.println("Starting scheduled health task for node: " + entry.getValue());
+                System.out.println("Starting scheduled health task for stalker node: " + entry.getValue());
                 timer.scheduleAtFixedRate(new HealthCheckerTask(entry.getKey(),
                                 entry.getValue(),
                                 spaceAvailableSoFar,
@@ -76,7 +76,7 @@ public class HealthChecker {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                System.out.println("Starting scheduled health task for node: " + attributes.getAddress());
+                System.out.println("Starting scheduled health task for harm node: " + attributes.getAddress());
                 timer.scheduleAtFixedRate(new HealthCheckerTask(entry.getKey(),
                         attributes.getAddress(),
                         null,
@@ -101,14 +101,15 @@ public class HealthChecker {
         Timer timer = new Timer();
 
         System.out.println("Starting scheduled health task for node: " + stalkerIp);
-        //NOT CORRECT
+        // TO:DO  FIX THIS NOT CORRECT
         timer.scheduleAtFixedRate(new HealthCheckerTask(0, stalkerIp, null, target), 0, interval);
 
     }
 
 
-
-
+    /**
+     * This is the actual runnable task that will execute run method at the given interval
+     */
     class HealthCheckerTask extends TimerTask {
 
         private final String host ;
@@ -158,11 +159,11 @@ public class HealthChecker {
 
 
                 if(status.equals("SUCCESS")){
-                    if(target == Module.STALKER) {
+                    if(target == Module.STALKER && this.spaceToUpdate != null) {
                         this.spaceToUpdate.set(availableSpace);
                         System.out.println("Status was success for health check and disk space available "
                                 + this.spaceToUpdate.get());
-                    }else{
+                    }else if(target == Module.HARM){
                         // need to add the space for all HARMS in config file
                         NetworkUtils.updateHarmList(String.valueOf(this.uuid),
                                 availableSpace,
@@ -207,6 +208,7 @@ public class HealthChecker {
                 NetworkUtils.deleteNodeFromConfig("config/stalkers.list", String.valueOf(this.uuid));
             }else{
                 // don't remove but mark as dead in HARM list
+                NetworkUtils.updateHarmList(String.valueOf(this.uuid), -1, false );
             }
 
             //cancel task
