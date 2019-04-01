@@ -14,6 +14,7 @@ import java.util.List;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import app.FileStreamer;
 
 /**
  *
@@ -74,9 +75,13 @@ public class UploadServiceHandler implements Runnable {
 //          3. ACK request from JCP and perform download of file
 ///------------------------------------------------------------
             commsLink.sendResponse(socket, MessageType.ACK);
-            if (!getFileFromJCP()){
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error when getting file from JCP.");
-            }
+            FileStreamer fileStreamer = new FileStreamer(socket);
+            fileStreamer.receiveFileFromSocket(filePath);
+
+
+//            if (!getFileFromJCP()){
+//                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error when getting file from JCP.");
+//            }
 ///------------------------------------------------------------
 //          4. distribute to harm targets
             IndexEntry update = distributeToHarm();

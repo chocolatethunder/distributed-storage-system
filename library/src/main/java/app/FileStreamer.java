@@ -16,7 +16,7 @@ public class FileStreamer {
     DataInputStream in = null;
     BufferedInputStream bufferedInputStream = null;
 
-    FileStreamer(Socket socket) {
+    public FileStreamer(Socket socket) {
         this.socket = socket;
     }
 
@@ -37,7 +37,6 @@ public class FileStreamer {
                 bufferedInputStream.read(byteArray, 0, byteArray.length);
 
                 System.out.println("Sending " + filepath + "(" + byteArray.length + " bytes)");
-
                 out.write(byteArray, 0, byteArray.length);
                 out.flush();
                 System.out.println("Done.");
