@@ -19,11 +19,11 @@ public class App {
         //check the netDiscovery class to see where the file is being created
         Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, discoveryinterval, true));
         //DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
-        discManager.run();
+        discManager.start();
 
         //we will wait for network discovery to do its thing
         try{
-            Thread.sleep((long)(Math.random() * (discoveryinterval * 1000) + 5000));
+            Thread.sleep((long)((discoveryinterval * 1000) + 5000));
         }
         catch (InterruptedException e){
             e.printStackTrace();

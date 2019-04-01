@@ -26,7 +26,7 @@ public class App {
         discManager.start();
         System.out.println("Waiting for stalker list to update");
         try{
-            Thread.sleep((long)(Math.random() * (discoveryTimeout * 1000) + 5000));
+            Thread.sleep((long)((discoveryTimeout * 1000) + 5000));
         }
         catch (InterruptedException e){
             e.printStackTrace();
