@@ -57,16 +57,10 @@ public class HealthChecker {
 
                 //receive packet from node
                 TcpPacket tcpPacket = commsHandler.receivePacket(socket);
-
                 String  content = tcpPacket.getMessage();
-
                 System.out.println(content);
 
-
-
             } catch (SocketException e) {
-
-
 
                 // server has not replied within expected timeoutTime
                 e.printStackTrace();

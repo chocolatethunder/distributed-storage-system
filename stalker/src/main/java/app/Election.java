@@ -1,5 +1,6 @@
 package app;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -108,16 +109,12 @@ public class Election implements Runnable {
             Socket socket = null;
             try {
                 socket = NetworkUtils.createConnection(entry.getValue(), port);
-                //if server does not reply within 5 seconds, then SocketException will be thrown
                 socket.setSoTimeout(1000 * timeoutForReply);
 
-                CommsHandler commsHandler = new CommsHandler();
                 //sending the health check request
                 // create a election packet and send it to this host
-                ElectionPacket elecPacket = new ElectionPacket(String.valueOf(localLeader), entry.getValue());
-                ObjectMapper mapper = new ObjectMapper();
-                System.out.println("Sending out broadcast with signature: " + mapper.writeValueAsString(elecPacket) + "\n");
-                String electionPacket = mapper.writeValueAsString(elecPacket);
+                CommsHandler commsHandler = new CommsHandler();
+                String electionPacket = electionPakcet(localLeader);
                 commsHandler.sendPacketWithoutAck(socket, MessageType.ELECTION, electionPacket);
 
                 // listen for other people leader
@@ -148,7 +145,8 @@ public class Election implements Runnable {
         int stalkerRole = identifyRole();
         setRole(stalkerRole);
 
-
     }
+
+
 }
 
