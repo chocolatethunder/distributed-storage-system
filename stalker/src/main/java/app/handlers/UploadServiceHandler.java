@@ -60,6 +60,7 @@ public class UploadServiceHandler implements Runnable {
                 System.out.println(NetworkUtils.timeStamp(1) + "Connected to leader: ");
                 req = commsLink.receivePacket(leader);
                 System.out.println(NetworkUtils.timeStamp(1) + "Permission from leader granted");
+                listener.close();
             }
             catch (IOException e){
                 e.printStackTrace();
@@ -158,7 +159,7 @@ public class UploadServiceHandler implements Runnable {
         entry.summary();
         ////////////////distribute file
         if(cd.distributeChunks(entry, 3)){
-            entry.cleanLocalChunks();
+            //entry.cleanLocalChunks();
             entry.summary();
             return entry;
         }
