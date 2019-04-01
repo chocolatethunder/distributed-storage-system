@@ -14,21 +14,22 @@ import java.util.concurrent.Executors;
 /**
  *
  */
-public class ListenerThread implements Runnable{
+public class ListenerThread implements Runnable {
 
     private final int serverPort;
     private boolean running = true;
 
 
-
-    public ListenerThread(int port){
+    public ListenerThread(int port) {
         serverPort = port;
     }
+
     @Override
     public void run() {
 
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
+
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
@@ -37,7 +38,7 @@ public class ListenerThread implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for health check or Leader Election requests..");
+        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for health check requests from stalkers..");
         // will keep on listening for requests
         while (running) {
             try {
@@ -49,16 +50,18 @@ public class ListenerThread implements Runnable{
                 TcpPacket req = commLink.receivePacket(client);
 
                 //checking for request type if health check
-                if (req.getMessageType() == MessageType.HEALTH_CHECK){
+                if (req.getMessageType() == MessageType.HEALTH_CHECK) {
                     System.out.println("Received health Check request");
+
+                    //_______TO:DO check for corrupted chunks here
+
                     executorService.execute(new HealthCheckResponder(client,
                             "SUCCESS",
                             getAvailableDiskSpace(),
-                            Module.STALKER));
+                            null,
+                            Module.HARM));
                 }
-
-                //@Masroor add the Leader election logic here
-                else{
+                else {
                     running = false;
                     client.close();
                 }
@@ -69,7 +72,7 @@ public class ListenerThread implements Runnable{
 
     }
 
-    public long getAvailableDiskSpace(){
+    public long getAvailableDiskSpace() {
         NumberFormat nf = NumberFormat.getNumberInstance();
         long total = 0;
         for (Path root : FileSystems.getDefault().getRootDirectories()) {
@@ -87,4 +90,5 @@ public class ListenerThread implements Runnable{
 
         return total;
     }
+
 }

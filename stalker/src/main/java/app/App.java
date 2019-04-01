@@ -18,9 +18,12 @@ public class App {
 
         //First thing to do is locate all other stalkers and print the stalkers to file
 
+        int port = Integer.valueOf(args[0]);
+
+
 
        // DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
-        //DM.start();
+        //DM.startTask();
 
         int test = 0;
         initStalker();
@@ -30,7 +33,7 @@ public class App {
         //testing
 
         //starting health check listener
-        ListenerThread healthCheckHandler = new ListenerThread();
+        ListenerThread healthCheckHandler = new ListenerThread(port);
         healthCheckHandler.run();
 
 

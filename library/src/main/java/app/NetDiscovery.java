@@ -84,7 +84,17 @@ public class NetDiscovery implements Runnable{
             JsonNode discoverReply = mapper.readTree(received);
             String uuid = discoverReply.get("uuid").textValue();
             InetAddress replyAddress =  InetAddress.getByName(discoverReply.get("address").textValue());
-            stalkerMap.put(Integer.valueOf(uuid), replyAddress.getHostAddress());
+
+
+            // need to have the harm list to have additional attributes such as space, and if alive
+            // during health check, the space and alive will be updated
+            if(this.target.equals(Module.HARM.name())){
+                NodeAttribute attributes = new NodeAttribute(replyAddress.getHostAddress(), 0, true);
+                String stringAttributes = mapper.writeValueAsString(attributes);
+                stalkerMap.put(Integer.valueOf(uuid), stringAttributes);
+            }else {
+                stalkerMap.put(Integer.valueOf(uuid), replyAddress.getHostAddress());
+            }
         }
         System.out.println("Discovery complete.");
         socket.close();
