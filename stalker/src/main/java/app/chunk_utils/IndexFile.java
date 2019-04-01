@@ -7,7 +7,7 @@ import java.util.List;
 public class IndexFile {
     private Map<String,IndexEntry> entries;
     //maps uuid to mac id list
-    private Map<String,List<String>> chunkIndex;
+    private Map<String,List<Integer>> chunkIndex;
     public IndexFile(){
         entries = new HashMap<>();
         chunkIndex = new HashMap<>();
@@ -45,7 +45,7 @@ public class IndexFile {
 
     public Map<String, IndexEntry> getEntries() {return entries; }
     public void setEntries(Map<String, IndexEntry> entries) { this.entries = entries; }
-    public Map<String, List<String>> getChunkIndex() { return chunkIndex; }
-    public void setChunkIndex(Map<String, List<String>> chunkIndex) { this.chunkIndex = chunkIndex; }
+    public Map<String, List<Integer>> getChunkIndex() { return chunkIndex; }
+    public void setChunkIndex(Map<String, List<Integer>> chunkIndex) { this.chunkIndex = chunkIndex; }
 
 }
