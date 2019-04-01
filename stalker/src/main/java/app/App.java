@@ -16,9 +16,11 @@ public class App {
 
         //First thing to do is locate all other stalkers and print the stalkers to file
 
-        DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
-        DM.start();
+        //DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
+        //DM.start();
 
+
+        System.out.println(NetworkUtils.getMacID());
         int test = 0;
         initStalker();
         IndexFile ind = Indexer.loadFromFile();
@@ -32,29 +34,57 @@ public class App {
 
 
         //election based on networkDiscovery
-        int role = getRole();
 
-        switch (role){
-            case 0:
-                //This means that this STK is the leader
-                //create a priority comparator for the Priority queue
-                CRUDQueue syncQueue = new CRUDQueue();
-                StalkerRequestHandler stalkerCoordinator = new StalkerRequestHandler(syncQueue);
-                RequestAdministrator reqAdmin = new RequestAdministrator(syncQueue);
-                stalkerCoordinator.run();
-                reqAdmin.run();
-                break;
-            case 1:
-                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
-                jcpRequestHandler.run();
-                break;
-            case 2:
-                break;
+
+        while (true){
+            int role = getRole();
+            switch (role){
+                case 0:
+                    //This means that this STK is the leader
+                    //create a priority comparator for the Priority queue
+                    CRUDQueue syncQueue = new CRUDQueue();
+                    Thread t1 = new Thread(new StalkerRequestHandler(syncQueue));
+                    Thread t2 =  new Thread(new RequestAdministrator(syncQueue));
+
+//
+//                StalkerRequestHandler stalkerCoordinator = new StalkerRequestHandler(syncQueue);
+//                RequestAdministrator reqAdmin = new RequestAdministrator(syncQueue);
+//                stalkerCoordinator.run();
+//                System.out.println("Running admin");
+//                reqAdmin.run();
+
+                    t1.start();
+                    t2.start();
+
+                    try{
+                        t1.join();
+                        t2.join();
+                    }
+                    catch(InterruptedException e){
+                        e.printStackTrace();
+                    }
+                    break;
+                case 1:
+                    Thread jcpReq = new Thread(new JcpRequestHandler(ind));
+//                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
+//                jcpRequestHandler.run();
+                    jcpReq.start();
+                    try {
+                        jcpReq.join();
+                    }
+                    catch(InterruptedException e){
+                        e.printStackTrace();
+                    }
+                    break;
+                case 2:
+                    break;
+            }
         }
+
     }
 
     public static int getRole(){
-        return(1);
+        return(0);
     }
 
     //cleans chunk folders on startup
