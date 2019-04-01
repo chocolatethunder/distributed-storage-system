@@ -4,7 +4,6 @@
 package app.chunk_utils;
 import java.io.*;
 import java.util.*;
-import java.security.MessageDigest;
 
 public class Chunk {
     //private String chunkStatus;
@@ -17,7 +16,7 @@ public class Chunk {
 
     //this list will contain the adresses of each of the chunk replicas that
     // are hosted on then harm targets. will probably become an object in the future
-    private List<String> replicas;
+    private List<Integer> replicas;
 
     public Chunk(){ }
 
@@ -42,7 +41,7 @@ public class Chunk {
 
 
     //add a replica to the tracked list
-    public void addReplica(String addr){replicas.add(addr);}
+    public void addReplica(Integer addr){replicas.add(addr);}
 
     @Override
     public String toString(){
@@ -53,7 +52,7 @@ public class Chunk {
     public void printReplicas(){
         System.out.println("Replicas: ");
         int i = 0;
-        for (String s : replicas){
+        for (Integer s : replicas){
             System.out.println(i + " ----> Harm ID: " + s);
             i++;
         }
@@ -69,7 +68,7 @@ public class Chunk {
     public void setChunk_path(String chunk_path) { this.chunk_path = chunk_path; }
     public long getChunk_size() { return chunk_size; }
     public void setChunk_size(long chunk_size) { this.chunk_size = chunk_size; }
-    public List<String> getReplicas() { return replicas; }
+    public List<Integer> getReplicas() { return replicas; }
 
-    public void setReplicas(List<String> replicas) { this.replicas = replicas; }
+    public void setReplicas(List<Integer> replicas) { this.replicas = replicas; }
 }

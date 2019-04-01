@@ -24,14 +24,14 @@ public class App {
         //this beast will be running at all times
         Thread discManager = new Thread(new DiscoveryManager(Module.JCP, discoveryTimeout, false));
         discManager.start();
-        System.out.println("Waiting for stalker list to update");
+        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for stalker list to update");
         try{
-            Thread.sleep((long)((discoveryTimeout * 1000) + 5000));
+            Thread.sleep(5000);
         }
         catch (InterruptedException e){
             e.printStackTrace();
         }
-        System.out.println("List updated!");
+        System.out.println(NetworkUtils.timeStamp(1) + "List updated!");
 
 
         //get the stalkers from file

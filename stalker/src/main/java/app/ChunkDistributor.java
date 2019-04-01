@@ -14,14 +14,15 @@ public class ChunkDistributor {
     private boolean debug = false;
     private String chunkDir;
     private CommsHandler commLink;
+    private int port = 22222;
 
     //we are going to hard code this for now
     private int harm_count = 4;
     //for now this will be a set of directories of "harm targets"
     //in the future these will be some sort of address
-    List<String> harm_list;
+    List<Integer> harm_list;
     //hardcoded test variables
-    public ChunkDistributor(String c_dir, List<String> h_list) {
+    public ChunkDistributor(String c_dir, List<Integer> h_list) {
         chunkDir = c_dir;
         //this list will contain harm id and ip in the future...
         harm_list = h_list;
@@ -34,12 +35,13 @@ public class ChunkDistributor {
     public boolean distributeChunks(IndexEntry iEnt, int num_reps) {
         //we go through each chunk in the IndexEntry object
         //token represents which harm target we are currently sending to
+
         int token = 0;
         for (Chunk c : iEnt.getChunkList()){
             //for each replica
             for (int i = 0; i < num_reps; i++){
                 //get target ip from harm list
-                String target_path = harm_list.get(token);
+                Integer target_path = harm_list.get(token);
                 //String target_ip = "127.0.0.1";
 
                 if(sendChunk(c, target_path)) {
@@ -63,7 +65,8 @@ public class ChunkDistributor {
     }
 
     //placeholder chunk sending function
-    public boolean sendChunk(Chunk c, String target){
+    public boolean sendChunk(Chunk c, Integer target){
+        HashMap<Integer, String > m = NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
         int attempts = 0;
         while(true){
             if (attempts == 3){
@@ -75,9 +78,8 @@ public class ChunkDistributor {
                 //FileUtils.copyFile(new File(c.path()),new File(target));
                 System.out.println("Sending chunk");
                 //make a connection to the harm target
-                Socket harmServer = NetworkUtils.createConnection(target, 22222);
+                Socket harmServer = NetworkUtils.createConnection(m.get(target), port);
                 //if everything went well then we can send the damn file
-
                 //send the packet to the harm target
                 if(commLink.sendPacket(harmServer, MessageType.UPLOAD, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.UPLOAD)) == MessageType.ACK){
                     FileStreamer fileStreamer = new FileStreamer(harmServer);

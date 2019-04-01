@@ -6,6 +6,7 @@
 package app;
 import java.io.*;
 import java.net.Socket;
+import java.util.HashMap;
 
 import app.chunk_utils.Chunk;
 import app.chunk_utils.IndexEntry;
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ChunkRetriever {
     private boolean debug = false;
     private String chunkDir;
+    private int port = 22222;
     //hardcoded test variables
 
     public ChunkRetriever(String c_dir) {
@@ -37,17 +39,17 @@ public class ChunkRetriever {
     //if it cannot get any copies of the chunk it will fail and return false
     //in the future will retrieve it from a remote node
     public boolean retrieveChunk(Chunk c){
+        //get the map of harm ids
+        HashMap<Integer, String > m = NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
         int attempts = 0;
-        for (String s : c.getReplicas()){
+        for (Integer s : c.getReplicas()){
             while(true){
                 if (attempts == 3){
                     System.out.println("Failed to receive file from HARM target after multiple attempts");
                     break;
                 }
                 try{
-                    System.out.println("SOCKET: " + Integer.valueOf(s));
-                    int port = Integer.valueOf(s);
-                    Socket harmServer = NetworkUtils.createConnection("127.0.0.1", port);
+                    Socket harmServer = NetworkUtils.createConnection(m.get(s), 22222);
                     //FileUtils.copyFile(new File(s),new File(chunkDir + c.getUuid()));
                     if(handShakeSuccess(MessageType.DOWNLOAD, c.getUuid(), harmServer)){
                         FileStreamer fileStreamer = new FileStreamer(harmServer);

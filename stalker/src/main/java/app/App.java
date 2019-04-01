@@ -22,14 +22,14 @@ public class App {
         discManager.start();
 
         //we will wait for network discovery to do its thing
-        System.out.println("Waiting for system discovery...");
+        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for system discovery...");
         try{
             Thread.sleep((long)((discoveryinterval * 1000) + 5000));
         }
         catch (InterruptedException e){
             e.printStackTrace();
         }
-        System.out.println("System discovery complete!");
+        System.out.println(NetworkUtils.timeStamp(1) + "System discovery complete!");
 
 
 

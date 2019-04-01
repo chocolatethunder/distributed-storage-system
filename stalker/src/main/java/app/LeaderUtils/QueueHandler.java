@@ -25,7 +25,6 @@ public class QueueHandler implements  Runnable {
 
     @Override
     public void run(){
-        System.out.println("inside function");
         switch(mode){
             case 0:
                 queueJob();
@@ -52,7 +51,10 @@ public class QueueHandler implements  Runnable {
             if (response.getMessageType() == MessageType.DONE){
                 //send permission to worker
                 commLink.sendPacket(worker, MessageType.ACK, "");
+                System.out.println(NetworkUtils.timeStamp(1) + " job complete");
             }
+
+
         }
         catch (IOException e){
             e.printStackTrace();

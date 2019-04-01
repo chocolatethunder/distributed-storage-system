@@ -31,7 +31,7 @@ public class App {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(NetworkUtils.timeStamp(1) + "Waiting...");
+        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for requests...");
 
         // will keep on listening for requests from STALKERs
         while (true) {
