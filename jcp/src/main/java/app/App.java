@@ -3,25 +3,30 @@
  */
 package app;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class App {
 
-    // to capture total disk space in the system and will be updated with each health check
-    public volatile int TotalDiskSpace = 0 ;
+
     //jcp main
     public static void main(String[] args) {
         int test  = 0;
 
+        // to capture total disk space in the system and will be updated with each health check
+        // AtomicLong is already synchronized
+        // value in bytes
+        AtomicLong totalDiskSpace = new AtomicLong(0);
+
 
         System.out.println(NetworkUtils.timeStamp(1) + "JCP online");
+
         //make a discoverymanager and start it, prints results to file
-       // DiscoveryManager DM = new DiscoveryManager(Module.JCP);
-       // DM.start();
+        DiscoveryManager DM = new DiscoveryManager(Module.JCP);
+        DM.start();
 
 
 
@@ -30,8 +35,12 @@ public class App {
         //get sorted list from targets
         List<Integer> s_list = NetworkUtils.mapToSList(m);
 
-        HealthChecker checker = new HealthChecker();
-        checker.start(m);
+
+        //starting health checker tasks for each stalker in the stalker list
+        HealthChecker checker = new HealthChecker(m, totalDiskSpace);
+        checker.startTask();
+
+
 
         System.out.println(" Ip ids" + (s_list));
 //        if (test == 0){
@@ -40,6 +49,8 @@ public class App {
         for (Integer key : m.keySet()){
 
         }
+
+
         RequestSender requestSender = RequestSender.getInstance();
         //ip of stalker we'll just use the one at index 0 for now
         String i =  m.get(s_list.get(0));
@@ -49,7 +60,7 @@ public class App {
         //port to connect to
         int port = 11111;
         Socket socket = requestSender.connect(stalkerip, port);
-        String req = "delete";
+        String req = "download";
         switch (req){
             case("upload"):
               //  requestSender.sendFile("temp\\003_txt_test.txt");

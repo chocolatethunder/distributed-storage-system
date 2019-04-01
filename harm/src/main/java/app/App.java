@@ -16,6 +16,14 @@ public class App {
         DiscoveryManager DM = new DiscoveryManager(Module.HARM, 35);
         DM.start();
 
+
+
+        //Starting the listenerthread for health check requests
+        Thread listenerThread = new Thread(new ListenerThread());
+        listenerThread.start();
+
+
+
         int macID = NetworkUtils.getMacID();
         CommsHandler commLink = new CommsHandler();
         //initialize socket and input stream

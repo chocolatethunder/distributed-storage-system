@@ -18,8 +18,10 @@ public class App {
 
         //First thing to do is locate all other stalkers and print the stalkers to file
 
+       DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
+       DM.start();
 
-        //DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
+       // DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
         //DM.start();
 
         int test = 0;
@@ -29,11 +31,21 @@ public class App {
         System.out.println(NetworkUtils.timeStamp(1) + "Stalker Online");
         //testing
 
-        // initial health checks and leadership election
 
-        //starting health check listener
-        ListenerThread healthCheckHandler = new ListenerThread();
-        healthCheckHandler.run();
+        //starting listener thread for health check and leader election
+        Thread healthCheckthread = new Thread( new ListenerThread());
+        healthCheckthread.start();
+
+
+
+        //starting task for health checks on STALKERS and HARM targets
+        String stalkerList = NetworkUtils.fileToString("config/stalkers.list");
+        String harmlist = NetworkUtils.fileToString("config/harm.list");
+        HealthChecker checker = new HealthChecker(NetworkUtils.mapFromJson(stalkerList),
+                NetworkUtils.mapFromJson(harmlist));
+        checker.startTask();
+
+
 
         // call the leader election and wait until done
         Election electionThread = new Election();
@@ -55,19 +67,20 @@ public class App {
                     };
                     PriorityQueue<QueueEntry> syncQueue = new PriorityQueue<>(entryPriorityComparator);
 
-                    StalkerRequestHandler stalkerCoordinator = new StalkerRequestHandler(syncQueue);
-                    RequestAdministrator reqAdmin = new RequestAdministrator(syncQueue);
-                    stalkerCoordinator.run();
-                    reqAdmin.run();
-                    break;
-                case 1:
-                    JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
-                    jcpRequestHandler.run();
-                    break;
-                case 2:
-                    break;
-            }
+                StalkerRequestHandler stalkerCoordinator = new StalkerRequestHandler(syncQueue);
+                RequestAdministrator reqAdmin = new RequestAdministrator(syncQueue);
+                stalkerCoordinator.run();
+                reqAdmin.run();
+                break;
+            case 1:
+                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
+                Thread jcpListener = new Thread(jcpRequestHandler);
+                jcpListener.start();
+                break;
+            case 2:
+                break;
         }
+    }
 
     }
 

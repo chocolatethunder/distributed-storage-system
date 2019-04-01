@@ -14,6 +14,8 @@ import java.util.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -151,6 +153,7 @@ public class NetworkUtils {
         return true;
     }
 
+
     // gets the MAC address of the System
     public static int getMacID(){    //get the mac ID of the current device
         int mac_addr = Integer.MAX_VALUE;
@@ -275,16 +278,21 @@ public class NetworkUtils {
 
     /**
      * This method creates the JsonString for Health Check Reply Message Content
+     * @param senderType
      * @param status
      * @param diskSpace
      * @param corruptedChunks
      * @return
      */
-    public static String createHealthCheckReply(String status, long diskSpace, Map<Integer, Integer> corruptedChunks) {
+    public static String createHealthCheckReply(Module senderType,
+                                                String status,
+                                                long diskSpace,
+                                                Map<Integer, Integer> corruptedChunks) {
         String healthCheckContent = null;
         ObjectMapper mapper = new ObjectMapper();
 
-        HealthCheckReply reply = new HealthCheckReply(status,
+        HealthCheckReply reply = new HealthCheckReply(senderType,
+                status,
                 diskSpace,
                 corruptedChunks);
 
@@ -298,5 +306,83 @@ public class NetworkUtils {
 
 
     }
+
+
+    /**
+     * This is a thread safe method that removes an entry from Config file
+     * @param filePath
+     * @param nodeToRemove  uuid of the node
+     */
+    public static synchronized void deleteNodeFromConfig(String filePath, String nodeToRemove) {
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        ObjectNode node = null;
+        String configStringContent = NetworkUtils.fileToString(filePath);
+        try {
+            node = (ObjectNode) mapper.readTree(configStringContent);
+            node.remove(nodeToRemove);
+
+            String jsonInString = mapper.writeValueAsString(node);
+            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node));
+
+            PrintWriter out = new PrintWriter(filePath);
+            out.print(jsonInString);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * This method is used for updating harm.list
+     * @param nodeUuid
+     * @param space
+     * @param isAlive
+     */
+    public static synchronized void updateHarmList(String nodeUuid,
+                                                   long space,
+                                                   boolean isAlive) {
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        ObjectNode node = null;
+        String configStringContent = NetworkUtils.fileToString("config/harm.list");
+
+
+        try {
+            node = (ObjectNode) mapper.readTree(configStringContent);
+            NodeAttribute oldAttributes = mapper.readValue(node.get(nodeUuid).asText(), NodeAttribute.class);
+
+            NodeAttribute newAttributes = new NodeAttribute ();
+            newAttributes.setAddress(oldAttributes.getAddress());
+            if(space >= 0) {
+                newAttributes.setSpace(space);
+            }else{
+                newAttributes.setSpace(oldAttributes.getSpace());
+            }
+            newAttributes.setAlive(isAlive);
+
+           if(!Objects.equals(oldAttributes, newAttributes)){
+
+                //Update value in object
+                node.put(nodeUuid, mapper.writeValueAsString(newAttributes));
+                String jsonInString = mapper.writeValueAsString(node);
+               // System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newAttributes));
+
+                PrintWriter out = new PrintWriter("config/harm.list");
+                out.print(jsonInString);
+                out.close();
+
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
 }

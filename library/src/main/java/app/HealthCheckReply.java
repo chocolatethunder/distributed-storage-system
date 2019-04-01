@@ -10,12 +10,17 @@ public class HealthCheckReply {
     private String status;
     private long diskSpace;
     private Map<Integer, Integer> corruptedChunks;
+    private Module sender;
 
 
     public HealthCheckReply(){}
 
-    public HealthCheckReply(String status, long diskSpace, Map<Integer, Integer> corruptedChunks){
+    public HealthCheckReply(Module sender,
+                            String status,
+                            long diskSpace,
+                            Map<Integer, Integer> corruptedChunks){
 
+        this.setSender(sender);
         this.setStatus(status);
         this.setDiskSpace(diskSpace);
         this.setCorruptedChunks(corruptedChunks);
@@ -44,5 +49,13 @@ public class HealthCheckReply {
 
     public void setCorruptedChunks(Map<Integer, Integer> corruptedChunks) {
         this.corruptedChunks = corruptedChunks;
+    }
+
+    public Module getSender() {
+        return sender;
+    }
+
+    public void setSender(Module sender) {
+        this.sender = sender;
     }
 }

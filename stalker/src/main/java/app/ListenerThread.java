@@ -1,22 +1,16 @@
 package app;
 
-import app.handlers.ServiceHandlerFactory;
-import org.apache.commons.io.FileSystemUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.FileStore;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.NumberFormat;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- *
+ * This is the listener thread for STALKER, excepting health check requests from JCP and other stalkers
  */
 public class ListenerThread implements Runnable{
 
@@ -25,11 +19,15 @@ public class ListenerThread implements Runnable{
 
 
 
+    public ListenerThread(){}
+
+
     @Override
     public void run() {
 
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
+
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
@@ -38,7 +36,7 @@ public class ListenerThread implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for health check or Leader Election request..");
+        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for health check or Leader Election requests..");
         // will keep on listening for requests
         while (running) {
             try {
@@ -52,7 +50,10 @@ public class ListenerThread implements Runnable{
                 //checking for request type if health check
                 if (req.getMessageType() == MessageType.HEALTH_CHECK){
                     System.out.println("Received health Check request");
-                    executorService.execute(new HealthCheckResponder(client, "SUCCESS", getAvailableDiskSpace()));
+                    executorService.submit(new HealthCheckResponder(client,
+                            "SUCCESS",
+                            getTotalSpaceFromHarms(),
+                            Module.STALKER));
                 }
 
                 //@Masroor add the Leader election logic here
@@ -70,22 +71,26 @@ public class ListenerThread implements Runnable{
 
     }
 
-    public long getAvailableDiskSpace(){
-        NumberFormat nf = NumberFormat.getNumberInstance();
+
+    /**
+     * Adds the total space from harm list
+     * @return
+     */
+    public long getTotalSpaceFromHarms(){
         long total = 0;
-        for (Path root : FileSystems.getDefault().getRootDirectories()) {
 
-            System.out.print(root + ": ");
+        Map<Integer, String> harms = NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
+        ObjectMapper mapper = new ObjectMapper();
+        for (Map.Entry<Integer, String> entry : harms.entrySet()) {
+            NodeAttribute attributes = null;
             try {
-                FileStore store = Files.getFileStore(root);
-                total += store.getUsableSpace();
-                System.out.println("available=" + nf.format(store.getUsableSpace())
-                        + ", total=" + nf.format(store.getTotalSpace()));
+                attributes = mapper.readValue(entry.getValue(), NodeAttribute.class);
+                total += attributes.getSpace();
             } catch (IOException e) {
-                System.out.println("error querying space: " + e.toString());
+                e.printStackTrace();
             }
-        }
 
+        }
         return total;
     }
 }
