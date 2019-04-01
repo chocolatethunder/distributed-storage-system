@@ -22,7 +22,7 @@ public class App {
         System.out.println(NetworkUtils.timeStamp(1) + "JCP online");
         //make a discovery manager and start it, prints results to file
         //this beast will be running at all times
-        Thread discManager = new Thread(new DiscoveryManager(Module.JCP, discoveryTimeout, true));
+        Thread discManager = new Thread(new DiscoveryManager(Module.JCP, discoveryTimeout, false));
         discManager.start();
         System.out.println("Waiting for stalker list to update");
         try{
