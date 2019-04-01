@@ -34,7 +34,7 @@ public class QueueHandler implements  Runnable {
                 getJob();
                 if (!processJob()){
                     //if it fails we'll put it back in the queue
-                    //queueJob();
+                    queueJob();
                 }
                 break;
         }
