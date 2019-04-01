@@ -13,11 +13,13 @@ public class NetDiscovery implements Runnable{
     private String target;
     private String origin;
     private static int discovery_timeout = 0;
-
-    public NetDiscovery(Module target, Module origin, int discovery_timeout) {
+    private boolean verbose;
+    public NetDiscovery(Module target, Module origin, int discovery_timeout, boolean verbose) {
         this.target = target.name();
         this.origin = origin.name();
         this.discovery_timeout = discovery_timeout;
+        this.verbose = verbose;
+
     }
 
     @Override
@@ -25,10 +27,15 @@ public class NetDiscovery implements Runnable{
         HashMap<Integer,String> listOfAddrs =  null;
         try {
             listOfAddrs = broadcast(MessageType.DISCOVER,target);
+
             if (target == Module.STALKER.name()){
+                //write to file
+                System.out.println("Updating STALKER list");
                 NetworkUtils.toFile("config/stalkers.list", listOfAddrs);
             }
             else{
+                //write to file
+                System.out.println("Updating HARM list");
                 NetworkUtils.toFile("config/harm.list", listOfAddrs);
             }
         } catch (IOException e) {
@@ -57,7 +64,7 @@ public class NetDiscovery implements Runnable{
         // create a discover request packet and broadcast it
         UDPPacket discovery = new UDPPacket(request, String.valueOf(NetworkUtils.getMacID()), target, NetworkUtils.getIP());
         ObjectMapper mapper = new ObjectMapper();
-        System.out.println("Sending out broadcast with signature: " + mapper.writeValueAsString(discovery) + "\n");
+        if (verbose){System.out.println("Sending out broadcast with signature: " + mapper.writeValueAsString(discovery) + "\n");}
         byte[] req = mapper.writeValueAsString(discovery).getBytes();
         //the port we are sending on
         DatagramPacket packet = new DatagramPacket(req, req.length, address, ports[0]);
@@ -65,7 +72,7 @@ public class NetDiscovery implements Runnable{
 
         // waits for 5 sec to get response from the LAN
         long t= System.currentTimeMillis();
-        long end = t+ (discovery_timeout*1000);
+        long end = t + (discovery_timeout*1000);
         while(System.currentTimeMillis() < end) {
             byte[] buf = new byte[1024];
             packet = new DatagramPacket(buf, buf.length);
@@ -79,14 +86,13 @@ public class NetDiscovery implements Runnable{
                 continue;
             }
             String received = new String(packet.getData(), 0, packet.getLength());
-            System.out.println("A target has responded: " + received);
+            if (verbose) {System.out.println("A target has responded: " + received);}
             // parse the packet content
             JsonNode discoverReply = mapper.readTree(received);
             String uuid = discoverReply.get("uuid").textValue();
             InetAddress replyAddress =  InetAddress.getByName(discoverReply.get("address").textValue());
             stalkerMap.put(Integer.valueOf(uuid), replyAddress.getHostAddress());
         }
-        System.out.println("Discovery complete.");
         socket.close();
         return stalkerMap;
     }

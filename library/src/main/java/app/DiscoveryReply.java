@@ -16,13 +16,14 @@ public class DiscoveryReply implements Runnable {
     private final int STK_HARM = 10001;
     private final int HARM_STK = 11001;
 
+    private boolean verbose;
     private static int listening_timeout;
     Module module;
     private int[] ports;
 
     //listen for packets from a certain module
     //module is listening module, expected is the one being listened for
-    public DiscoveryReply(Module module, Module expected, int listening_timeout) {
+    public DiscoveryReply(Module module, Module expected, int listening_timeout, boolean verbose) {
         this.module = module;
         this.ports = NetworkUtils.getPortTargets(expected.name(), module.name());
         this.listening_timeout = listening_timeout;
@@ -32,6 +33,7 @@ public class DiscoveryReply implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        this.verbose = verbose;
     }
 
     @Override
@@ -53,7 +55,7 @@ public class DiscoveryReply implements Runnable {
 
             // parse the packet
             String received = new String(packet.getData(), 0, packet.getLength());
-            System.out.println("A discovery probe was received: " + received);
+            if(verbose){System.out.println("A discovery probe was received: " + received);}
             ObjectMapper mapper = new ObjectMapper();
             JsonNode request = null;
             String req_type = null;
@@ -74,7 +76,6 @@ public class DiscoveryReply implements Runnable {
             {
                 // get Info about the packet
                 InetAddress address = packet.getAddress();
-
                 // make the response JSON
                 UDPPacket reply = null;
                 //we must designate what type of device is responding to the message

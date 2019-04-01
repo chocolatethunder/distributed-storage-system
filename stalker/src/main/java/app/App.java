@@ -14,10 +14,21 @@ public class App {
 
     public static void main(String[] args) {
 
+        int discoveryinterval = 20;
         //First thing to do is locate all other stalkers and print the stalkers to file
+        //check the netDiscovery class to see where the file is being created
+        Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, discoveryinterval, true));
+        //DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
+        discManager.run();
 
-        DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
-        DM.start();
+        //we will wait for network discovery to do its thing
+        try{
+            Thread.sleep((long)(Math.random() * (discoveryinterval * 1000) + 5000));
+        }
+        catch (InterruptedException e){
+            e.printStackTrace();
+        }
+
 
 
         System.out.println("This Stalker's macID" + NetworkUtils.getMacID());
@@ -76,7 +87,7 @@ public class App {
     }
 
     public static int getRole(){
-        return(0);
+        return(1);
     }
 
     //cleans chunk folders on startup

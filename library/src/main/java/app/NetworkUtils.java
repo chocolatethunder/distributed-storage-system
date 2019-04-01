@@ -90,7 +90,7 @@ public class NetworkUtils {
     }
 
     //turn a file to string to be read by objectmapper
-    public static String fileToString(String fileName) {
+    public static synchronized String fileToString(String fileName) {
         String fileString = "";
         try{
             fileString = new String(Files.readAllBytes(Paths.get(fileName)), StandardCharsets.UTF_8);
@@ -136,7 +136,7 @@ public class NetworkUtils {
     }
 
     //print an object to a file as json
-    public static boolean toFile(String path, Object s){
+    public static synchronized boolean toFile(String path, Object s){
         ObjectMapper mapper = new ObjectMapper();
         try {
             String jsonInString = mapper.writeValueAsString(s);

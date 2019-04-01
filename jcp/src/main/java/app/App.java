@@ -17,11 +17,22 @@ public class App {
     public static void main(String[] args) {
         int test  = 0;
 
+        int discoveryTimeout = 20;
 
         System.out.println(NetworkUtils.timeStamp(1) + "JCP online");
-        //make a discoverymanager and start it, prints results to file
-        DiscoveryManager DM = new DiscoveryManager(Module.JCP);
-        DM.start();
+        //make a discovery manager and start it, prints results to file
+        //this beast will be running at all times
+        Thread discManager = new Thread(new DiscoveryManager(Module.JCP, discoveryTimeout, true));
+        discManager.start();
+        System.out.println("Waiting for stalker list to update");
+        try{
+            Thread.sleep((long)(Math.random() * (discoveryTimeout * 1000) + 5000));
+        }
+        catch (InterruptedException e){
+            e.printStackTrace();
+        }
+        System.out.println("List updated!");
+
 
         //get the stalkers from file
         HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
@@ -39,7 +50,7 @@ public class App {
 
         }
         RequestSender requestSender = RequestSender.getInstance();
-        //ip of stalker we'll just use the one at index 0 for now
+        //ip of stalker we'll just use the one at index 1 for now
         String i =  m.get(s_list.get(0));
         String stalkerip =  m.get(s_list.get(1));
 

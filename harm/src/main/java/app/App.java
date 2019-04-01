@@ -13,8 +13,9 @@ public class App {
 
     public static void main(String[] args) {
 
-        DiscoveryManager DM = new DiscoveryManager(Module.HARM, 20);
-        DM.start();
+        //this will always be running
+        Thread discManager = new Thread(new DiscoveryManager(Module.HARM, 20, true));
+        discManager.start();
 
         int macID = NetworkUtils.getMacID();
         CommsHandler commLink = new CommsHandler();
