@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- *
+ *This listener thread is dedicated to listening for HEALTH check requests
  */
 public class ListenerThread implements Runnable {
 
@@ -55,7 +55,7 @@ public class ListenerThread implements Runnable {
 
                     //_______TO:DO check for corrupted chunks here
 
-                    executorService.execute(new HealthCheckResponder(client,
+                    executorService.submit(new HealthCheckResponder(client,
                             "SUCCESS",
                             getAvailableDiskSpace(),
                             null,
@@ -72,6 +72,10 @@ public class ListenerThread implements Runnable {
 
     }
 
+    /**
+     * This method returns total space available in root directory and all subdirectories
+     * @return
+     */
     public long getAvailableDiskSpace() {
         NumberFormat nf = NumberFormat.getNumberInstance();
         long total = 0;

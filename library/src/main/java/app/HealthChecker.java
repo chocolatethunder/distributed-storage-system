@@ -36,14 +36,12 @@ public class HealthChecker {
      * This constructor should be used from STALKER units to do health checks on other STALKERS and HARM lists
      * @param stalkers
      * @param harms
-     * @param spaceAvailableSoFar
+     *
      */
     public HealthChecker(Map<Integer, String> stalkers,
-                         Map<Integer, String> harms,
-                         AtomicLong spaceAvailableSoFar){
+                         Map<Integer, String> harms){
         this.stalkerList = stalkers;
         this.harmList = harms;
-        this.spaceAvailableSoFar = spaceAvailableSoFar;
     }
 
 
@@ -56,23 +54,32 @@ public class HealthChecker {
         Timer timer = new Timer();
 
         // for each node in the stalker list, scheduling a task to occur at interval
-        for(Map.Entry<Integer, String> entry : stalkerList.entrySet()) {
-            System.out.println("Starting scheduled health task for node: " + entry.getValue());
-            timer.scheduleAtFixedRate(new HealthCheckerTask(entry.getKey(),
-                    entry.getValue(),
-                    spaceAvailableSoFar,
-                    Module.STALKER),
-                    0,
-                    interval);
+        if(stalkerList != null) {
+            for (Map.Entry<Integer, String> entry : stalkerList.entrySet()) {
+                System.out.println("Starting scheduled health task for node: " + entry.getValue());
+                timer.scheduleAtFixedRate(new HealthCheckerTask(entry.getKey(),
+                                entry.getValue(),
+                                spaceAvailableSoFar,
+                                Module.STALKER),
+                        0,
+                        interval);
+            }
         }
 
         if(harmList != null) {
+            ObjectMapper mapper = new ObjectMapper();
             // for each node in the harm list, scheduling a task to occur at interval
             for (Map.Entry<Integer, String> entry : harmList.entrySet()) {
-                System.out.println("Starting scheduled health task for node: " + entry.getValue());
+                NodeAttribute attributes = null;
+                try {
+                    attributes = mapper.readValue(entry.getValue(), NodeAttribute.class);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("Starting scheduled health task for node: " + attributes.getAddress());
                 timer.scheduleAtFixedRate(new HealthCheckerTask(entry.getKey(),
-                        entry.getValue(),
-                        spaceAvailableSoFar,
+                        attributes.getAddress(),
+                        null,
                         Module.HARM),
                         0,
                         interval);
@@ -156,7 +163,10 @@ public class HealthChecker {
                         System.out.println("Status was success for health check and disk space available "
                                 + this.spaceToUpdate.get());
                     }else{
-                        // need to add the space for all HARMS
+                        // need to add the space for all HARMS in config file
+                        NetworkUtils.updateHarmList(String.valueOf(this.uuid),
+                                availableSpace,
+                                true);
                     }
                 }
 

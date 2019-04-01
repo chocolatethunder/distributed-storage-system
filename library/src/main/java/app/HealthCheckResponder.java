@@ -1,5 +1,6 @@
 package app;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.Map;
 
@@ -61,12 +62,12 @@ public class HealthCheckResponder implements Runnable {
                     diskSpace,
                     corruptedChunks ));
 
-//            try{
-//                System.out.println("Closing connection..");
-//                socket.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+            try{
+                System.out.println("Closing connection..");
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
     }
 }

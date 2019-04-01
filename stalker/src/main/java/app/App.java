@@ -18,7 +18,7 @@ public class App {
 
         //First thing to do is locate all other stalkers and print the stalkers to file
 
-        int port = Integer.valueOf(args[0]);
+        //int port = Integer.valueOf(args[0]);
 
 
 
@@ -32,10 +32,14 @@ public class App {
         System.out.println(NetworkUtils.timeStamp(1) + "Stalker Online");
         //testing
 
-        //starting health check listener
-        ListenerThread healthCheckHandler = new ListenerThread(port);
-        healthCheckHandler.run();
+        //starting listener thread for health check and leader election
+        Thread healthCheckthread = new Thread( new ListenerThread(11115));
+        healthCheckthread.start();
 
+        //starting task for health checks on STALKERS and HARM targets
+        HealthChecker checker = new HealthChecker(NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list")),
+                NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list")));
+        checker.startTask();
 
         //election based on networkDiscovery
         int role = getRole();

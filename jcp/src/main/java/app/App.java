@@ -11,7 +11,7 @@ public class App {
 
 
     //jcp main
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) {
         int test  = 0;
 
         // to capture total disk space in the system and will be updated with each health check

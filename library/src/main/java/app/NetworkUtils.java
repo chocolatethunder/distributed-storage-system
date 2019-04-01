@@ -344,22 +344,16 @@ public class NetworkUtils {
             NodeAttribute attributes = mapper.readValue(node.get(nodeUuid).asText(), NodeAttribute.class);
 
             NodeAttribute newAttributes = new NodeAttribute ();
-            attributes.setAddress(attributes.getAddress());
-            if(attributes.getSpace() != space){
-                newAttributes.setSpace(space);
-            }
+            newAttributes.setAddress(attributes.getAddress());
+            newAttributes.setSpace(space);
+            newAttributes.setAlive(isAlive);
 
-            if(attributes.isAlive() != isAlive){
-                newAttributes.setAlive(isAlive);
-            }
+           if(!Objects.equals(attributes, newAttributes)){
 
-            if(!Objects.equals(attributes, newAttributes)){
-
-                String newAttributesJson = mapper.writeValueAsString(newAttributes);
                 //Update value in object
                 node.put(nodeUuid, mapper.writeValueAsString(newAttributes));
                 String jsonInString = mapper.writeValueAsString(node);
-                System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node));
+               // System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newAttributes));
 
                 PrintWriter out = new PrintWriter("config/harm.list");
                 out.print(jsonInString);
