@@ -159,7 +159,7 @@ public class UploadServiceHandler implements Runnable {
         IndexEntry entry = f.chunkFile(filePath, 3);
         if (entry != null){
             File file = new File(filePath);
-            file.delete();
+            //file.delete();
         }
         entry.summary();
         ////////////////distribute file
