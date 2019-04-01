@@ -16,11 +16,11 @@ public class App {
 
         //First thing to do is locate all other stalkers and print the stalkers to file
 
-        //DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
-        //DM.start();
+        DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
+        DM.start();
 
 
-        System.out.println(NetworkUtils.getMacID());
+        System.out.println("This Stalker's macID" + NetworkUtils.getMacID());
         int test = 0;
         initStalker();
         IndexFile ind = Indexer.loadFromFile();
@@ -45,14 +45,6 @@ public class App {
                     CRUDQueue syncQueue = new CRUDQueue();
                     Thread t1 = new Thread(new StalkerRequestHandler(syncQueue));
                     Thread t2 =  new Thread(new RequestAdministrator(syncQueue));
-
-//
-//                StalkerRequestHandler stalkerCoordinator = new StalkerRequestHandler(syncQueue);
-//                RequestAdministrator reqAdmin = new RequestAdministrator(syncQueue);
-//                stalkerCoordinator.run();
-//                System.out.println("Running admin");
-//                reqAdmin.run();
-
                     t1.start();
                     t2.start();
 

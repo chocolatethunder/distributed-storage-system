@@ -23,8 +23,6 @@ public class App {
         DiscoveryManager DM = new DiscoveryManager(Module.JCP);
         DM.start();
 
-
-
         //get the stalkers from file
         HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
         //get sorted list from targets
@@ -43,7 +41,6 @@ public class App {
         RequestSender requestSender = RequestSender.getInstance();
         //ip of stalker we'll just use the one at index 0 for now
         String i =  m.get(s_list.get(0));
-        System.out.println(" dwdwdwdwddwwd" + i.toString());
         String stalkerip =  m.get(s_list.get(1));
 
         //port to connect to
