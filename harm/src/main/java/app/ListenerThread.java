@@ -16,12 +16,11 @@ import java.util.concurrent.Executors;
  */
 public class ListenerThread implements Runnable {
 
-    private final int serverPort;
+    private final int serverPort = 11114;
     private boolean running = true;
 
 
-    public ListenerThread(int port) {
-        serverPort = port;
+    public ListenerThread(){
     }
 
     @Override

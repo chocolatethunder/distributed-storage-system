@@ -13,12 +13,16 @@ public class App {
 
     public static void main(String[] args) {
 
-//        DiscoveryManager DM = new DiscoveryManager(Module.HARM, 35);
-//        DM.start();
+        DiscoveryManager DM = new DiscoveryManager(Module.HARM, 35);
+        DM.start();
 
-        int port = Integer.valueOf(args[0]);
-        Thread listenerThread = new Thread(new ListenerThread(port));
+
+
+        //Starting the listenerthread for health check requests
+        Thread listenerThread = new Thread(new ListenerThread());
         listenerThread.start();
+
+
 
         int macID = NetworkUtils.getMacID();
         CommsHandler commLink = new CommsHandler();

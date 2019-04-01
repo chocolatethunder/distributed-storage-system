@@ -10,23 +10,24 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- *
+ * This is the listener thread for STALKER, excepting health check requests from JCP and other stalkers
  */
 public class ListenerThread implements Runnable{
 
-    private final int serverPort;
+    private final int serverPort = 11114;
     private boolean running = true;
 
 
 
-    public ListenerThread(int port){
-        serverPort = port;
-    }
+    public ListenerThread(){}
+
+
     @Override
     public void run() {
 
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
+
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
@@ -67,6 +68,11 @@ public class ListenerThread implements Runnable{
 
     }
 
+
+    /**
+     * Adds the total space from harm list
+     * @return
+     */
     public long getTotalSpaceFromHarms(){
         long total = 0;
 

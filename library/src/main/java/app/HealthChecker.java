@@ -14,8 +14,12 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class HealthChecker {
 
-    // every 5 seconds for now
-    private final long interval = 1000 * 5;
+    // every 30 seconds for now
+    private final long interval = 1000 * 30;
+
+    //delay between each timerTask, considering net discovery already occured
+    private final long intialDelay = 1000 * 20;
+
     private Map<Integer, String> stalkerList;
     private Map<Integer, String> harmList;
     private AtomicLong spaceAvailableSoFar;
@@ -61,7 +65,7 @@ public class HealthChecker {
                                 entry.getValue(),
                                 spaceAvailableSoFar,
                                 Module.STALKER),
-                        0,
+                        intialDelay,
                         interval);
             }
         }
@@ -81,7 +85,7 @@ public class HealthChecker {
                         attributes.getAddress(),
                         null,
                         Module.HARM),
-                        0,
+                        intialDelay,
                         interval);
             }
         }
@@ -115,7 +119,10 @@ public class HealthChecker {
         private final String host ;
         private final int uuid;
         private final int port = 11114;
-        private final int timeoutForReply = 1000 * 5;
+
+        //will wait 30 seconds for reply, if not then it will be considered dead
+        private final int timeoutForReply = 1000 * 30;
+
         private AtomicLong spaceToUpdate;
         private Module target;
 
@@ -133,7 +140,7 @@ public class HealthChecker {
             Socket socket = null;
             try {
 
-                socket = NetworkUtils.createConnection("127.0.0.1", Integer.valueOf(host));
+                socket = NetworkUtils.createConnection(host, port);
 
                 //if server does not reply within specified timeout, then SocketException will be thrown
                 socket.setSoTimeout(1000 * timeoutForReply);

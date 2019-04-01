@@ -3,6 +3,8 @@
  */
 package app;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -22,9 +24,9 @@ public class App {
 
         System.out.println(NetworkUtils.timeStamp(1) + "JCP online");
 
-        //make a discoverymanager and startTask it, prints results to file
-       // DiscoveryManager DM = new DiscoveryManager(Module.JCP);
-       // DM.startTask();
+        //make a discoverymanager and start it, prints results to file
+        DiscoveryManager DM = new DiscoveryManager(Module.JCP);
+        DM.start();
 
 
 
@@ -33,8 +35,12 @@ public class App {
         //get sorted list from targets
         List<Integer> s_list = NetworkUtils.mapToSList(m);
 
+
+        //starting health checker tasks for each stalker in the stalker list
         HealthChecker checker = new HealthChecker(m, totalDiskSpace);
         checker.startTask();
+
+
 
         System.out.println(" Ip ids" + (s_list));
 //        if (test == 0){
@@ -44,38 +50,31 @@ public class App {
 
         }
 
+
+        RequestSender requestSender = RequestSender.getInstance();
+        //ip of stalker we'll just use the one at index 0 for now
+        String i =  m.get(s_list.get(0));
+        System.out.println(" dwdwdwdwddwwd" + i.toString());
+        String stalkerip =  m.get(s_list.get(1));
+
+        //port to connect to
+        int port = 11111;
+        Socket socket = requestSender.connect(stalkerip, port);
+        String req = "download";
+        switch (req){
+            case("upload"):
+              //  requestSender.sendFile("temp\\003_txt_test.txt");
+                break;
+            case("download"):
+                requestSender.getFile("temp\\003_txt_test.txt");
+                break;
+        }
+        // should close socket from main calling method, otherwise threads giving null pointer exception
         try {
-            Thread.sleep(1000 * 10);
-        } catch (InterruptedException e) {
+            socket.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
-        System.out.println("total space in JCP " + totalDiskSpace.get() );
-
-//        RequestSender requestSender = RequestSender.getInstance();
-//        //ip of stalker we'll just use the one at index 0 for now
-//        String i =  m.get(s_list.get(0));
-//        System.out.println(" dwdwdwdwddwwd" + i.toString());
-//        String stalkerip =  m.get(s_list.get(1));
-//
-//        //port to connect to
-//        int port = 11111;
-//        Socket socket = requestSender.connect(stalkerip, port);
-//        String req = "delete";
-//        switch (req){
-//            case("upload"):
-//              //  requestSender.sendFile("temp\\003_txt_test.txt");
-//                break;
-//            case("download"):
-//                requestSender.getFile("temp\\003_txt_test.txt");
-//                break;
-//        }
-//        // should close socket from main calling method, otherwise threads giving null pointer exception
-//        try {
-//            socket.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
 

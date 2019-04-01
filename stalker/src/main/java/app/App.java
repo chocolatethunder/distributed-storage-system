@@ -18,12 +18,9 @@ public class App {
 
         //First thing to do is locate all other stalkers and print the stalkers to file
 
-    //   int port = Integer.valueOf(args[0]);
+       DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
+       DM.start();
 
-
-
-       // DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
-        //DM.startTask();
 
         int test = 0;
         initStalker();
@@ -32,9 +29,12 @@ public class App {
         System.out.println(NetworkUtils.timeStamp(1) + "Stalker Online");
         //testing
 
+
         //starting listener thread for health check and leader election
-        Thread healthCheckthread = new Thread( new ListenerThread(11115));
+        Thread healthCheckthread = new Thread( new ListenerThread());
         healthCheckthread.start();
+
+
 
         //starting task for health checks on STALKERS and HARM targets
         String stalkerList = NetworkUtils.fileToString("config/stalkers.list");
@@ -42,6 +42,9 @@ public class App {
         HealthChecker checker = new HealthChecker(NetworkUtils.mapFromJson(stalkerList),
                 NetworkUtils.mapFromJson(harmlist));
         checker.startTask();
+
+
+
 
         //election based on networkDiscovery
         int role = getRole();
@@ -65,7 +68,8 @@ public class App {
                 break;
             case 1:
                 JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
-                jcpRequestHandler.run();
+                Thread jcpListener = new Thread(jcpRequestHandler);
+                jcpListener.start();
                 break;
             case 2:
                 break;
