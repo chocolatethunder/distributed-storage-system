@@ -122,10 +122,12 @@ public class NetDiscovery implements Runnable{
                 InetAddress replyAddress =  InetAddress.getByName(discoverReply.get("address").textValue());
                 stalkerMap.put(Integer.valueOf(uuid), replyAddress.getHostAddress());
             }
-            catch (Exception e)
+            catch (SocketTimeoutException ex)
             {
-                //socket.close();
-                return null;
+                //socket timed out
+            }
+            catch (IOException e){
+                e.printStackTrace();
             }
         }
         //socket.close();
