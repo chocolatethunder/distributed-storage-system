@@ -8,6 +8,7 @@ import java.net.*;
 
 public class DiscoveryReply implements Runnable {
 
+    private DatagramSocket receiverSocket;
     private DatagramSocket socket;
     private DatagramPacket packet;
     private byte[] req = new byte[1024];
@@ -40,24 +41,32 @@ public class DiscoveryReply implements Runnable {
             try {
                 //where to listen
                 //breaks here...
-                socket = new DatagramSocket(ports[0]);
-                socket.setSoTimeout(listening_timeout * 1000);
+                receiverSocket = new DatagramSocket(ports[0]);
+                socket = new DatagramSocket();
+                receiverSocket.setSoTimeout(listening_timeout * 1000);
                 bound = true;
             } catch (Exception e) {
                 //e.printStackTrace();
-
             }
         }
         while(!Thread.interrupted()){
-            listen();
+            listenServer();
         }
     }
 
-    public void listen(){
-        String req_target = null;
+    public void listenServer(){
         ObjectMapper mapper = new ObjectMapper();
+        String req_targ = receiveSignal(mapper);
+        if (req_targ != null){
+            sendSignal(mapper, req_targ);
+        }
+
+    }
+
+    public String receiveSignal(ObjectMapper mapper){
+        String req_target = null;
         try {
-            socket.receive(packet);
+            receiverSocket.receive(packet);
             // parse the packet
             String received = new String(packet.getData(), 0, packet.getLength());
             if(verbose){System.out.println("A discovery probe was received: " + received);}
@@ -70,9 +79,12 @@ public class DiscoveryReply implements Runnable {
         }
         catch (IOException e) {
             e.printStackTrace();
-            return;
+            return null;
         }
+        return req_target;
+    }
 
+    public boolean sendSignal(ObjectMapper mapper, String req_target){
         // Make sure the broadcast is targeting this module
         if(req_target.equals(module.name()))
         {
@@ -99,15 +111,17 @@ public class DiscoveryReply implements Runnable {
                 req = mapper.writeValueAsString(reply).getBytes();
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
-                return;
+                return false;
             }
             DatagramPacket replyPkt = new DatagramPacket(req, req.length, address, ports[1]);
             try {
                 socket.send(replyPkt);
             } catch (IOException e) {
                 e.printStackTrace();
-                return;
+                return false;
             }
         }
+        return true;
     }
+
 }
