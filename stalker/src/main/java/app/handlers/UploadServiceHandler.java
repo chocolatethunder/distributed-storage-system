@@ -125,32 +125,6 @@ public class UploadServiceHandler implements Runnable {
     }
 
 
-    public boolean getFileFromJCP(){
-        byte[] chunkArray = new byte[1024];
-        int bytesRead = 0;
-        try {
-            in = new DataInputStream(socket.getInputStream());
-            bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(filePath));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        try {
-            while ((bytesRead = in.read(chunkArray)) != -1) {
-
-                bufferedOutputStream.write(chunkArray, 0, bytesRead);
-                bufferedOutputStream.flush();
-                System.out.println("File "
-                        + " downloaded (" + bytesRead + " bytes read)");
-            }
-            bufferedOutputStream.close();
-        }catch (IOException e){
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
     public IndexEntry distributeToHarm(){
         List<Integer> harm_list = getHarms(0);
         FileChunker f = new FileChunker(chunk_dir);
@@ -159,12 +133,12 @@ public class UploadServiceHandler implements Runnable {
         IndexEntry entry = f.chunkFile(filePath, 3);
         if (entry != null){
             File file = new File(filePath);
-            //file.delete();
+            file.delete();
         }
         entry.summary();
         ////////////////distribute file
         if(cd.distributeChunks(entry, 3)){
-            //entry.cleanLocalChunks();
+            entry.cleanLocalChunks();
             entry.summary();
             return entry;
         }

@@ -33,16 +33,14 @@ public class DiscoveryReply implements Runnable {
     @Override
     public void run() {
         // runs for 15 sec for a udp broadcast
-        try {
-            //where to listen
-            socket = new DatagramSocket(ports[0]);
-        } catch (Exception e) {
-            e.printStackTrace();
-            socket.close();
-            return;
-        }
-        while(true){
 
+        while(true){
+            try {
+                //where to listen
+                socket = new DatagramSocket(ports[0]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             DatagramPacket packet = new DatagramPacket(req, req.length);
             try {
                 socket.setSoTimeout(listening_timeout*1000);
