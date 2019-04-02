@@ -3,22 +3,19 @@
  */
 package app;
 
-import app.LeaderUtils.QueueEntry;
+import app.LeaderUtils.CRUDQueue;
 import app.LeaderUtils.RequestAdministrator;
 import app.chunk_utils.Indexer;
 import app.chunk_utils.IndexFile;
 import org.apache.commons.io.FilenameUtils;
 import java.io.*;
-import java.util.PriorityQueue;
-import java.util.Comparator;
 
 public class App {
 
     public static void main(String[] args) {
 
         //First thing to do is locate all other stalkers and print the stalkers to file
-
-
+        
        // DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
         //DM.start();
 
@@ -41,14 +38,7 @@ public class App {
             case 0:
                 //This means that this STK is the leader
                 //create a priority comparator for the Priority queue
-                Comparator<QueueEntry> entryPriorityComparator = new Comparator<QueueEntry>() {
-                    @Override
-                    public int compare(QueueEntry q1, QueueEntry q2) {
-                        return q1.getPriority() - q2.getPriority();
-                    }
-                };
-                PriorityQueue<QueueEntry> syncQueue = new PriorityQueue<>(entryPriorityComparator);
-
+                CRUDQueue syncQueue = new CRUDQueue();
                 StalkerRequestHandler stalkerCoordinator = new StalkerRequestHandler(syncQueue);
                 RequestAdministrator reqAdmin = new RequestAdministrator(syncQueue);
                 stalkerCoordinator.run();

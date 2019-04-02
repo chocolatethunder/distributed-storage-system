@@ -1,5 +1,6 @@
 package app;
 
+import app.LeaderUtils.CRUDQueue;
 import app.LeaderUtils.QueueEntry;
 import app.LeaderUtils.QueueHandler;
 
@@ -18,9 +19,9 @@ public class StalkerRequestHandler implements Runnable {
 
     private int serverPort = 11112;
     private boolean running = true;
-    private PriorityQueue<QueueEntry> pQueue;
-    public StalkerRequestHandler(PriorityQueue<QueueEntry> q){
-
+    private CRUDQueue pQueue;
+    public StalkerRequestHandler(CRUDQueue q){
+        this.pQueue = q;
     }
     @Override
     public void run(){
