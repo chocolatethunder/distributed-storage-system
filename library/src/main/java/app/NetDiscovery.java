@@ -97,6 +97,7 @@ public class NetDiscovery implements Runnable{
             stalkerMap.put(Integer.valueOf(uuid), replyAddress.getHostAddress());
         }
         receiverSocket.close();
+        socket.close();
         return stalkerMap;
     }
 }
