@@ -99,12 +99,13 @@ public class NetDiscovery implements Runnable{
             packet = new DatagramPacket(buf, buf.length);
             // set socket timeout to 1 sec
             try {
-                receiverSocket.setSoTimeout(1000);
+                receiverSocket.setSoTimeout(discovery_timeout);
                 receiverSocket.receive(packet);
             }
             catch (SocketTimeoutException e)
             {
                 socket.close();
+                return null;
             }
             String received = new String(packet.getData(), 0, packet.getLength());
             if (verbose) {System.out.println("A target has responded: " + received);}
