@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class NetDiscovery implements Runnable{
     private static DatagramSocket socket = null;
+    private DatagramSocket receiverSocket;
     private String target;
     private String origin;
     private static int discovery_timeout = 0;
@@ -25,23 +26,36 @@ public class NetDiscovery implements Runnable{
     @Override
     public void run() {
         HashMap<Integer,String> listOfAddrs =  null;
+        int[] ports = NetworkUtils.getPortTargets(origin, target);
         try {
-            listOfAddrs = broadcast(MessageType.DISCOVER,target);
-            if (listOfAddrs != null){
-                if (target == Module.STALKER.name()){
-                    //write to file
-                    System.out.println("Updating STALKER list");
-                    NetworkUtils.toFile("config/stalkers.list", listOfAddrs);
-                }
-                else{
-                    //write to file
-                    System.out.println("Updating HARM list");
-                    NetworkUtils.toFile("config/harm.list", listOfAddrs);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+            receiverSocket = new DatagramSocket(ports[1]);
         }
+        catch (SocketException e){
+
+        }
+
+
+
+        while (true){
+            try {
+                listOfAddrs = broadcast(MessageType.DISCOVER,target);
+                if (listOfAddrs != null){
+                    if (target == Module.STALKER.name()){
+                        //write to file
+                        System.out.println("Updating STALKER list");
+                        NetworkUtils.toFile("config/stalkers.list", listOfAddrs);
+                    }
+                    else{
+                        //write to file
+                        System.out.println("Updating HARM list");
+                        NetworkUtils.toFile("config/harm.list", listOfAddrs);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     /**
@@ -59,10 +73,10 @@ public class NetDiscovery implements Runnable{
         int[] ports = NetworkUtils.getPortTargets(origin, target);
 
 
-        //port we are receiving on
+        //port we are receiving on0
         //breaking here????????!!!
-        DatagramSocket receiverSocket = new DatagramSocket(ports[1]);    // socket to receive replies
-        receiverSocket.setReuseAddress(true);
+            // socket to receive replies
+
         // create a discover request packet and broadcast it
         UDPPacket discovery = new UDPPacket(request, String.valueOf(NetworkUtils.getMacID()), target, NetworkUtils.getIP());
         ObjectMapper mapper = new ObjectMapper();
