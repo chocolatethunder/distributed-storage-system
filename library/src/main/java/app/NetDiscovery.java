@@ -96,7 +96,7 @@ public class NetDiscovery implements Runnable{
             InetAddress replyAddress =  InetAddress.getByName(discoverReply.get("address").textValue());
             stalkerMap.put(Integer.valueOf(uuid), replyAddress.getHostAddress());
         }
-        //receiverSocket.close();
+        receiverSocket.close();
         return stalkerMap;
     }
 }
