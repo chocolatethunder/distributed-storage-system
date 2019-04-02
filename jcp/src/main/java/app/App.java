@@ -61,8 +61,6 @@ public class App {
         switch (req){
             case("upload"):
                 requestSender.sendFile("temp/003_txt_test.txt");
-
-
                 break;
             case("download"):
                 requestSender.getFile("temp/003_txt_test.txt");

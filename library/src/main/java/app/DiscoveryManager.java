@@ -21,8 +21,7 @@ public class DiscoveryManager implements Runnable{
     @Override
     public void run(){
         //run forever
-
-    while(true){
+    while(!Thread.interrupted()){
         switch (mType){
             case STALKER:
                 STALKERDiscovery();
@@ -38,8 +37,11 @@ public class DiscoveryManager implements Runnable{
         }
     }
 
+    }
 
 
+    public void close(){
+        exit = true;
     }
 
     //will search for harm targets and stalkers on the network

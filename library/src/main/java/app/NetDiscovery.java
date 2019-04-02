@@ -28,18 +28,15 @@ public class NetDiscovery implements Runnable{
         HashMap<Integer,String> listOfAddrs =  null;
         int[] ports = NetworkUtils.getPortTargets(origin, target);
         try {
+            //only bind your ports once!!!
             receiverSocket = new DatagramSocket(ports[1]);
+            socket = new DatagramSocket();
         }
         catch (SocketException e){
-
         }
-
-
-
-        while (true){
+        while (!Thread.interrupted()){
             try {
-                Thread.sleep(discovery_timeout);
-                listOfAddrs = broadcast(MessageType.DISCOVER,target);
+                listOfAddrs = serverSearch(MessageType.DISCOVER, ports);
                 if (listOfAddrs != null){
                     if (target == Module.STALKER.name()){
                         //write to file
@@ -52,13 +49,10 @@ public class NetDiscovery implements Runnable{
                         NetworkUtils.toFile("config/harm.list", listOfAddrs);
                     }
                 }
-
-
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
+            try{Thread.sleep(discovery_timeout * 1000);}catch (Exception e){};
         }
 
     }
@@ -68,54 +62,76 @@ public class NetDiscovery implements Runnable{
      * broadcasts a UDP packet over a LAN network
      * @return list of address of the modules that repllied
      */
-    public HashMap<Integer, String> broadcast(MessageType request,String target) throws IOException {
+    public HashMap<Integer, String> serverSearch(MessageType request,int[] ports) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        try{
+            if(sendSignal(request, mapper)){
+                System.out.println("We did it!!!");
+                return(receiveSignal(mapper));
+            }
+        }
+        catch (IOException e){
+            e.printStackTrace();
+            System.out.println("Server search failed!");
+        }
+        return (null);
+
+    }
+
+    //send out a UDP broadcast
+    public boolean sendSignal(MessageType request, ObjectMapper mapper) throws IOException{
+//        try{
+//
+//            return(false);
+//        }
+//        catch(SocketException e){
+//            e.printStackTrace();
+//        }
         // To broadcast change this to 255.255.255.255
         InetAddress address = InetAddress.getByName("192.168.1.255");       // broadcast address
         //we want a map of MAC -> ip
-        HashMap<Integer, String> stalkerMap = new HashMap<>();
-        socket = new DatagramSocket();
         //the ports must be specific to target/origin
         int[] ports = NetworkUtils.getPortTargets(origin, target);
-
-
-        //port we are receiving on0
-        //breaking here????????!!!
-            // socket to receive replies
-
         // create a discover request packet and broadcast it
         UDPPacket discovery = new UDPPacket(request, String.valueOf(NetworkUtils.getMacID()), target, NetworkUtils.getIP());
-        ObjectMapper mapper = new ObjectMapper();
         if (verbose){System.out.println("Sending out broadcast with signature: " + mapper.writeValueAsString(discovery) + "\n");}
         byte[] req = mapper.writeValueAsString(discovery).getBytes();
         //the port we are sending on
         DatagramPacket packet = new DatagramPacket(req, req.length, address, ports[0]);
         socket.send(packet);
+        return(true);
+    }
 
+    public HashMap<Integer, String> receiveSignal(ObjectMapper mapper){
+        HashMap<Integer, String> stalkerMap = new HashMap<>();
         // waits for 5 sec to get response from the LAN
         long t= System.currentTimeMillis();
         long end = t + (discovery_timeout*1000);
         while(System.currentTimeMillis() < end) {
             byte[] buf = new byte[1024];
-            packet = new DatagramPacket(buf, buf.length);
+            DatagramPacket packet = new DatagramPacket(buf, buf.length);
             // set socket timeout to 1 sec
             try {
                 receiverSocket.setSoTimeout(discovery_timeout);
                 receiverSocket.receive(packet);
+                String received = new String(packet.getData(), 0, packet.getLength());
+                if (verbose) {System.out.println("A target has responded: " + received);}
+                // parse the packet content
+                JsonNode discoverReply = mapper.readTree(received);
+                String uuid = discoverReply.get("uuid").textValue();
+                InetAddress replyAddress =  InetAddress.getByName(discoverReply.get("address").textValue());
+                stalkerMap.put(Integer.valueOf(uuid), replyAddress.getHostAddress());
             }
-            catch (SocketTimeoutException e)
+            catch (Exception e)
             {
-                socket.close();
+                //socket.close();
                 return null;
             }
-            String received = new String(packet.getData(), 0, packet.getLength());
-            if (verbose) {System.out.println("A target has responded: " + received);}
-            // parse the packet content
-            JsonNode discoverReply = mapper.readTree(received);
-            String uuid = discoverReply.get("uuid").textValue();
-            InetAddress replyAddress =  InetAddress.getByName(discoverReply.get("address").textValue());
-            stalkerMap.put(Integer.valueOf(uuid), replyAddress.getHostAddress());
         }
-        socket.close();
+        //socket.close();
         return stalkerMap;
     }
+
+
+
 }

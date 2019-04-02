@@ -14,13 +14,12 @@ public class App {
 
     public static void main(String[] args) {
 
-        int discoveryinterval = 20;
+        int discoveryinterval = 15;
         //First thing to do is locate all other stalkers and print the stalkers to file
         //check the netDiscovery class to see where the file is being created
-        Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, discoveryinterval, false));
+        Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, discoveryinterval, true));
         //DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
         discManager.start();
-
         //we will wait for network discovery to do its thing
         System.out.println(NetworkUtils.timeStamp(1) + "Waiting for system discovery...");
         try{
