@@ -17,7 +17,7 @@ public class App {
         int discoveryinterval = 20;
         //First thing to do is locate all other stalkers and print the stalkers to file
         //check the netDiscovery class to see where the file is being created
-        Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, discoveryinterval, false));
+        Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, discoveryinterval, true));
         //DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
         discManager.start();
 

@@ -51,9 +51,11 @@ public class NetDiscovery implements Runnable{
                         NetworkUtils.toFile("config/harm.list", listOfAddrs);
                     }
                 }
-            } catch (IOException e) {
+                Thread.sleep(discovery_timeout);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+
         }
 
     }
