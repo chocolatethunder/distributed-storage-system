@@ -36,10 +36,10 @@ public class FileStreamer {
                 bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
                 bufferedInputStream.read(byteArray, 0, byteArray.length);
 
-                System.out.println("Sending " + filepath + "(" + byteArray.length + " bytes)");
+                System.out.println(NetworkUtils.timeStamp(1) + "Sending " + filepath + "(" + byteArray.length + " bytes)");
                 out.write(byteArray, 0, byteArray.length);
                 out.flush();
-                System.out.println("Done.");
+                System.out.println(NetworkUtils.timeStamp(1) + "Done.");
 
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -84,7 +84,7 @@ public class FileStreamer {
                 }
 
                 bufferedOutputStream.flush();
-                System.out.println("Done.");
+                System.out.println(NetworkUtils.timeStamp(1) + "Done.");
 
             } catch (IOException ex) {
                 ex.printStackTrace();

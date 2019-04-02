@@ -60,14 +60,14 @@ public class NetworkUtils {
     public static String timeStamp(int option){
         Calendar cal = Calendar.getInstance();
         Date date=cal.getTime();
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
         String formattedDate = dateFormat.format(date);
         switch (option){
             case 0:
                 formattedDate =  "---__--__--__--__--> " + formattedDate;
                 break;
             case 1:
-                formattedDate =  formattedDate + " ---------------->>>: ";
+                formattedDate =  formattedDate + " --->>>: ";
                 break;
             default:
                 break;

@@ -46,8 +46,6 @@ public class App {
 
 
         //election based on networkDiscovery
-
-
         while (true){
             int role = getRole();
             switch (role){
@@ -107,7 +105,6 @@ public class App {
                 }
             }
         }
-
         if(temp_folder_contents != null) {
             for (File f : temp_folder_contents) {
                 if (!FilenameUtils.getExtension(f.getName()).equals("empty")) {

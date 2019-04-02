@@ -52,6 +52,7 @@ public class DiscoveryReply implements Runnable {
         while(!Thread.interrupted()){
             listenServer();
         }
+
     }
 
     public void listenServer(){
@@ -69,7 +70,7 @@ public class DiscoveryReply implements Runnable {
             receiverSocket.receive(packet);
             // parse the packet
             String received = new String(packet.getData(), 0, packet.getLength());
-            if(verbose){System.out.println("A discovery probe was received: " + received);}
+            if(verbose){System.out.println(NetworkUtils.timeStamp(1) + "A discovery probe was received: " + received);}
             JsonNode request = null;
             request = mapper.readTree(received);
             req_target = request.get("target").textValue();

@@ -40,12 +40,12 @@ public class NetDiscovery implements Runnable{
                 if (listOfAddrs != null){
                     if (target == Module.STALKER.name()){
                         //write to file
-                        System.out.println("Updating STALKER list");
+                        System.out.println(NetworkUtils.timeStamp(1) + "STALKER list updated");
                         NetworkUtils.toFile("config/stalkers.list", listOfAddrs);
                     }
                     else{
                         //write to file
-                        System.out.println("Updating HARM list");
+                        System.out.println(NetworkUtils.timeStamp(1) + "HARM list updated");
                         NetworkUtils.toFile("config/harm.list", listOfAddrs);
                     }
                 }
@@ -66,7 +66,11 @@ public class NetDiscovery implements Runnable{
         ObjectMapper mapper = new ObjectMapper();
         try{
             if(sendSignal(request, mapper)){
-                return(receiveSignal(mapper));
+                HashMap<Integer,String> m;
+                m = receiveSignal(mapper);
+                if(m != null){
+                    return(m);
+                }
             }
         }
         catch (IOException e){
@@ -93,7 +97,7 @@ public class NetDiscovery implements Runnable{
         int[] ports = NetworkUtils.getPortTargets(origin, target);
         // create a discover request packet and broadcast it
         UDPPacket discovery = new UDPPacket(request, String.valueOf(NetworkUtils.getMacID()), target, NetworkUtils.getIP());
-        if (verbose){System.out.println("Sending out broadcast with signature: " + mapper.writeValueAsString(discovery) + "\n");}
+        if (verbose){System.out.println(NetworkUtils.timeStamp(1) + "Sending out broadcast with signature: " + mapper.writeValueAsString(discovery) + "\n");}
         byte[] req = mapper.writeValueAsString(discovery).getBytes();
         //the port we are sending on
         DatagramPacket packet = new DatagramPacket(req, req.length, address, ports[0]);
@@ -114,7 +118,7 @@ public class NetDiscovery implements Runnable{
                 receiverSocket.setSoTimeout(discovery_timeout);
                 receiverSocket.receive(packet);
                 String received = new String(packet.getData(), 0, packet.getLength());
-                if (verbose) {System.out.println("A target has responded: " + received);}
+                if (verbose) {System.out.println(NetworkUtils.timeStamp(1) + "A target has responded: " + received);}
                 // parse the packet content
                 JsonNode discoverReply = mapper.readTree(received);
                 String uuid = discoverReply.get("uuid").textValue();

@@ -59,7 +59,7 @@ public class RequestSender {
             }else{
                 //need a way to connect to another STALKER
                 //DEBUG
-                System.out.println("SERVER BUSY");
+                System.out.println(NetworkUtils.timeStamp(1) + "SERVER BUSY");
             }
         }
     }

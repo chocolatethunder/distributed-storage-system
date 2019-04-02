@@ -32,7 +32,7 @@ public class App {
             e.printStackTrace();
         }
         System.out.println(NetworkUtils.timeStamp(1) + "List updated!");
-
+        discManager.interrupt();
 
         //get the stalkers from file
         HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
@@ -42,10 +42,6 @@ public class App {
         //HealthChecker checker = new HealthChecker();
         //checker.start(m);
 
-        System.out.println(" Ip ids" + (s_list));
-//        if (test == 0){
-//            return;
-//        }
         for (Integer key : m.keySet()){
 
         }
@@ -68,12 +64,12 @@ public class App {
         }
         // should close socket from main calling method, otherwise threads giving null pointer exception
         try {
-            discManager.interrupt();
+            //discManager.interrupt();
             socket.close();
+            System.exit(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
 
