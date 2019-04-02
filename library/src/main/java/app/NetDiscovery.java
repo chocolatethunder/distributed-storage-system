@@ -62,7 +62,7 @@ public class NetDiscovery implements Runnable{
         //port we are receiving on
         //breaking here????????!!!
         DatagramSocket receiverSocket = new DatagramSocket(ports[1]);    // socket to receive replies
-
+        receiverSocket.setReuseAddress(true);
         // create a discover request packet and broadcast it
         UDPPacket discovery = new UDPPacket(request, String.valueOf(NetworkUtils.getMacID()), target, NetworkUtils.getIP());
         ObjectMapper mapper = new ObjectMapper();
