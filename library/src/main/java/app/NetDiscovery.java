@@ -38,20 +38,21 @@ public class NetDiscovery implements Runnable{
 
         while (true){
             try {
-                listOfAddrs = broadcast(MessageType.DISCOVER,target);
-                if (listOfAddrs != null){
-                    if (target == Module.STALKER.name()){
-                        //write to file
-                        System.out.println("Updating STALKER list");
-                        NetworkUtils.toFile("config/stalkers.list", listOfAddrs);
-                    }
-                    else{
-                        //write to file
-                        System.out.println("Updating HARM list");
-                        NetworkUtils.toFile("config/harm.list", listOfAddrs);
-                    }
-                }
                 Thread.sleep(discovery_timeout);
+                listOfAddrs = broadcast(MessageType.DISCOVER,target);
+
+                if (target == Module.STALKER.name()){
+                    //write to file
+                    System.out.println("Updating STALKER list");
+                    NetworkUtils.toFile("config/stalkers.list", listOfAddrs);
+                }
+                else{
+                    //write to file
+                    System.out.println("Updating HARM list");
+                    NetworkUtils.toFile("config/harm.list", listOfAddrs);
+                }
+
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
