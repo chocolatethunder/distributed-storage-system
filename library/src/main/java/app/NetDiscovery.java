@@ -40,17 +40,19 @@ public class NetDiscovery implements Runnable{
             try {
                 Thread.sleep(discovery_timeout);
                 listOfAddrs = broadcast(MessageType.DISCOVER,target);
+                if (listOfAddrs != null){
+                    if (target == Module.STALKER.name()){
+                        //write to file
+                        System.out.println("Updating STALKER list");
+                        NetworkUtils.toFile("config/stalkers.list", listOfAddrs);
+                    }
+                    else{
+                        //write to file
+                        System.out.println("Updating HARM list");
+                        NetworkUtils.toFile("config/harm.list", listOfAddrs);
+                    }
+                }
 
-                if (target == Module.STALKER.name()){
-                    //write to file
-                    System.out.println("Updating STALKER list");
-                    NetworkUtils.toFile("config/stalkers.list", listOfAddrs);
-                }
-                else{
-                    //write to file
-                    System.out.println("Updating HARM list");
-                    NetworkUtils.toFile("config/harm.list", listOfAddrs);
-                }
 
 
             } catch (Exception e) {
@@ -103,7 +105,6 @@ public class NetDiscovery implements Runnable{
             catch (SocketTimeoutException e)
             {
                 socket.close();
-                return null;
             }
             String received = new String(packet.getData(), 0, packet.getLength());
             if (verbose) {System.out.println("A target has responded: " + received);}
