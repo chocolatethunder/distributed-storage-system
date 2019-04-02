@@ -48,13 +48,14 @@ public class RequestSender {
      *
      * @param fileName absolute file path
      */
-    public void sendFile(String fileName){
+    public void sendFile(String filePath){
         MessageType m = MessageType.UPLOAD;
-        if(NetworkUtils.checkFile(fileName)){
+        if(NetworkUtils.checkFile(filePath)){
+            String fileName = FilenameUtils.getName(filePath);
             //send a request and wait for ACK before proceeding
             if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m)) == MessageType.ACK) {
                 FileStreamer fileStreamer = new FileStreamer(socket);
-                fileStreamer.sendFileToSocket(fileName);
+                fileStreamer.sendFileToSocket(filePath);
             }else{
                 //need a way to connect to another STALKER
                 //DEBUG

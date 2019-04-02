@@ -5,6 +5,7 @@ public class DiscoveryManager implements Runnable{
     private Module mType;
     private int timeout = 20;
     private boolean verbose = false;
+    private boolean exit = false;
     public DiscoveryManager(Module m){
         mType = m;
     }
@@ -17,10 +18,16 @@ public class DiscoveryManager implements Runnable{
         this.timeout = timeout;
         this.verbose = verbose;
     }
-
+    @Override
     public void run(){
         //run forever
-        while(true){
+
+        if (Thread.interrupted()){
+            exit = true;
+        }
+
+
+        while(!exit){
             switch (mType){
                 case STALKER:
                     STALKERDiscovery();
@@ -37,6 +44,8 @@ public class DiscoveryManager implements Runnable{
         }
 
     }
+
+
 
     //will search for harm targets and stalkers on the network
     public void STALKERDiscovery(){

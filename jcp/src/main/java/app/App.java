@@ -17,7 +17,7 @@ public class App {
     public static void main(String[] args) {
         int test  = 0;
 
-        int discoveryTimeout = 20;
+        int discoveryTimeout = 5;
 
         System.out.println(NetworkUtils.timeStamp(1) + "JCP online");
         //make a discovery manager and start it, prints results to file
@@ -26,7 +26,7 @@ public class App {
         discManager.start();
         System.out.println(NetworkUtils.timeStamp(1) + "Waiting for stalker list to update");
         try{
-            Thread.sleep(5000);
+            Thread.sleep(10000);
         }
         catch (InterruptedException e){
             e.printStackTrace();
@@ -60,18 +60,22 @@ public class App {
         String req = "upload";
         switch (req){
             case("upload"):
-                requestSender.sendFile("temp\\003_txt_test.txt");
+                requestSender.sendFile("temp/003_txt_test.txt");
+
+
                 break;
             case("download"):
-                requestSender.getFile("temp\\003_txt_test.txt");
+                requestSender.getFile("temp/003_txt_test.txt");
                 break;
         }
         // should close socket from main calling method, otherwise threads giving null pointer exception
         try {
+            discManager.interrupt();
             socket.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
 
