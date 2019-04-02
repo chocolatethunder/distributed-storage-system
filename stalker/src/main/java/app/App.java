@@ -27,8 +27,8 @@ public class App {
         //testing
 
         //starting health check listener
-        ListenerThread healthCheckHandler = new ListenerThread();
-        healthCheckHandler.run();
+        //ListenerThread healthCheckHandler = new ListenerThread();
+        //healthCheckHandler.run();
 
 
         //election based on networkDiscovery

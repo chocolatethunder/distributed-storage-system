@@ -30,8 +30,8 @@ public class App {
         //get sorted list from targets
         List<Integer> s_list = NetworkUtils.mapToSList(m);
 
-        HealthChecker checker = new HealthChecker();
-        checker.start(m);
+        //HealthChecker checker = new HealthChecker();
+        //checker.start(m);
 
         System.out.println(" Ip ids" + (s_list));
 //        if (test == 0){

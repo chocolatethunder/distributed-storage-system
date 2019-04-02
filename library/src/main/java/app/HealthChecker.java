@@ -54,7 +54,6 @@ public class HealthChecker {
                 //sending the health check request
                 commsHandler.sendPacketWithoutAck(socket, MessageType.HEALTH_CHECK, "request");
 
-
                 //receive packet from node
                 TcpPacket tcpPacket = commsHandler.receivePacket(socket);
 
