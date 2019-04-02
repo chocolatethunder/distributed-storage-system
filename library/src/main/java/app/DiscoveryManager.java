@@ -22,12 +22,11 @@ public class DiscoveryManager implements Runnable{
     public void run(){
         //run forever
 
-        if (Thread.interrupted()){
-            exit = true;
-        }
-
 
         while(!exit){
+            if (Thread.interrupted()){
+                exit = true;
+            }
             switch (mType){
                 case STALKER:
                     STALKERDiscovery();
@@ -44,8 +43,6 @@ public class DiscoveryManager implements Runnable{
         }
 
     }
-
-
 
     //will search for harm targets and stalkers on the network
     public void STALKERDiscovery(){
