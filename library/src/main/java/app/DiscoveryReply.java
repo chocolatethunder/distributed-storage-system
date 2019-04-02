@@ -37,6 +37,7 @@ public class DiscoveryReply implements Runnable {
         while(true){
             try {
                 //where to listen
+                //breaks here...
                 socket = new DatagramSocket(ports[0]);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -114,7 +115,7 @@ public class DiscoveryReply implements Runnable {
                     return;
                 }
 
-
+                socket.close();
             }
         }
 

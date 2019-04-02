@@ -22,11 +22,7 @@ public class DiscoveryManager implements Runnable{
     public void run(){
         //run forever
 
-
-
-//            if (Thread.interrupted()){
-//                exit = true;
-//            }
+    while(true){
         switch (mType){
             case STALKER:
                 STALKERDiscovery();
@@ -40,6 +36,8 @@ public class DiscoveryManager implements Runnable{
             default:
                 return;
         }
+    }
+
 
 
     }
