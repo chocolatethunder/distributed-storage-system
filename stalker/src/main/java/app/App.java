@@ -15,9 +15,9 @@ public class App {
     public static void main(String[] args) {
 
         //First thing to do is locate all other stalkers and print the stalkers to file
-        
-       // DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
-        //DM.start();
+
+        DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
+        DM.start();
 
         int test = 0;
         initStalker();
@@ -63,7 +63,6 @@ public class App {
         File chunk_folder = new File("temp/chunks/");
 
         File[] chunk_folder_contents = chunk_folder.listFiles();
-
         File temp_folder = new File("temp/toChunk/");
         File[] temp_folder_contents = temp_folder.listFiles();
 

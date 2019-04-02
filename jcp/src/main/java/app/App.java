@@ -20,8 +20,8 @@ public class App {
 
         System.out.println(NetworkUtils.timeStamp(1) + "JCP online");
         //make a discoverymanager and start it, prints results to file
-       // DiscoveryManager DM = new DiscoveryManager(Module.JCP);
-       // DM.start();
+        DiscoveryManager DM = new DiscoveryManager(Module.JCP);
+        DM.start();
 
 
 
