@@ -66,7 +66,6 @@ public class NetDiscovery implements Runnable{
         ObjectMapper mapper = new ObjectMapper();
         try{
             if(sendSignal(request, mapper)){
-                System.out.println("We did it!!!");
                 return(receiveSignal(mapper));
             }
         }
