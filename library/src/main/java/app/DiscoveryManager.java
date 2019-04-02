@@ -23,24 +23,24 @@ public class DiscoveryManager implements Runnable{
         //run forever
 
 
-        while(!exit){
-            if (Thread.interrupted()){
-                exit = true;
-            }
-            switch (mType){
-                case STALKER:
-                    STALKERDiscovery();
-                    break;
-                case HARM:
-                    HARMDiscovery();
-                    break;
-                case JCP:
-                    JCPDiscovery();
-                    break;
-                default:
-                    return;
-            }
+
+//            if (Thread.interrupted()){
+//                exit = true;
+//            }
+        switch (mType){
+            case STALKER:
+                STALKERDiscovery();
+                break;
+            case HARM:
+                HARMDiscovery();
+                break;
+            case JCP:
+                JCPDiscovery();
+                break;
+            default:
+                return;
         }
+
 
     }
 

@@ -60,6 +60,7 @@ public class NetDiscovery implements Runnable{
 
 
         //port we are receiving on
+        //breaking here????????!!!
         DatagramSocket receiverSocket = new DatagramSocket(ports[1]);    // socket to receive replies
 
         // create a discover request packet and broadcast it
