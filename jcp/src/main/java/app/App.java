@@ -3,6 +3,8 @@
  */
 package app;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
@@ -12,6 +14,10 @@ import java.util.Map;
 public class App {
 
     // to capture total disk space in the system and will be updated with each health check
+    static JFrame mainFrame = new JFrame("KRATOS");
+    static JList listOfFiles = new JList();
+    static JTextArea consoleOutput = new JTextArea();
+    static DefaultListModel listModel = new DefaultListModel();
     public volatile int TotalDiskSpace = 0 ;
     //jcp main
     public static void main(String[] args) {
@@ -70,10 +76,117 @@ public class App {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        String request = null;
+        String filename = null;
+
+        //set up the gui
+        JButton uploadButton = new JButton("Upload");
+        uploadButton.setBounds(250,30,100,40);
+        JButton listButton = new JButton("List Files");
+        listButton.setBounds(250,80,100,40);
+        JButton downloadButton = new JButton("Download");
+        downloadButton.setBounds(50,350,100,40);
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.setBounds(250,350,100,40);
+        JScrollPane scrollableList = new JScrollPane(listOfFiles);
+        scrollableList.setBounds(50,150,300,200);
+        listOfFiles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane scrollableConsole = new JScrollPane(consoleOutput);
+        scrollableConsole.setBounds(50,30,180,90);
+        consoleOutput.setEditable(false);
+
+        mainFrame.add(uploadButton);
+        mainFrame.add(listButton);
+        mainFrame.add(downloadButton);
+        mainFrame.add(deleteButton);
+        mainFrame.add(scrollableList);
+        mainFrame.add(scrollableConsole);
+
+        //set up listeners
+        UploadListener uploadListener = new UploadListener();
+        uploadButton.addActionListener(uploadListener);
+        ListListener listListener = new ListListener();
+        listButton.addActionListener(listListener);
+        DownloadListener downloadListener = new DownloadListener();
+        downloadButton.addActionListener(downloadListener);
+        DeleteListener deleteListener = new DeleteListener();
+        deleteButton.addActionListener(deleteListener);
+
+
+
+
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setSize(400,500);
+        mainFrame.setLayout(null);
+        mainFrame.setResizable(false);
+        mainFrame.setVisible(true);
+
+        //bring window to front
+        mainFrame.setAlwaysOnTop(true);
+        mainFrame.setAlwaysOnTop(false);
     }
 
 
 //
 //    //load a config (stalker ip) from file while we get network discovery working
+public static void retrieveFiles() {
+    //uncomment this:
+		/*
+			listModel.clear();
+			List<String> fileList = requestSender.getFileList();
+			for (int i=0; i < fileList.size(); i++) {
+				listModel.addElement(fileList.get(i);
+			}
+		*/
+    //remove this:
+    listOfFiles.setModel(listModel);
+    consoleOutput.append("Listed files.\n");
+    System.out.println("Listed files.");
+}
 
+    public static void chooseFile() {
+        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        int returnValue = jfc.showOpenDialog(null);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = jfc.getSelectedFile();
+            //remove this:
+            listModel.addElement(selectedFile.getName());
+            //uncomment this:
+            //requestSender.sendFile(selectedFile.getAbsolutePath());
+            consoleOutput.append("Uploaded " + selectedFile + "\n");
+            System.out.println("Uploaded " + selectedFile);
+        }
+        retrieveFiles();
+    }
+
+    public static void deleteFile() {
+        int index = listOfFiles.getSelectedIndex();
+        Object selectedFilename = listOfFiles.getSelectedValue();
+        //remove this:
+        listModel.removeElement(selectedFilename);
+        //remove this:
+        listOfFiles.setModel(listModel);
+        //uncomment this:
+        //requestSender.deleteFile(selectedFilename);
+        consoleOutput.append("Deleted " + selectedFilename.toString() + "\n");
+        System.out.println("Deleted " + selectedFilename.toString());
+        retrieveFiles();
+    }
+
+    public static void downloadFile() {
+        String selectedFilename = listOfFiles.getSelectedValue().toString();
+        //remove this?:
+        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int returnValue = jfc.showOpenDialog(null);
+        //
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = jfc.getSelectedFile();
+            //uncomment this:
+            //requestSender.getFile(selectedFilename);
+            consoleOutput.append("Downloaded " + selectedFilename + " to " + selectedFile + "\n");
+            System.out.println("Downloaded " + selectedFilename + " to " + selectedFile);
+        }
+    }
 }
