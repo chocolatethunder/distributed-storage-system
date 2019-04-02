@@ -123,11 +123,17 @@ public class App {
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setSize(400,500);
 		mainFrame.setLayout(null);
+		mainFrame.setResizable(false);
 		mainFrame.setVisible(true);
+		
+		//bring window to front
+		mainFrame.setAlwaysOnTop(true);
+		mainFrame.setAlwaysOnTop(false);
 		
     }
 	
 	public static void retrieveFiles() {
+		//uncomment this:
 		/*
 			listModel.clear();
 			List<String> fileList = requestSender.getFileList();
@@ -135,6 +141,7 @@ public class App {
 				listModel.addElement(fileList.get(i);
 			}
 		*/
+		//remove this:
 		listOfFiles.setModel(listModel);
 		consoleOutput.append("Listed files.\n");
 		System.out.println("Listed files.");
@@ -152,6 +159,7 @@ public class App {
 			consoleOutput.append("Uploaded " + selectedFile + "\n");
 			System.out.println("Uploaded " + selectedFile);
 		}
+		retrieveFiles();
 	}
 	
 	public static void deleteFile() {
@@ -165,14 +173,16 @@ public class App {
 		//requestSender.deleteFile(selectedFilename);
 		consoleOutput.append("Deleted " + selectedFilename.toString() + "\n");
 		System.out.println("Deleted " + selectedFilename.toString());
-		//retrieveFiles();
+		retrieveFiles();
 	}
 	
 	public static void downloadFile() {
 		String selectedFilename = listOfFiles.getSelectedValue().toString();
+		//remove this?:
 		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 		jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int returnValue = jfc.showOpenDialog(null);
+		//
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = jfc.getSelectedFile();
 			//uncomment this:
