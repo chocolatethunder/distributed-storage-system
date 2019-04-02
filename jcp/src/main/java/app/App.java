@@ -49,10 +49,10 @@ public class App {
         //port to connect to
         int port = 11111;
         Socket socket = requestSender.connect(stalkerip, port);
-        String req = "delete";
+        String req = "upload";
         switch (req){
             case("upload"):
-              //  requestSender.sendFile("temp\\003_txt_test.txt");
+                requestSender.sendFile("temp\\003_txt_test.txt");
                 break;
             case("download"):
                 requestSender.getFile("temp\\003_txt_test.txt");
