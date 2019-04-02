@@ -33,28 +33,24 @@ public class DiscoveryReply implements Runnable {
     @Override
     public void run() {
         // runs for 15 sec for a udp broadcast
-
+        try {
+            //where to listen
+            //breaks here...
+            socket = new DatagramSocket(ports[0]);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         while(true){
-            try {
-                //where to listen
-                //breaks here...
-                socket = new DatagramSocket(ports[0]);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+
             DatagramPacket packet = new DatagramPacket(req, req.length);
             try {
                 socket.setSoTimeout(listening_timeout*1000);
                 socket.receive(packet);
             }catch (SocketTimeoutException e)
             {
-                socket.close();
-                return;
             }
             catch (IOException e) {
                 e.printStackTrace();
-                socket.close();
-                return;
             }
 
             // parse the packet
@@ -73,7 +69,6 @@ public class DiscoveryReply implements Runnable {
 
             } catch (IOException e) {
                 e.printStackTrace();
-                socket.close();
                 return;
             }
 
@@ -102,7 +97,6 @@ public class DiscoveryReply implements Runnable {
                 try {
                     req = mapper.writeValueAsString(reply).getBytes();
                 } catch (JsonProcessingException e) {
-                    socket.close();
                     e.printStackTrace();
                     return;
                 }
@@ -110,12 +104,9 @@ public class DiscoveryReply implements Runnable {
                 try {
                     socket.send(replyPkt);
                 } catch (IOException e) {
-                    socket.close();
                     e.printStackTrace();
                     return;
                 }
-
-                socket.close();
             }
         }
 

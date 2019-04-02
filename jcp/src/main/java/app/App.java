@@ -17,7 +17,7 @@ public class App {
     public static void main(String[] args) {
         int test  = 0;
 
-        int discoveryTimeout = 5;
+        int discoveryTimeout = 10;
 
         System.out.println(NetworkUtils.timeStamp(1) + "JCP online");
         //make a discovery manager and start it, prints results to file
@@ -26,7 +26,7 @@ public class App {
         discManager.start();
         System.out.println(NetworkUtils.timeStamp(1) + "Waiting for stalker list to update");
         try{
-            Thread.sleep(10000);
+            Thread.sleep((discoveryTimeout * 1000) + 5000);
         }
         catch (InterruptedException e){
             e.printStackTrace();
