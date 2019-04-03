@@ -94,12 +94,14 @@ public class RequestSender {
 //     * This will fetch a list of all file names in the system
 //     * @return list of filenames
 //     */
-//    public List<String> getFileList(){
-//
-//
-//        if(handShakeSuccess(MessageType.LIST)) {
-//
-//        }
-//        return null;
-//    }
+    public List<String> getFileList(){
+
+        List<String> files = null;
+        MessageType m = MessageType.LIST;
+        if(commLink.sendPacket(socket, m, "", true) == MessageType.ACK) {
+            TcpPacket t =  commLink.receivePacket(socket);
+            files = NetworkUtils.listFromJson(t.getMessage());
+        }
+        return(files);
+    }
 }

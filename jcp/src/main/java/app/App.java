@@ -74,14 +74,16 @@ public class App {
 //
 //    //load a config (stalker ip) from file while we get network discovery working
     public static void retrieveFiles() {
+
+        Socket connection = connectToStalker();
+
         //uncomment this:
-            /*
-                listModel.clear();
-                List<String> fileList = requestSender.getFileList();
-                for (int i=0; i < fileList.size(); i++) {
-                    listModel.addElement(fileList.get(i);
-                }
-            */
+
+        listModel.clear();
+        List<String> fileList = requestSender.getFileList();
+        for (int i=0; i < fileList.size(); i++) {
+            listModel.addElement(fileList.get(i));
+        }
         //remove this:
         listOfFiles.setModel(listModel);
         consoleOutput.append("Listed files.\n");

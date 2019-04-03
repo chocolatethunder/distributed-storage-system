@@ -26,10 +26,10 @@ public class IndexFile {
     }
 
     //get the info to be sent
-    public List<String> infoList(){
+    public List<String> fileList(){
         List<String> temp = new ArrayList<>();
         for(IndexEntry e: entries.values()){
-            temp.add(e.clientData());
+            temp.add(e.fileName());
         }
         return temp;
     }
