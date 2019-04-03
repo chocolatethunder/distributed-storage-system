@@ -92,6 +92,7 @@ public class UploadServiceHandler implements Runnable {
             }
             catch(IOException e){
             }
+
         }
         catch(RuntimeException e){
             try{ socket.close(); }

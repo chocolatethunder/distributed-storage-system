@@ -50,6 +50,7 @@ public class QueueHandler implements  Runnable {
                 //send permission to worker to update index
                 commLink.sendPacket(worker, MessageType.ACK, "", false);
                 System.out.println(NetworkUtils.timeStamp(1) + " job complete");
+                worker.close();
             }
         }
         catch (IOException e){

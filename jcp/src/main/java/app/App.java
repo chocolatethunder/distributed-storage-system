@@ -129,8 +129,8 @@ public class App {
             System.out.println("Uploaded " + selectedFile);
         }
         retrieveFiles();
-//        try{ connection.close();}
-//        catch(IOException e){ e.printStackTrace();}
+        try{ connection.close();}
+        catch(IOException e){ e.printStackTrace();}
 
     }
 
@@ -147,8 +147,8 @@ public class App {
         consoleOutput.append("Deleted " + selectedFilename.toString() + "\n");
         System.out.println("Deleted " + selectedFilename.toString());
         retrieveFiles();
-//        try{ connection.close();}
-//        catch(IOException e){ e.printStackTrace();}
+        try{ connection.close();}
+        catch(IOException e){ e.printStackTrace();}
     }
 
     public static void downloadFile() {
@@ -162,12 +162,12 @@ public class App {
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             File selectedFile = jfc.getSelectedFile();
             //uncomment this:
-            //requestSender.getFile(selectedFilename);
+            requestSender.getFile(selectedFilename);
             consoleOutput.append("Downloaded " + selectedFilename + " to " + selectedFile + "\n");
             System.out.println("Downloaded " + selectedFilename + " to " + selectedFile);
         }
-//        try{ connection.close();}
-//        catch(IOException e){ e.printStackTrace();}
+        try{ connection.close();}
+        catch(IOException e){ e.printStackTrace();}
     }
 
     public static void initJFrame(){
