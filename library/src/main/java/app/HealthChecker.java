@@ -131,7 +131,6 @@ public class HealthChecker {
             this.host = host;
             this.spaceToUpdate = spaceToUpdate;
             this.target = type;
-
         }
 
         @Override
@@ -182,10 +181,6 @@ public class HealthChecker {
                     // deal with corrupt chunks here
 
                 }
-
-
-
-
 
             } catch (SocketException e) {
                 // server has not replied within expected timeoutTime

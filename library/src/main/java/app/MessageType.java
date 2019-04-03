@@ -21,7 +21,7 @@ public enum MessageType {
         DISC_HARM_R,
         DISC_STK_R,
         HEALTH_CHECK,
-        ELECTION
-
+        ELECTION,
+        LEADER
 
 }

@@ -57,11 +57,9 @@ public class ListenerThread implements Runnable{
                 }
 
                 //@Masroor add the Leader election logic here
-                else{
-                    // reply to election local leader
-                    executorService.execute(new ElectionResponder(client,req.getMessage()));
-                    // reply to election stuff.
-
+                else if(req.getMessageType() == MessageType.LEADER){
+                    // reply to with leader
+                    executorService.execute(new LeaderResponder(client));
 
                 }
             } catch (IOException e) {

@@ -1,31 +1,34 @@
 package app;
 
+/**
+ * Election packet that contains the leader's Uuid and IP
+ */
 public class ElectionPacket {
 
-    public String leaderUuid= "";
-    public String leaderIp = "";
+    public String uuid = "";
+    public String ip = "";
 
     public ElectionPacket(String leaderUuid,String leaderIp)
     {
-        this.leaderUuid = leaderUuid;
-        this.leaderIp = leaderIp;
+        this.uuid = leaderUuid;
+        this.ip = leaderIp;
 
     }
 
-    public String getLeaderUuid() {
-        return leaderUuid;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setLeaderUuid(String leaderUuid) {
-        this.leaderUuid = leaderUuid;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
-    public String getLeaderIp() {
-        return leaderIp;
+    public String getIp() {
+        return ip;
     }
 
-    public void setLeaderIp(String leaderIp) {
-        this.leaderIp = leaderIp;
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
 

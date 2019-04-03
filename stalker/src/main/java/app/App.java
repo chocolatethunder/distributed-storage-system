@@ -9,12 +9,16 @@ import app.chunk_utils.Indexer;
 import app.chunk_utils.IndexFile;
 import org.apache.commons.io.FilenameUtils;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Comparator;
 
 public class App {
 
     public static void main(String[] args) {
+
+        int leaderUuid = -1;
 
         //First thing to do is locate all other stalkers and print the stalkers to file
 
@@ -45,15 +49,21 @@ public class App {
                 NetworkUtils.mapFromJson(harmlist));
         checker.startTask();
 
+        // initiaze ids
+        List<Integer> ids = new ArrayList<>();
+        // Leader election by asking for a leader
+        LeaderCheck Leaderchecker = new LeaderCheck(NetworkUtils.mapFromJson(stalkerList),ids);
+        leaderUuid = Leaderchecker.getLeaderUuid();
 
 
-        // call the leader election and wait until done
-        Election electionThread = new Election();
-        electionThread.holdElection();
+
+
+
+
 
         while (true) {
 
-            int role = Election.getRole();
+            int role = ElectionUtils.identifyRole(leaderUuid, ids);
 
             switch (role) {
                 case 0:
