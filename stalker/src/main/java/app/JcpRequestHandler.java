@@ -40,7 +40,7 @@ public class JcpRequestHandler implements Runnable {
         }
         System.out.println(NetworkUtils.timeStamp(1) + "Waiting...");
         // will keep on listening for requests
-        while (running) {
+        while (true) {
             try {
                 //accept connection from a JCP
 //                if (server == null){
@@ -60,14 +60,7 @@ public class JcpRequestHandler implements Runnable {
                     running = false;
                     client.close();
                 }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-
-            } catch (IOException e) {
-//                try{
-//                    server.close();
-//                }
-//                catch (IOException ex){}
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
