@@ -93,6 +93,7 @@ public class DeleteServiceHandler implements Runnable {
         for (Chunk c : e.getChunkList()){
             for (Integer i : c.getReplicas()){
                 try{
+                    System.out.println(i);
                     Socket harmServer = NetworkUtils.createConnection(m.get(i), port);
                     //if everything went well then we can send the damn file
                     //send the packet to the harm target

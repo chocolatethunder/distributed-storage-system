@@ -34,7 +34,6 @@ public class Handler implements Runnable {
         } else if (requestType == MessageType.DOWNLOAD) {
             commLink.sendResponse(socket, MessageType.ACK);
             streamer.sendFileToSocket(storage_path + request.getFileName());
-
         }
         else if (requestType == MessageType.DELETE) {
             File f = new File(storage_path + request.getFileName());

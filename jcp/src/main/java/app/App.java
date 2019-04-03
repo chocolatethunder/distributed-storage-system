@@ -106,9 +106,10 @@ public class App {
             consoleOutput.append("Uploaded " + selectedFile + "\n");
             System.out.println("Uploaded " + selectedFile);
         }
-        retrieveFiles();
         try{ connection.close();}
         catch(IOException e){ e.printStackTrace();}
+        retrieveFiles();
+
 
     }
 
@@ -124,9 +125,10 @@ public class App {
         requestSender.deleteFile(selectedFilename.toString());
         consoleOutput.append("Deleted " + selectedFilename.toString() + "\n");
         System.out.println("Deleted " + selectedFilename.toString());
-        retrieveFiles();
         try{ connection.close();}
         catch(IOException e){ e.printStackTrace();}
+        retrieveFiles();
+
     }
 
     public static void downloadFile() {
