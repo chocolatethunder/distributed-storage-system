@@ -43,9 +43,9 @@ public class JcpRequestHandler implements Runnable {
         while (running) {
             try {
                 //accept connection from a JCP
-//                if (server == null){
+                if (server == null){
                     server = new ServerSocket(serverPort);
-//                }
+                }
                 Socket client = server.accept();
                 System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + client);
                 // receive packet on the socket link
@@ -62,8 +62,12 @@ public class JcpRequestHandler implements Runnable {
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-            } catch (IOException e) {
 
+            } catch (IOException e) {
+                try{
+                    server.close();
+                }
+                catch (IOException ex){}
                 e.printStackTrace();
             }
         }

@@ -77,7 +77,6 @@ public class App {
 
         Socket connection = connectToStalker();
         //uncomment this:
-
         listModel.clear();
         List<String> fileList = requestSender.getFileList();
         for (int i=0; i < fileList.size(); i++) {
