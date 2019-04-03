@@ -32,20 +32,20 @@ public class JcpRequestHandler implements Runnable {
         CommsHandler commLink = new CommsHandler();
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
-//        try {
-//            server = new ServerSocket(serverPort);
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            server = new ServerSocket(serverPort);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         System.out.println(NetworkUtils.timeStamp(1) + "Waiting...");
         // will keep on listening for requests
         while (running) {
             try {
                 //accept connection from a JCP
-                if (server == null){
-                    server = new ServerSocket(serverPort);
-                }
+//                if (server == null){
+//                    server = new ServerSocket(serverPort);
+//                }
                 Socket client = server.accept();
                 System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + client);
                 // receive packet on the socket link
@@ -64,10 +64,10 @@ public class JcpRequestHandler implements Runnable {
                 e.printStackTrace();
 
             } catch (IOException e) {
-                try{
-                    server.close();
-                }
-                catch (IOException ex){}
+//                try{
+//                    server.close();
+//                }
+//                catch (IOException ex){}
                 e.printStackTrace();
             }
         }
