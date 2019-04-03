@@ -10,7 +10,7 @@ public class CommsHandler {
     public CommsHandler(){}
     //Send a tcp packet on a designated socket
     //if a request is being made it should be serialized JSON string of a request
-    public MessageType sendPacket(Socket socket, MessageType messageType, String content){
+    public MessageType sendPacket(Socket socket, MessageType messageType, String content, boolean ack){
         TcpPacket receivedPacket = null;
         MessageType response = null;
         try {
@@ -24,16 +24,19 @@ public class CommsHandler {
             //Object to JSON in String
             String jsonInString = mapper.writeValueAsString(initialPacket);
             out.writeUTF(jsonInString);
-            try {
-                // receiving packet back from STALKER
-                String received = in.readUTF();
-                System.out.println(NetworkUtils.timeStamp(1) + "rec " + received);
-                receivedPacket = mapper.readValue(received, TcpPacket.class);
+            if (ack){
+                try {
+                    // receiving packet back from STALKER
+                    String received = in.readUTF();
+                    System.out.println(NetworkUtils.timeStamp(1) + "rec " + received);
+                    receivedPacket = mapper.readValue(received, TcpPacket.class);
 
-                response = receivedPacket.getMessageType();
-            } catch (EOFException e) {
-                // do nothing end of packet
+                    response = receivedPacket.getMessageType();
+                } catch (EOFException e) {
+                    // do nothing end of packet
+                }
             }
+
         } catch (IOException  e) {
             e.printStackTrace();
         }
@@ -41,45 +44,49 @@ public class CommsHandler {
     }
 
 
-    /**
-     * This method only sends a packet does not wait for reply
-     * @param socket
-     * @param messageType
-     * @param content
-     * @return
-     */
-    public MessageType sendPacketWithoutAck(Socket socket, MessageType messageType, String content){
-
-        MessageType response = null;
-        try {
-            TcpPacket initialPacket = new TcpPacket(messageType, content);
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            DataInputStream in = new DataInputStream((socket.getInputStream()));
-            ObjectMapper mapper = new ObjectMapper();
-
-
-            //Object to JSON in String
-            String jsonInString = mapper.writeValueAsString(initialPacket);
-            out.writeUTF(jsonInString);
-        } catch (IOException  e) {
-            e.printStackTrace();
-        }
-        return response;
-    }
+//    /**
+//     * This method only sends a packet does not wait for reply
+//     * @param socket
+//     * @param messageType
+//     * @param content
+//     * @return
+//     */
+//    public MessageType sendPacketWithoutAck(Socket socket, MessageType messageType, String content){
+//
+//        MessageType response = null;
+//        try {
+//            TcpPacket initialPacket = new TcpPacket(messageType, content);
+//            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+//            DataInputStream in = new DataInputStream((socket.getInputStream()));
+//            ObjectMapper mapper = new ObjectMapper();
+//
+//
+//            //Object to JSON in String
+//            String jsonInString = mapper.writeValueAsString(initialPacket);
+//            out.writeUTF(jsonInString);
+//        } catch (IOException  e) {
+//            e.printStackTrace();
+//        }
+//        return response;
+//    }
 
     //function for recieving a TCP packet once a connection has been established
-    public TcpPacket receivePacket(Socket socket) throws IOException {
+    public TcpPacket receivePacket(Socket socket) {
         ObjectMapper mapper = new ObjectMapper();
         Optional<TcpPacket> receivedPacket = Optional.empty();
 
         try {
             //read string from port
+            System.out.println("Debug 1");
             String rec = new DataInputStream(socket.getInputStream()).readUTF();
             // reading the packet as object from json string
+            System.out.println("Debug 2");
             receivedPacket = Optional.of(mapper.readValue(rec, TcpPacket.class));
         }
-        catch (EOFException e) {
+        catch (Exception e) {
+            e.printStackTrace();
         }
+        System.out.println("Debug 3");
         return receivedPacket.get();
     }
 
@@ -105,7 +112,7 @@ public class CommsHandler {
             //connect to leader and send request
             //currently hard coded
             Socket leader = NetworkUtils.createConnection("192.168.1.121", 11112);
-            if (!(sendPacket(leader, m, "") == MessageType.ACK)){
+            if (!(sendPacket(leader, m, "", true) == MessageType.ACK)){
                 return false;
             }
             else {

@@ -52,7 +52,7 @@ public class HealthChecker {
 
                 CommsHandler commsHandler = new CommsHandler();
                 //sending the health check request
-                commsHandler.sendPacketWithoutAck(socket, MessageType.HEALTH_CHECK, "request");
+                commsHandler.sendPacket(socket, MessageType.HEALTH_CHECK, "request", false);
 
                 //receive packet from node
                 TcpPacket tcpPacket = commsHandler.receivePacket(socket);

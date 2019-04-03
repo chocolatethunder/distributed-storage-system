@@ -97,6 +97,7 @@ public class UploadServiceHandler implements Runnable {
 
             try {
                 TcpPacket t = commsLink.receivePacket(leader);
+                System.out.println("HEEEELLLLLLOOOOOO");
                 System.out.println(t.getMessageType());
                 if(t.getMessageType() == MessageType.ACK){
                     //we are done with the connection to the leader

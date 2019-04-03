@@ -53,7 +53,7 @@ public class RequestSender {
         if(NetworkUtils.checkFile(filePath)){
             String fileName = FilenameUtils.getName(filePath);
             //send a request and wait for ACK before proceeding
-            if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m)) == MessageType.ACK) {
+            if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m), true) == MessageType.ACK) {
                 FileStreamer fileStreamer = new FileStreamer(socket);
                 fileStreamer.sendFileToSocket(filePath);
             }else{
@@ -70,7 +70,7 @@ public class RequestSender {
     public void deleteFile(String fileName){
 
         MessageType m = MessageType.DELETE;
-        if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m)) == MessageType.ACK) {
+        if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m), true) == MessageType.ACK) {
         }
     }
     /**
@@ -81,7 +81,7 @@ public class RequestSender {
     public void getFile(String fileName){
         MessageType m = MessageType.DOWNLOAD;
         // TO:DO need logic to verify file size  here
-        if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m)) == MessageType.ACK) {
+        if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m), true) == MessageType.ACK) {
             FileStreamer fileStreamer = new FileStreamer(socket);
             fileStreamer.receiveFileFromSocket(fileName);
 

@@ -81,7 +81,7 @@ public class ChunkDistributor {
                 Socket harmServer = NetworkUtils.createConnection(m.get(target), port);
                 //if everything went well then we can send the damn file
                 //send the packet to the harm target
-                if(commLink.sendPacket(harmServer, MessageType.UPLOAD, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.UPLOAD)) == MessageType.ACK){
+                if(commLink.sendPacket(harmServer, MessageType.UPLOAD, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.UPLOAD), true) == MessageType.ACK){
                     FileStreamer fileStreamer = new FileStreamer(harmServer);
                     fileStreamer.sendFileToSocket(c.getChunk_path());
                     harmServer.close();
@@ -107,55 +107,6 @@ public class ChunkDistributor {
 
         return(true);
     }
-
-
-
-//    //YEAH I KNOW MORE REUSED CODE
-//    //WILL CLEAN IN THE FUTURE
-//    //resposnible for making a request to the STALKER
-//    private boolean handShakeSuccess(MessageType requestType, String toSend, Socket socket){
-//        TcpPacket receivedPacket = null;
-//        try {
-//
-//            TcpPacket initialPacket = new TcpPacket(requestType, "HELLO_INIT");
-//            // in the case that we are sending a file we need to also
-//            // send the name of the file as well as the file size
-//            //The request will not be sent if the file doesn't exist...
-//            File f = new File(toSend);
-//            if (f.exists()){
-//                initialPacket.setFile(FilenameUtils.getName(toSend), (int) f.length());
-//            }
-//            else{
-//                throw new FileNotFoundException("The file specified does not exist!");
-//            }
-//            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-//            DataInputStream  in = new DataInputStream((socket.getInputStream()));
-//            ObjectMapper mapper = new ObjectMapper();
-//
-//            //DEBUG : Object to JSON in file
-//            //mapper.writeValue(new File("file.json"), initialPacket);
-//
-//            //Object to JSON in String
-//            String jsonInString = mapper.writeValueAsString(initialPacket);
-//            out.writeUTF(jsonInString);
-//            try {
-//
-//                // receiving packet back from STALKER
-//                String received = in.readUTF();
-//                System.out.println("rec " + received);
-//                receivedPacket = mapper.readValue(received, TcpPacket.class);
-//
-//            } catch (EOFException e) {
-//                // do nothing end of packet
-//            }
-//
-//        } catch (IOException  e) {
-//            e.printStackTrace();
-//        }
-//        return receivedPacket != null && receivedPacket.getMessage().equals("AVAIL");
-//    }
-
-
 
     public void debug() { debug = !debug; }
 
