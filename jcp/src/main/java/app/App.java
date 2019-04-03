@@ -135,7 +135,7 @@ public class App {
     }
 
     public static void deleteFile() {
-        //Socket connection = connectToStalker();
+        Socket connection = connectToStalker();
         int index = listOfFiles.getSelectedIndex();
         Object selectedFilename = listOfFiles.getSelectedValue();
         //remove this:
@@ -143,16 +143,16 @@ public class App {
         //remove this:
         listOfFiles.setModel(listModel);
         //uncomment this:
-        //requestSender.deleteFile(selectedFilename);
+        requestSender.deleteFile(selectedFilename.toString());
         consoleOutput.append("Deleted " + selectedFilename.toString() + "\n");
         System.out.println("Deleted " + selectedFilename.toString());
         retrieveFiles();
-//        try{ connection.close();}
-//        catch(IOException e){ e.printStackTrace();}
+        try{ connection.close();}
+        catch(IOException e){ e.printStackTrace();}
     }
 
     public static void downloadFile() {
-        //Socket connection = connectToStalker();
+        Socket connection = connectToStalker();
         String selectedFilename = listOfFiles.getSelectedValue().toString();
         //remove this?:
         JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
@@ -166,8 +166,8 @@ public class App {
             consoleOutput.append("Downloaded " + selectedFilename + " to " + selectedFile + "\n");
             System.out.println("Downloaded " + selectedFilename + " to " + selectedFile);
         }
-//        try{ connection.close();}
-//        catch(IOException e){ e.printStackTrace();}
+        try{ connection.close();}
+        catch(IOException e){ e.printStackTrace();}
     }
 
     public static void initJFrame(){

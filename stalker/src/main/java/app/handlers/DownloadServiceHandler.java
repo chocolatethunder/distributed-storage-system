@@ -1,10 +1,11 @@
 package app.handlers;
 
-import app.ChunkRetriever;
+import app.*;
 import app.chunk_utils.IndexEntry;
 import app.chunk_utils.IndexFile;
-import app.Request;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
@@ -12,6 +13,7 @@ import java.net.Socket;
  */
 public class DownloadServiceHandler implements Runnable {
 
+    private final int server_port = 11113;
     private final Socket socket;
     private String fileName;
     private IndexFile index;
@@ -26,10 +28,50 @@ public class DownloadServiceHandler implements Runnable {
 
     @Override
     public void run(){
+        CommsHandler commsLink = new CommsHandler();
+        try {
+            // 0. we are going to check to see if the file exists first...
+            IndexEntry e = index.search(fileName);
+            if (e == null){
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "File does not exist.");
+            }
+//          1. get permissions from leader
+//------------------------------------------------------------
+            //going to need IP of leader
+            if (!commsLink.sendRequestToLeader(MessageType.DOWNLOAD)) {
+                commsLink.sendResponse(socket, MessageType.ERROR);
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Could not connect to leader.");
+            }
+            System.out.println("Request sent to leader");
+//          2. Wait for Leader to grant job permission
+///------------------------------------------------------------
+            Socket leader = new Socket();
+            if(!commsLink.getLeaderResponse(server_port, leader)){
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error with leader connection");
+            }
+//          3. Now we must get the files from the harm targets
+///------------------------------------------------------------
+            ChunkRetriever cr = new ChunkRetriever(c_dir);
+            cr.retrieveChunks(e);
 
-        ChunkRetriever cr = new ChunkRetriever(c_dir);
-        IndexEntry e = index.search(fileName);
-        cr.retrieveChunks(e);
+        }
+        catch (RuntimeException ex){
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         ///used for download
 //        //retrieve chunks
 

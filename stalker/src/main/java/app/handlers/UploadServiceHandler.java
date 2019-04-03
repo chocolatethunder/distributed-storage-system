@@ -41,7 +41,7 @@ public class UploadServiceHandler implements Runnable {
 
 
         CommsHandler commsLink = new CommsHandler();
-        ServerSocket listener;
+
         try{
 //          1. get permissions from leader
 //------------------------------------------------------------
@@ -54,21 +54,9 @@ public class UploadServiceHandler implements Runnable {
 //          2. Wait for Leader to grant job permission
 ///------------------------------------------------------------
             TcpPacket req;
-            Socket leader;
-            try{
-                listener = new ServerSocket(server_port);
-                leader = listener.accept();
-                System.out.println(NetworkUtils.timeStamp(1) + "Connected to leader: ");
-                req = commsLink.receivePacket(leader);
-                System.out.println(NetworkUtils.timeStamp(1) + "Permission from leader granted");
-                listener.close();
-            }
-            catch (IOException e){
-                e.printStackTrace();
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Could not use server port");
-            }
-            if (!(req.getMessageType() == MessageType.START)){
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Request denied by leader.");
+            Socket leader = new Socket();
+            if(!commsLink.getLeaderResponse(server_port, leader)){
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error with leader connection");
             }
 ///------------------------------------------------------------
 
@@ -88,22 +76,17 @@ public class UploadServiceHandler implements Runnable {
             if(update == null){
                 throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error when Distributing to Harm Target.");
             }
-            else {
-
-            }
 ///------------------------------------------------------------
 //          5. Send done status to leader
             commsLink.sendResponse(leader, MessageType.DONE);
-
             try {
                 TcpPacket t = commsLink.receivePacket(leader);
-                System.out.println("HEEEELLLLLLOOOOOO");
-                System.out.println(t.getMessageType());
                 if(t.getMessageType() == MessageType.ACK){
                     //we are done with the connection to the leader
                     //then update index
-                    System.out.println("Saving indexfile");
+
                     updateIndex(update);
+                    System.out.println("Indexfile saved!");
                     leader.close();
                 }
             }
@@ -111,12 +94,8 @@ public class UploadServiceHandler implements Runnable {
             }
         }
         catch(RuntimeException e){
-            try{
-                socket.close();
-            }
-            catch(IOException ex){
-                ex.printStackTrace();
-            }
+            try{ socket.close(); }
+            catch(IOException ex){ ex.printStackTrace(); }
             e.printStackTrace();
             return;
         }

@@ -16,10 +16,12 @@ public class ChunkRetriever {
     private boolean debug = false;
     private String chunkDir;
     private int port = 22222;
+    private CommsHandler commLink;
     //hardcoded test variables
 
     public ChunkRetriever(String c_dir) {
         chunkDir = c_dir;
+        commLink = new CommsHandler();
     }
 
 
@@ -50,8 +52,7 @@ public class ChunkRetriever {
                 }
                 try{
                     Socket harmServer = NetworkUtils.createConnection(m.get(s), 22222);
-                    //FileUtils.copyFile(new File(s),new File(chunkDir + c.getUuid()));
-                    if(handShakeSuccess(MessageType.DOWNLOAD, c.getUuid(), harmServer)){
+                    if(commLink.sendPacket(harmServer, MessageType.DOWNLOAD, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.DOWNLOAD), true) == MessageType.ACK){
                         FileStreamer fileStreamer = new FileStreamer(harmServer);
                         fileStreamer.receiveFileFromSocket(chunkDir + c.getUuid());
                         harmServer.close();
@@ -70,32 +71,4 @@ public class ChunkRetriever {
         return(false);
     }
 
-    //sepcialized request for getting a file
-    private boolean handShakeSuccess(MessageType requestType, String toGet, Socket socket){
-        TcpPacket receivedPacket = null;
-        try {
-
-            TcpPacket initialPacket = new TcpPacket(requestType, "HELLO_INIT");
-            //initialPacket.setFile(toGet, 0);
-
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            DataInputStream  in = new DataInputStream((socket.getInputStream()));
-            ObjectMapper mapper = new ObjectMapper();
-            //Object to JSON in String
-            String jsonInString = mapper.writeValueAsString(initialPacket);
-            out.writeUTF(jsonInString);
-            try {
-                // receiving packet back from STALKER
-                String received = in.readUTF();
-                System.out.println("rec " + received);
-                receivedPacket = mapper.readValue(received, TcpPacket.class);
-            } catch (EOFException e) {
-                // do nothing end of packet
-            }
-        } catch (IOException  e) {
-            e.printStackTrace();
-        }
-        return receivedPacket != null && receivedPacket.getMessage().equals("AVAIL");
-    }
-    public void debug() { debug = !debug; }
 }

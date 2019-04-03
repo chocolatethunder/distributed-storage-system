@@ -45,16 +45,12 @@ public class QueueHandler implements  Runnable {
             System.out.println(NetworkUtils.timeStamp(1) + " Processing job...");
             worker = NetworkUtils.createConnection(q.getInetAddr().getHostAddress(), 11113);
             //connect and grant permission to edit file
-            MessageType response = commLink.sendPacket(worker, MessageType.START, "", true);
             //get ack that job is done
-            //TcpPacket response = commLink.receivePacket(worker);
-            if (response == MessageType.DONE){
-                //send permission to worker
+            if (commLink.sendPacket(worker, MessageType.START, "", true) == MessageType.DONE){
+                //send permission to worker to update index
                 commLink.sendPacket(worker, MessageType.ACK, "", false);
                 System.out.println(NetworkUtils.timeStamp(1) + " job complete");
             }
-
-
         }
         catch (IOException e){
             e.printStackTrace();

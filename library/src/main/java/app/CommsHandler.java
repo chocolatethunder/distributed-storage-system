@@ -2,6 +2,7 @@ package app;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.*;
+import java.net.ServerSocket;
 import java.util.Optional;
 import java.net.Socket;
 
@@ -18,7 +19,6 @@ public class CommsHandler {
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             DataInputStream in = new DataInputStream((socket.getInputStream()));
             ObjectMapper mapper = new ObjectMapper();
-
             //DEBUG : Object to JSON in file
             //mapper.writeValue(new File("file.json"), initialPacket);
             //Object to JSON in String
@@ -30,7 +30,6 @@ public class CommsHandler {
                     String received = in.readUTF();
                     System.out.println(NetworkUtils.timeStamp(1) + "rec " + received);
                     receivedPacket = mapper.readValue(received, TcpPacket.class);
-
                     response = receivedPacket.getMessageType();
                 } catch (EOFException e) {
                     // do nothing end of packet
@@ -43,33 +42,6 @@ public class CommsHandler {
         return response;
     }
 
-
-//    /**
-//     * This method only sends a packet does not wait for reply
-//     * @param socket
-//     * @param messageType
-//     * @param content
-//     * @return
-//     */
-//    public MessageType sendPacketWithoutAck(Socket socket, MessageType messageType, String content){
-//
-//        MessageType response = null;
-//        try {
-//            TcpPacket initialPacket = new TcpPacket(messageType, content);
-//            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-//            DataInputStream in = new DataInputStream((socket.getInputStream()));
-//            ObjectMapper mapper = new ObjectMapper();
-//
-//
-//            //Object to JSON in String
-//            String jsonInString = mapper.writeValueAsString(initialPacket);
-//            out.writeUTF(jsonInString);
-//        } catch (IOException  e) {
-//            e.printStackTrace();
-//        }
-//        return response;
-//    }
-
     //function for recieving a TCP packet once a connection has been established
     public TcpPacket receivePacket(Socket socket) {
         ObjectMapper mapper = new ObjectMapper();
@@ -77,16 +49,13 @@ public class CommsHandler {
 
         try {
             //read string from port
-            System.out.println("Debug 1");
             String rec = new DataInputStream(socket.getInputStream()).readUTF();
             // reading the packet as object from json string
-            System.out.println("Debug 2");
             receivedPacket = Optional.of(mapper.readValue(rec, TcpPacket.class));
         }
         catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("Debug 3");
         return receivedPacket.get();
     }
 
@@ -129,6 +98,28 @@ public class CommsHandler {
         }
         ///////////////////////////////
         //Wait for leader to grant permission to start
+    }
+
+    public boolean getLeaderResponse(int server_port, Socket leader){
+        TcpPacket req;
+        ServerSocket listener;
+        try {
+            listener = new ServerSocket(server_port);
+            leader = listener.accept();
+            System.out.println(NetworkUtils.timeStamp(1) + "Connected to leader: ");
+            req = receivePacket(leader);
+            System.out.println(NetworkUtils.timeStamp(1) + "Permission from leader granted");
+            listener.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println(NetworkUtils.timeStamp(1) + "Could not use server port");
+            return (false);
+        }
+        if (!(req.getMessageType() == MessageType.START)) {
+            System.out.println( NetworkUtils.timeStamp(1) + "Request denied by leader.");
+            return(false);
+        }
+        return(true);
     }
 
 }
