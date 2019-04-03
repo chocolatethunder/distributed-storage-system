@@ -24,7 +24,11 @@ public class ServiceHandlerFactory {
     public static Runnable getServiceHandler(TcpPacket request, Socket socket, IndexFile index) {
 
         MessageType requestType = request.getMessageType();
-        Request toProcess = NetworkUtils.getPacketContents(request);
+
+        Request toProcess = null;
+        if (requestType != MessageType.LIST){
+            toProcess = NetworkUtils.getPacketContents(request);
+        }
         switch (requestType) {
             case DOWNLOAD:
                 return new DownloadServiceHandler(socket, toProcess, index);
