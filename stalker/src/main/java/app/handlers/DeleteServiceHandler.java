@@ -47,18 +47,20 @@ public class DeleteServiceHandler implements Runnable {
 
 //          2. Wait for Leader to grant job permission
 ///------------------------------------------------------------
+            System.out.println("Debug0");
             leader = commsLink.getLeaderResponse(server_port);
             if(leader == null){
                 throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error with leader connection");
             }
 ///------------------------------------------------------------
 
-
+           System.out.println("Debug1");
 //         3. remove chunks
 ///------------------------------------------------------------
             if(!removeChunks(toRemove)){
                 throw new RuntimeException(NetworkUtils.timeStamp(1) + "Could not remove chunks!");
             }
+            System.out.println("Debug2");
 //          4. Send done status to leader
             commsLink.sendResponse(leader, MessageType.DONE);
             try {
@@ -73,6 +75,7 @@ public class DeleteServiceHandler implements Runnable {
                 }
             }
             catch(IOException e){
+                System.out.println("Debug3");
             }
         }
         catch(RuntimeException e){
