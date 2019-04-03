@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+import java.util.UUID;
 
 public class IndexFile {
     private Map<String,IndexEntry> entries;
@@ -21,7 +22,7 @@ public class IndexFile {
     }
 
     public IndexEntry search(String filename){
-        return(entries.get(filename));
+        return(entries.get(UUID.nameUUIDFromBytes(filename.getBytes()).toString()));
     }
 
     //get the info to be sent
@@ -34,7 +35,7 @@ public class IndexFile {
     }
 
     public void add(IndexEntry e){
-        entries.put(e.fileName(), e);
+        entries.put(UUID.nameUUIDFromBytes(e.fileName().getBytes()).toString(), e);
     }
     public void indexChunks(IndexEntry e){
         for (Chunk c : e.getChunkList()){

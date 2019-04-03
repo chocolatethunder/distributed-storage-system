@@ -27,6 +27,7 @@ public class Indexer {
                 throw new FileNotFoundException("Index file not found...");
             }
             ind = Optional.of(mapper.readValue(NetworkUtils.fileToString(indexPath), IndexFile.class));
+            System.out.println("Indexfile loaded from file.");
         }
         catch (IOException e){
             //if the file is corrupt or empty we create a new IndexFile
@@ -36,7 +37,6 @@ public class Indexer {
             saveToFile(temp);
             return(temp);
         }
-        System.out.println("Indexfile loaded from file.");
         return ind.get();
     }
 
@@ -49,8 +49,6 @@ public class Indexer {
 
             File temp = new File(tempfile);
             File indexfile = new File(indexPath);
-
-
             if (temp.exists()){
                 temp.delete();
             }

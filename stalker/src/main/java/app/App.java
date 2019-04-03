@@ -31,8 +31,6 @@ public class App {
         }
         System.out.println(NetworkUtils.timeStamp(1) + "System discovery complete!");
 
-
-
         System.out.println("This Stalker's macID" + NetworkUtils.getMacID());
         int test = 0;
         initStalker();
@@ -44,7 +42,6 @@ public class App {
         //starting health check listener
         //ListenerThread healthCheckHandler = new ListenerThread();
         //healthCheckHandler.run();
-
 
         //election based on networkDiscovery
         while (true){
@@ -83,8 +80,6 @@ public class App {
                     break;
             }
         }
-
-
 
     }
 

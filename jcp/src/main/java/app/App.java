@@ -113,7 +113,7 @@ public class App {
     }
 
     public static void chooseFile() {
-        //Socket connection = connectToStalker();
+        Socket connection = connectToStalker();
         JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
         int returnValue = jfc.showOpenDialog(null);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
@@ -129,8 +129,8 @@ public class App {
             System.out.println("Uploaded " + selectedFile);
         }
         retrieveFiles();
-//        try{ connection.close();}
-//        catch(IOException e){ e.printStackTrace();}
+        try{ connection.close();}
+        catch(IOException e){ e.printStackTrace();}
 
     }
 
