@@ -100,9 +100,10 @@ public class CommsHandler {
         //Wait for leader to grant permission to start
     }
 
-    public Socket getLeaderResponse(int server_port, Socket leader){
+    public Socket getLeaderResponse(int server_port){
         TcpPacket req;
         ServerSocket listener;
+        Socket leader;
         try {
             listener = new ServerSocket(server_port);
             leader = listener.accept();

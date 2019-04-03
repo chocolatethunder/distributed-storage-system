@@ -45,8 +45,7 @@ public class DownloadServiceHandler implements Runnable {
             System.out.println("Request sent to leader");
 //          2. Wait for Leader to grant job permission
 ///------------------------------------------------------------
-            Socket leader = null;
-            leader = commsLink.getLeaderResponse(server_port, leader);
+            Socket leader = commsLink.getLeaderResponse(server_port);
             if(leader == null){
                 throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error with leader connection");
             }
