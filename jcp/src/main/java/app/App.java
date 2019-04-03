@@ -88,6 +88,8 @@ public class App {
         listOfFiles.setModel(listModel);
         consoleOutput.append("Listed files.\n");
         System.out.println("Listed files.");
+        try{ connection.close();}
+        catch(IOException e){ e.printStackTrace();}
     }
 
     public static void chooseFile() {
