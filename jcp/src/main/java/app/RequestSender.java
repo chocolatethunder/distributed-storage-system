@@ -46,7 +46,7 @@ public class RequestSender {
     /**
      * This is the request for uploading file
      *
-     * @param fileName absolute file path
+     * @param filePath absolute file path
      */
     public void sendFile(String filePath){
         MessageType m = MessageType.UPLOAD;
@@ -76,7 +76,7 @@ public class RequestSender {
     /**
      * This will download a file given the filename
      *
-     * @param fileName
+     * @param filePath
      */
     public void getFile(String filePath){
         MessageType m = MessageType.DOWNLOAD;

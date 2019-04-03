@@ -27,7 +27,7 @@ public class App {
     public static void main(String[] args) {
         int test  = 0;
 
-        int discoveryTimeout = 10;
+        int discoveryTimeout = 5;
         System.out.println(NetworkUtils.timeStamp(1) + "JCP online");
         //make a discovery manager and start it, prints results to file
         //this beast will be running at all times
@@ -64,10 +64,6 @@ public class App {
             }
         }
     }
-
-
-
-
     public static Socket connectToStalker(){
         int port = 11111;
         HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
@@ -142,7 +138,7 @@ public class App {
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             File selectedFile = jfc.getSelectedFile();
             //uncomment this:
-            requestSender.getFile(selectedFile + selectedFilename);
+            requestSender.getFile(selectedFile + "/" + selectedFilename);
             consoleOutput.append("Downloaded " + selectedFilename + " to " + selectedFile + "\n");
             System.out.println("Downloaded " + selectedFilename + " to " + selectedFile);
         }
