@@ -19,7 +19,7 @@ public class DownloadServiceHandler implements Runnable {
     private String fileName;
     private IndexFile index;
     private final String c_dir = "temp/chunks/";
-    private final String ass_dir = "temp/assembled/";
+    private final String ass_dir = "temp/reassembled/";
 
     public DownloadServiceHandler(Socket socket, Request req, IndexFile ind){
         this.socket = socket;
