@@ -129,8 +129,8 @@ public class App {
             System.out.println("Uploaded " + selectedFile);
         }
         retrieveFiles();
-        try{ connection.close();}
-        catch(IOException e){ e.printStackTrace();}
+//        try{ connection.close();}
+//        catch(IOException e){ e.printStackTrace();}
 
     }
 
@@ -147,8 +147,8 @@ public class App {
         consoleOutput.append("Deleted " + selectedFilename.toString() + "\n");
         System.out.println("Deleted " + selectedFilename.toString());
         retrieveFiles();
-        try{ connection.close();}
-        catch(IOException e){ e.printStackTrace();}
+//        try{ connection.close();}
+//        catch(IOException e){ e.printStackTrace();}
     }
 
     public static void downloadFile() {
@@ -166,8 +166,8 @@ public class App {
             consoleOutput.append("Downloaded " + selectedFilename + " to " + selectedFile + "\n");
             System.out.println("Downloaded " + selectedFilename + " to " + selectedFile);
         }
-        try{ connection.close();}
-        catch(IOException e){ e.printStackTrace();}
+//        try{ connection.close();}
+//        catch(IOException e){ e.printStackTrace();}
     }
 
     public static void initJFrame(){
