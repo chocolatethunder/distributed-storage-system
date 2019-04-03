@@ -78,12 +78,13 @@ public class RequestSender {
      *
      * @param fileName
      */
-    public void getFile(String fileName){
+    public void getFile(String filePath){
         MessageType m = MessageType.DOWNLOAD;
         // TO:DO need logic to verify file size  here
+        String fileName = FilenameUtils.getName(filePath);
         if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m), true) == MessageType.ACK) {
             FileStreamer fileStreamer = new FileStreamer(socket);
-            fileStreamer.receiveFileFromSocket(fileName);
+            fileStreamer.receiveFileFromSocket(filePath);
 
         }
 

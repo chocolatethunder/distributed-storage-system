@@ -32,6 +32,7 @@ public class DownloadServiceHandler implements Runnable {
         CommsHandler commsLink = new CommsHandler();
         try {
             // 0. we are going to check to see if the file exists first...
+
             IndexEntry e = index.search(fileName);
             if (e == null){
                 throw new RuntimeException(NetworkUtils.timeStamp(1) + "File does not exist.");

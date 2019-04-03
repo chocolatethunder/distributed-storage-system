@@ -142,7 +142,7 @@ public class App {
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             File selectedFile = jfc.getSelectedFile();
             //uncomment this:
-            requestSender.getFile(selectedFilename + selectedFile);
+            requestSender.getFile(selectedFile + selectedFilename);
             consoleOutput.append("Downloaded " + selectedFilename + " to " + selectedFile + "\n");
             System.out.println("Downloaded " + selectedFilename + " to " + selectedFile);
         }
