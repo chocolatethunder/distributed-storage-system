@@ -76,7 +76,6 @@ public class App {
     public static void retrieveFiles() {
 
         Socket connection = connectToStalker();
-
         //uncomment this:
 
         listModel.clear();

@@ -37,7 +37,7 @@ public class FileListServiceHandler implements Runnable {
             message = mapper.writeValueAsString(l);
             commLink.sendResponse(socket, MessageType.ACK);
             commLink.sendPacket(socket, MessageType.LIST, message, false);
-            socket.close();
+            //socket.close();
         }
         catch(Exception e){
             e.printStackTrace();
