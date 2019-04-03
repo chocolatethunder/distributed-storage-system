@@ -54,8 +54,9 @@ public class UploadServiceHandler implements Runnable {
 //          2. Wait for Leader to grant job permission
 ///------------------------------------------------------------
             TcpPacket req;
-            Socket leader = new Socket();
-            if(!commsLink.getLeaderResponse(server_port, leader)){
+            Socket leader = null;
+            leader = commsLink.getLeaderResponse(server_port, leader);
+            if(leader == null){
                 throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error with leader connection");
             }
 ///------------------------------------------------------------

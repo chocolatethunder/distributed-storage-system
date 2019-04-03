@@ -45,10 +45,12 @@ public class DownloadServiceHandler implements Runnable {
             System.out.println("Request sent to leader");
 //          2. Wait for Leader to grant job permission
 ///------------------------------------------------------------
-            Socket leader = new Socket();
-            if(!commsLink.getLeaderResponse(server_port, leader)){
+            Socket leader = null;
+            leader = commsLink.getLeaderResponse(server_port, leader);
+            if(leader == null){
                 throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error with leader connection");
             }
+///-----------------
 //          3. Now we must get the files from the harm targets
 ///------------------------------------------------------------
             ChunkRetriever cr = new ChunkRetriever(c_dir);

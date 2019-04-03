@@ -100,7 +100,7 @@ public class CommsHandler {
         //Wait for leader to grant permission to start
     }
 
-    public boolean getLeaderResponse(int server_port, Socket leader){
+    public Socket getLeaderResponse(int server_port, Socket leader){
         TcpPacket req;
         ServerSocket listener;
         try {
@@ -113,13 +113,13 @@ public class CommsHandler {
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println(NetworkUtils.timeStamp(1) + "Could not use server port");
-            return (false);
+            return (null);
         }
         if (!(req.getMessageType() == MessageType.START)) {
             System.out.println( NetworkUtils.timeStamp(1) + "Request denied by leader.");
-            return(false);
+            return(null);
         }
-        return(true);
+        return(leader);
     }
 
 }
