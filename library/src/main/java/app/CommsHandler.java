@@ -110,7 +110,7 @@ public class CommsHandler {
             System.out.println(NetworkUtils.timeStamp(1) + "Connected to leader: ");
             req = receivePacket(leader);
             System.out.println(NetworkUtils.timeStamp(1) + "Permission from leader granted");
-            //listener.close();
+            listener.close();
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println(NetworkUtils.timeStamp(1) + "Could not use server port");
