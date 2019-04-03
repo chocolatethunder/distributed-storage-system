@@ -1,6 +1,7 @@
 package app;
 
 import java.net.Socket;
+import java.io.File;
 
 /**
  * This runnable handles request made by STALKERS
@@ -34,7 +35,13 @@ public class Handler implements Runnable {
             commLink.sendResponse(socket, MessageType.ACK);
             streamer.sendFileToSocket(storage_path + request.getFileName());
 
-        } else {
+        }
+        else if (requestType == MessageType.DELETE) {
+            File f = new File(storage_path + request.getFileName());
+            f.delete();
+            commLink.sendResponse(socket, MessageType.ACK);
+        }
+        else {
             //delete logic here
         }
     }

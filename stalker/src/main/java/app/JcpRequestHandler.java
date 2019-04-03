@@ -43,9 +43,6 @@ public class JcpRequestHandler implements Runnable {
         while (true) {
             try {
                 //accept connection from a JCP
-//                if (server == null){
-//                    server = new ServerSocket(serverPort);
-//                }
                 Socket client = server.accept();
                 System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + client);
                 // receive packet on the socket link

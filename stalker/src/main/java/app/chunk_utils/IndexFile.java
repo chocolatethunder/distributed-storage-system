@@ -37,6 +37,7 @@ public class IndexFile {
     public void add(IndexEntry e){
         entries.put(UUID.nameUUIDFromBytes(e.fileName().getBytes()).toString(), e);
     }
+    public void remove(IndexEntry e){entries.remove(UUID.nameUUIDFromBytes(e.fileName().getBytes()).toString());}
     public void indexChunks(IndexEntry e){
         for (Chunk c : e.getChunkList()){
             chunkIndex.put(c.getUuid(), c.getReplicas());

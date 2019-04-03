@@ -22,9 +22,7 @@ public class ServiceHandlerFactory {
      * @return
      */
     public static Runnable getServiceHandler(TcpPacket request, Socket socket, IndexFile index) {
-
         MessageType requestType = request.getMessageType();
-
         Request toProcess = null;
         if (requestType != MessageType.LIST){
             toProcess = NetworkUtils.getPacketContents(request);

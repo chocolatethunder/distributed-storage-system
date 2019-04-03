@@ -77,23 +77,6 @@ public class Indexer {
         }
         return(true);
     }
-
-
-
-//    //prints the indexfile object to file
-//    public static boolean writeIndex(IndexFile ind){
-//        try {
-//            ObjectMapper mapper = new ObjectMapper();
-//            //Object to JSON in String
-//            String jsonInString = mapper.writeValueAsString(ind);
-//
-//        }
-//        catch(IOException e){
-//            e.printStackTrace();
-//        }
-//        return true;
-//    }
-
     //add an entry to the index file
     //process thread safe
     public static boolean addEntry(IndexFile ind, IndexEntry ent){
@@ -102,6 +85,13 @@ public class Indexer {
         ind.indexChunks(ent);
         //-----------
         //update() file on disk
+        return true;
+    }
+    //add an entry to the index file
+    //process thread safe
+    public static boolean removeEntry(IndexFile ind, IndexEntry ent){
+        //get consent then add
+        ind.remove(ent);
         return true;
     }
 
