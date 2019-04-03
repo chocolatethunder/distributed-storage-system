@@ -6,6 +6,7 @@ import app.chunk_utils.IndexEntry;
 import app.chunk_utils.IndexFile;
 
 import java.io.IOException;
+import java.io.File;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -73,6 +74,8 @@ public class DownloadServiceHandler implements Runnable {
             commsLink.sendResponse(socket, MessageType.ACK);
             FileStreamer fileStreamer = new FileStreamer(socket);
             fileStreamer.sendFileToSocket(ass_dir + e.fileName());
+            File f = new File(ass_dir + e.fileName());
+            f.delete();
 
             ///file is sent
 //          6.tell the leader you are done
