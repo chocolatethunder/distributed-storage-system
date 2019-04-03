@@ -1,8 +1,10 @@
 package app.handlers;
 
 import app.*;
+import app.chunk_utils.ChunkAssembler;
 import app.chunk_utils.IndexEntry;
 import app.chunk_utils.IndexFile;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -53,11 +55,36 @@ public class DownloadServiceHandler implements Runnable {
 //          3. Now we must get the files from the harm targets
 ///------------------------------------------------------------
             ChunkRetriever cr = new ChunkRetriever(c_dir);
-            cr.retrieveChunks(e);
+            if(cr.retrieveChunks(e)){
+                System.out.println("Chunks retrieved OK!");
+            }
+//          4. Now we must reassemble the file
+///------------------------------------------------------------
+            ChunkAssembler ca = new ChunkAssembler(c_dir, ass_dir);
+            if(ca.assembleChunks(e)){
+                System.out.println("Chunks assembled");
+            }
+//          5. send it to the client
+///------------------------------------------------------------
+            commsLink.sendResponse(socket, MessageType.ACK);
+            FileStreamer fileStreamer = new FileStreamer(socket);
+            fileStreamer.sendFileToSocket(ass_dir + e.fileName());
 
+            ///file is sent
+//          6.tell the leader you are done
+///------------------------------------------------------------
+            commsLink.sendResponse(leader, MessageType.DONE);
+            TcpPacket t = commsLink.receivePacket(leader);
+            if (t.getMessageType() == MessageType.ACK) {
+                //we are done with the connection to the leader
+                leader.close();
+            }
         }
         catch (RuntimeException ex){
-
+            ex.printStackTrace();
+        }
+        catch (IOException err){
+            err.printStackTrace();
         }
 
 

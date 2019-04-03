@@ -63,26 +63,6 @@ public class App {
                 e.printStackTrace();
             }
         }
-
-//        String req = "upload";
-//        switch (req){
-//            case("upload"):
-//                requestSender.sendFile("temp/003_txt_test.txt");
-//                break;
-//            case("download"):
-//                requestSender.getFile("temp/003_txt_test.txt");
-//                break;
-//        }
-//        // should close socket from main calling method, otherwise threads giving null pointer exception
-//        try {
-//            //discManager.interrupt();
-//            socket.close();
-//            System.exit(0);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-
     }
 
 
@@ -162,7 +142,7 @@ public class App {
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             File selectedFile = jfc.getSelectedFile();
             //uncomment this:
-            requestSender.getFile(selectedFilename);
+            requestSender.getFile(selectedFilename + selectedFile);
             consoleOutput.append("Downloaded " + selectedFilename + " to " + selectedFile + "\n");
             System.out.println("Downloaded " + selectedFilename + " to " + selectedFile);
         }
