@@ -64,6 +64,9 @@ public class DownloadServiceHandler implements Runnable {
             if(ca.assembleChunks(e)){
                 System.out.println("Chunks assembled");
             }
+            else{
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error reassembling chunks");
+            }
 //          5. send it to the client
 ///------------------------------------------------------------
             commsLink.sendResponse(socket, MessageType.ACK);
