@@ -3,10 +3,13 @@
  */
 package app;
 
+import org.apache.commons.io.FilenameUtils;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,13 +21,13 @@ public class App {
     static JList listOfFiles = new JList();
     static JTextArea consoleOutput = new JTextArea();
     static DefaultListModel listModel = new DefaultListModel();
+    static RequestSender requestSender;
     public volatile int TotalDiskSpace = 0 ;
     //jcp main
     public static void main(String[] args) {
         int test  = 0;
 
         int discoveryTimeout = 10;
-
         System.out.println(NetworkUtils.timeStamp(1) + "JCP online");
         //make a discovery manager and start it, prints results to file
         //this beast will be running at all times
@@ -38,45 +41,136 @@ public class App {
             e.printStackTrace();
         }
         System.out.println(NetworkUtils.timeStamp(1) + "List updated!");
-        discManager.interrupt();
+        initJFrame();
 
+        System.out.println("here");
+//
         //get the stalkers from file
         HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
         //get sorted list from targets
-        List<Integer> s_list = NetworkUtils.mapToSList(m);
+        requestSender = RequestSender.getInstance();
 
-        //HealthChecker checker = new HealthChecker();
-        //checker.start(m);
-
-        for (Integer key : m.keySet()){
-
-        }
-        RequestSender requestSender = RequestSender.getInstance();
+////
+////        //HealthChecker checker = new HealthChecker();
+////        //checker.start(m);
+////
         //ip of stalker we'll just use the one at index 1 for now
-        String i =  m.get(s_list.get(0));
-        String stalkerip =  m.get(s_list.get(1));
+        while(true){
+            try{
+                Thread.sleep((10000));
+            }
+            catch (InterruptedException e){
+                e.printStackTrace();
+            }
+        }
 
-        //port to connect to
+//        String req = "upload";
+//        switch (req){
+//            case("upload"):
+//                requestSender.sendFile("temp/003_txt_test.txt");
+//                break;
+//            case("download"):
+//                requestSender.getFile("temp/003_txt_test.txt");
+//                break;
+//        }
+//        // should close socket from main calling method, otherwise threads giving null pointer exception
+//        try {
+//            //discManager.interrupt();
+//            socket.close();
+//            System.exit(0);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+
+    }
+
+
+
+
+    public static Socket connectToStalker(){
         int port = 11111;
-        Socket socket = requestSender.connect(stalkerip, port);
-        String req = "upload";
-        switch (req){
-            case("upload"):
-                requestSender.sendFile("temp/003_txt_test.txt");
-                break;
-            case("download"):
-                requestSender.getFile("temp/003_txt_test.txt");
-                break;
-        }
-        // should close socket from main calling method, otherwise threads giving null pointer exception
-        try {
-            //discManager.interrupt();
-            socket.close();
-            System.exit(0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
+        List<Integer> s_list = NetworkUtils.mapToSList(m);
+        String stalkerip =  m.get(s_list.get(1));
+        return(requestSender.connect(stalkerip, port));
+    }
+//
+//    //load a config (stalker ip) from file while we get network discovery working
+    public static void retrieveFiles() {
+        //uncomment this:
+            /*
+                listModel.clear();
+                List<String> fileList = requestSender.getFileList();
+                for (int i=0; i < fileList.size(); i++) {
+                    listModel.addElement(fileList.get(i);
+                }
+            */
+        //remove this:
+        listOfFiles.setModel(listModel);
+        consoleOutput.append("Listed files.\n");
+        System.out.println("Listed files.");
+    }
 
+    public static void chooseFile() {
+        //Socket connection = connectToStalker();
+        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        int returnValue = jfc.showOpenDialog(null);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = jfc.getSelectedFile();
+
+            String name = FilenameUtils.separatorsToUnix(selectedFile.getAbsolutePath());
+            System.out.println(name);
+            //remove this:
+            listModel.addElement(selectedFile.getName());
+            //uncomment this:
+            requestSender.sendFile(name);
+            consoleOutput.append("Uploaded " + selectedFile + "\n");
+            System.out.println("Uploaded " + selectedFile);
+        }
+        retrieveFiles();
+//        try{ connection.close();}
+//        catch(IOException e){ e.printStackTrace();}
+
+    }
+
+    public static void deleteFile() {
+        //Socket connection = connectToStalker();
+        int index = listOfFiles.getSelectedIndex();
+        Object selectedFilename = listOfFiles.getSelectedValue();
+        //remove this:
+        listModel.removeElement(selectedFilename);
+        //remove this:
+        listOfFiles.setModel(listModel);
+        //uncomment this:
+        //requestSender.deleteFile(selectedFilename);
+        consoleOutput.append("Deleted " + selectedFilename.toString() + "\n");
+        System.out.println("Deleted " + selectedFilename.toString());
+        retrieveFiles();
+//        try{ connection.close();}
+//        catch(IOException e){ e.printStackTrace();}
+    }
+
+    public static void downloadFile() {
+        //Socket connection = connectToStalker();
+        String selectedFilename = listOfFiles.getSelectedValue().toString();
+        //remove this?:
+        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int returnValue = jfc.showOpenDialog(null);
+        //
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = jfc.getSelectedFile();
+            //uncomment this:
+            //requestSender.getFile(selectedFilename);
+            consoleOutput.append("Downloaded " + selectedFilename + " to " + selectedFile + "\n");
+            System.out.println("Downloaded " + selectedFilename + " to " + selectedFile);
+        }
+//        try{ connection.close();}
+//        catch(IOException e){ e.printStackTrace();}
+    }
+
+    public static void initJFrame(){
         String request = null;
         String filename = null;
 
@@ -113,9 +207,6 @@ public class App {
         DeleteListener deleteListener = new DeleteListener();
         deleteButton.addActionListener(deleteListener);
 
-
-
-
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(400,500);
         mainFrame.setLayout(null);
@@ -127,66 +218,4 @@ public class App {
         mainFrame.setAlwaysOnTop(false);
     }
 
-
-//
-//    //load a config (stalker ip) from file while we get network discovery working
-public static void retrieveFiles() {
-    //uncomment this:
-		/*
-			listModel.clear();
-			List<String> fileList = requestSender.getFileList();
-			for (int i=0; i < fileList.size(); i++) {
-				listModel.addElement(fileList.get(i);
-			}
-		*/
-    //remove this:
-    listOfFiles.setModel(listModel);
-    consoleOutput.append("Listed files.\n");
-    System.out.println("Listed files.");
-}
-
-    public static void chooseFile() {
-        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-        int returnValue = jfc.showOpenDialog(null);
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = jfc.getSelectedFile();
-            //remove this:
-            listModel.addElement(selectedFile.getName());
-            //uncomment this:
-            //requestSender.sendFile(selectedFile.getAbsolutePath());
-            consoleOutput.append("Uploaded " + selectedFile + "\n");
-            System.out.println("Uploaded " + selectedFile);
-        }
-        retrieveFiles();
-    }
-
-    public static void deleteFile() {
-        int index = listOfFiles.getSelectedIndex();
-        Object selectedFilename = listOfFiles.getSelectedValue();
-        //remove this:
-        listModel.removeElement(selectedFilename);
-        //remove this:
-        listOfFiles.setModel(listModel);
-        //uncomment this:
-        //requestSender.deleteFile(selectedFilename);
-        consoleOutput.append("Deleted " + selectedFilename.toString() + "\n");
-        System.out.println("Deleted " + selectedFilename.toString());
-        retrieveFiles();
-    }
-
-    public static void downloadFile() {
-        String selectedFilename = listOfFiles.getSelectedValue().toString();
-        //remove this?:
-        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int returnValue = jfc.showOpenDialog(null);
-        //
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = jfc.getSelectedFile();
-            //uncomment this:
-            //requestSender.getFile(selectedFilename);
-            consoleOutput.append("Downloaded " + selectedFilename + " to " + selectedFile + "\n");
-            System.out.println("Downloaded " + selectedFilename + " to " + selectedFile);
-        }
-    }
 }

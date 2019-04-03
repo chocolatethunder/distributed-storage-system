@@ -25,11 +25,8 @@ public class FileStreamer {
 
         if (socket != null) {
             try {
-
                 // send file
                 File file = new File(filepath);
-
-
                 byte[] byteArray = new byte[(int) file.length()];
 
                 out = new DataOutputStream(socket.getOutputStream());
