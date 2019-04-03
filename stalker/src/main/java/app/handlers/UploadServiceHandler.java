@@ -98,13 +98,13 @@ public class UploadServiceHandler implements Runnable {
             try {
                 if(commsLink.receivePacket(leader).getMessageType() == MessageType.ACK){
                     //we are done with the connection to the leader
-                    leader.close();
                     //then update index
+                    System.out.println("Saving indexfile");
                     updateIndex(update);
+                    leader.close();
                 }
             }
             catch(IOException e){
-
             }
         }
         catch(RuntimeException e){
