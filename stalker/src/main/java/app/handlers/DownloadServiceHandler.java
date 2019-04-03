@@ -58,6 +58,7 @@ public class DownloadServiceHandler implements Runnable {
             if(cr.retrieveChunks(e)){
                 System.out.println("Chunks retrieved OK!");
             }
+            e.summary();
 //          4. Now we must reassemble the file
 ///------------------------------------------------------------
             ChunkAssembler ca = new ChunkAssembler(c_dir, ass_dir);

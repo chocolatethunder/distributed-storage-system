@@ -56,9 +56,10 @@ public class ChunkRetriever {
                         FileStreamer fileStreamer = new FileStreamer(harmServer);
                         fileStreamer.receiveFileFromSocket(chunkDir + c.getUuid());
                         harmServer.close();
+                        c.setChunk_path(chunkDir + c.getUuid());
                         return true;
                     }
-                    c.setChunk_path(chunkDir + c.getUuid());
+
                 }
                 catch(IOException e){
                     e.printStackTrace();
