@@ -29,6 +29,7 @@ public class CommsHandler {
                 String received = in.readUTF();
                 System.out.println(NetworkUtils.timeStamp(1) + "rec " + received);
                 receivedPacket = mapper.readValue(received, TcpPacket.class);
+
                 response = receivedPacket.getMessageType();
             } catch (EOFException e) {
                 // do nothing end of packet

@@ -96,7 +96,9 @@ public class UploadServiceHandler implements Runnable {
             commsLink.sendResponse(leader, MessageType.DONE);
 
             try {
-                if(commsLink.receivePacket(leader).getMessageType() == MessageType.ACK){
+                TcpPacket t = commsLink.receivePacket(leader);
+                System.out.println(t.getMessageType());
+                if(t.getMessageType() == MessageType.ACK){
                     //we are done with the connection to the leader
                     //then update index
                     System.out.println("Saving indexfile");
