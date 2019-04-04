@@ -10,30 +10,51 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class NetDiscovery implements Runnable{
     private static DatagramSocket socket = null;
+    private DatagramSocket receiverSocket;
     private String target;
     private String origin;
     private static int discovery_timeout = 0;
-
-    public NetDiscovery(Module target, Module origin, int discovery_timeout) {
+    private boolean verbose;
+    public NetDiscovery(Module target, Module origin, int discovery_timeout, boolean verbose) {
         this.target = target.name();
         this.origin = origin.name();
         this.discovery_timeout = discovery_timeout;
+        this.verbose = verbose;
+
     }
 
     @Override
     public void run() {
         HashMap<Integer,String> listOfAddrs =  null;
+        int[] ports = NetworkUtils.getPortTargets(origin, target);
         try {
-            listOfAddrs = broadcast(MessageType.DISCOVER,target);
-            if (target == Module.STALKER.name()){
-                NetworkUtils.toFile("config/stalkers.list", listOfAddrs);
-            }
-            else{
-                NetworkUtils.toFile("config/harm.list", listOfAddrs);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+            //only bind your ports once!!!
+            receiverSocket = new DatagramSocket(ports[1]);
+            socket = new DatagramSocket();
         }
+        catch (SocketException e){
+        }
+        while (!Thread.interrupted()){
+            try {
+                listOfAddrs = serverSearch(MessageType.DISCOVER, ports);
+                if (listOfAddrs != null){
+                    if (target == Module.STALKER.name()){
+                        //write to file
+                        System.out.println(NetworkUtils.timeStamp(1) + "STALKER list updated");
+                        NetworkUtils.toFile("config/stalkers.list", listOfAddrs);
+                    }
+                    else{
+                        //write to file
+                        System.out.println(NetworkUtils.timeStamp(1) + "HARM list updated");
+                        NetworkUtils.toFile("config/harm.list", listOfAddrs);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try{Thread.sleep(discovery_timeout * 1000);}catch (Exception e){};
+        }
+
     }
 
     /**
@@ -41,63 +62,81 @@ public class NetDiscovery implements Runnable{
      * broadcasts a UDP packet over a LAN network
      * @return list of address of the modules that repllied
      */
-    public HashMap<Integer, String> broadcast(MessageType request,String target) throws IOException {
+    public HashMap<Integer, String> serverSearch(MessageType request,int[] ports) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        try{
+            if(sendSignal(request, mapper)){
+                HashMap<Integer,String> m;
+                m = receiveSignal(mapper);
+                if(m != null){
+                    return(m);
+                }
+            }
+        }
+        catch (IOException e){
+            e.printStackTrace();
+            System.out.println("Server search failed!");
+        }
+        return (null);
+
+    }
+
+    //send out a UDP broadcast
+    public boolean sendSignal(MessageType request, ObjectMapper mapper) throws IOException{
+//        try{
+//
+//            return(false);
+//        }
+//        catch(SocketException e){
+//            e.printStackTrace();
+//        }
         // To broadcast change this to 255.255.255.255
         InetAddress address = InetAddress.getByName("192.168.1.255");       // broadcast address
         //we want a map of MAC -> ip
-        HashMap<Integer, String> stalkerMap = new HashMap<>();
-        socket = new DatagramSocket();
         //the ports must be specific to target/origin
         int[] ports = NetworkUtils.getPortTargets(origin, target);
-
-
-        //port we are receiving on
-        DatagramSocket receiverSocket = new DatagramSocket(ports[1]);    // socket to receive replies
-
         // create a discover request packet and broadcast it
         UDPPacket discovery = new UDPPacket(request, String.valueOf(NetworkUtils.getMacID()), target, NetworkUtils.getIP());
-        ObjectMapper mapper = new ObjectMapper();
-        System.out.println("Sending out broadcast with signature: " + mapper.writeValueAsString(discovery) + "\n");
+        if (verbose){System.out.println(NetworkUtils.timeStamp(1) + "Sending out broadcast with signature: " + mapper.writeValueAsString(discovery) + "\n");}
         byte[] req = mapper.writeValueAsString(discovery).getBytes();
         //the port we are sending on
         DatagramPacket packet = new DatagramPacket(req, req.length, address, ports[0]);
         socket.send(packet);
+        return(true);
+    }
 
+    public HashMap<Integer, String> receiveSignal(ObjectMapper mapper){
+        HashMap<Integer, String> stalkerMap = new HashMap<>();
         // waits for 5 sec to get response from the LAN
         long t= System.currentTimeMillis();
-        long end = t+ (discovery_timeout*1000);
+        long end = t + (discovery_timeout*1000);
         while(System.currentTimeMillis() < end) {
             byte[] buf = new byte[1024];
-            packet = new DatagramPacket(buf, buf.length);
+            DatagramPacket packet = new DatagramPacket(buf, buf.length);
             // set socket timeout to 1 sec
             try {
-                receiverSocket.setSoTimeout(1000);
+                receiverSocket.setSoTimeout(discovery_timeout);
                 receiverSocket.receive(packet);
-            }
-            catch (SocketTimeoutException e)
-            {
-                continue;
-            }
-            String received = new String(packet.getData(), 0, packet.getLength());
-            System.out.println("A target has responded: " + received);
-            // parse the packet content
-            JsonNode discoverReply = mapper.readTree(received);
-            String uuid = discoverReply.get("uuid").textValue();
-            InetAddress replyAddress =  InetAddress.getByName(discoverReply.get("address").textValue());
-
-
-            // need to have the harm list to have additional attributes such as space, and if alive
-            // during health check, the space and alive will be updated
-            if(this.target.equals(Module.HARM.name())){
-                NodeAttribute attributes = new NodeAttribute(replyAddress.getHostAddress(), 0, true);
-                String stringAttributes = mapper.writeValueAsString(attributes);
-                stalkerMap.put(Integer.valueOf(uuid), stringAttributes);
-            }else {
+                String received = new String(packet.getData(), 0, packet.getLength());
+                if (verbose) {System.out.println(NetworkUtils.timeStamp(1) + "A target has responded: " + received);}
+                // parse the packet content
+                JsonNode discoverReply = mapper.readTree(received);
+                String uuid = discoverReply.get("uuid").textValue();
+                InetAddress replyAddress =  InetAddress.getByName(discoverReply.get("address").textValue());
                 stalkerMap.put(Integer.valueOf(uuid), replyAddress.getHostAddress());
             }
+            catch (SocketTimeoutException ex)
+            {
+                //socket timed out
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
         }
-        System.out.println("Discovery complete.");
-        socket.close();
+        //socket.close();
         return stalkerMap;
     }
+
+
+
 }

@@ -3,25 +3,35 @@
  */
 package app;
 
-import app.LeaderUtils.QueueEntry;
+import app.LeaderUtils.CRUDQueue;
 import app.LeaderUtils.RequestAdministrator;
 import app.chunk_utils.Indexer;
 import app.chunk_utils.IndexFile;
 import org.apache.commons.io.FilenameUtils;
 import java.io.*;
-import java.util.PriorityQueue;
-import java.util.Comparator;
+import javax.swing.*;
+import javax.swing.filechooser.*;
 
 public class App {
-
     public static void main(String[] args) {
 
+        int discoveryinterval = 15;
         //First thing to do is locate all other stalkers and print the stalkers to file
+        //check the netDiscovery class to see where the file is being created
+        Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, discoveryinterval, false));
+        //DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
+        discManager.start();
+        //we will wait for network discovery to do its thing
+        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for system discovery...");
+        try{
+            Thread.sleep((long)((discoveryinterval * 1000) + 5000));
+        }
+        catch (InterruptedException e){
+            e.printStackTrace();
+        }
+        System.out.println(NetworkUtils.timeStamp(1) + "System discovery complete!");
 
-       DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
-       DM.start();
-
-
+        System.out.println("This Stalker's macID" + NetworkUtils.getMacID());
         int test = 0;
         initStalker();
         IndexFile ind = Indexer.loadFromFile();
@@ -29,51 +39,48 @@ public class App {
         System.out.println(NetworkUtils.timeStamp(1) + "Stalker Online");
         //testing
 
-
-        //starting listener thread for health check and leader election
-        Thread healthCheckthread = new Thread( new ListenerThread());
-        healthCheckthread.start();
-
-
-
-        //starting task for health checks on STALKERS and HARM targets
-        String stalkerList = NetworkUtils.fileToString("config/stalkers.list");
-        String harmlist = NetworkUtils.fileToString("config/harm.list");
-        HealthChecker checker = new HealthChecker(NetworkUtils.mapFromJson(stalkerList),
-                NetworkUtils.mapFromJson(harmlist));
-        checker.startTask();
-
-
-
+        //starting health check listener
+        //ListenerThread healthCheckHandler = new ListenerThread();
+        //healthCheckHandler.run();
 
         //election based on networkDiscovery
-        int role = getRole();
+        while (true){
+            int role = getRole();
+            switch (role){
+                case 0:
+                    //This means that this STK is the leader
+                    //create a priority comparator for the Priority queue
+                    CRUDQueue syncQueue = new CRUDQueue();
+                    Thread t1 = new Thread(new StalkerRequestHandler(syncQueue));
+                    Thread t2 =  new Thread(new RequestAdministrator(syncQueue));
+                    t1.start();
+                    t2.start();
 
-        switch (role){
-            case 0:
-                //This means that this STK is the leader
-                //create a priority comparator for the Priority queue
-                Comparator<QueueEntry> entryPriorityComparator = new Comparator<QueueEntry>() {
-                    @Override
-                    public int compare(QueueEntry q1, QueueEntry q2) {
-                        return q1.getPriority() - q2.getPriority();
+                    try{
+                        t1.join();
+                        t2.join();
                     }
-                };
-                PriorityQueue<QueueEntry> syncQueue = new PriorityQueue<>(entryPriorityComparator);
-
-                StalkerRequestHandler stalkerCoordinator = new StalkerRequestHandler(syncQueue);
-                RequestAdministrator reqAdmin = new RequestAdministrator(syncQueue);
-                stalkerCoordinator.run();
-                reqAdmin.run();
-                break;
-            case 1:
-                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
-                Thread jcpListener = new Thread(jcpRequestHandler);
-                jcpListener.start();
-                break;
-            case 2:
-                break;
+                    catch(InterruptedException e){
+                        e.printStackTrace();
+                    }
+                    break;
+                case 1:
+                    Thread jcpReq = new Thread(new JcpRequestHandler(ind));
+//                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
+//                jcpRequestHandler.run();
+                    jcpReq.start();
+                    try {
+                        jcpReq.join();
+                    }
+                    catch(InterruptedException e){
+                        e.printStackTrace();
+                    }
+                    break;
+                case 2:
+                    break;
+            }
         }
+
     }
 
     public static int getRole(){
@@ -86,7 +93,6 @@ public class App {
         File chunk_folder = new File("temp/chunks/");
 
         File[] chunk_folder_contents = chunk_folder.listFiles();
-
         File temp_folder = new File("temp/toChunk/");
         File[] temp_folder_contents = temp_folder.listFiles();
 
@@ -97,7 +103,6 @@ public class App {
                 }
             }
         }
-
         if(temp_folder_contents != null) {
             for (File f : temp_folder_contents) {
                 if (!FilenameUtils.getExtension(f.getName()).equals("empty")) {
@@ -107,6 +112,11 @@ public class App {
         }
 
     }
+
+
+
+
+
 
 
 }

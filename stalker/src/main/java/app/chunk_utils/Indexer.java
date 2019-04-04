@@ -27,6 +27,7 @@ public class Indexer {
                 throw new FileNotFoundException("Index file not found...");
             }
             ind = Optional.of(mapper.readValue(NetworkUtils.fileToString(indexPath), IndexFile.class));
+            System.out.println("Indexfile loaded from file.");
         }
         catch (IOException e){
             //if the file is corrupt or empty we create a new IndexFile
@@ -36,7 +37,6 @@ public class Indexer {
             saveToFile(temp);
             return(temp);
         }
-        System.out.println("Indexfile loaded from file.");
         return ind.get();
     }
 
@@ -49,8 +49,6 @@ public class Indexer {
 
             File temp = new File(tempfile);
             File indexfile = new File(indexPath);
-
-
             if (temp.exists()){
                 temp.delete();
             }
@@ -79,30 +77,21 @@ public class Indexer {
         }
         return(true);
     }
-
-
-
-//    //prints the indexfile object to file
-//    public static boolean writeIndex(IndexFile ind){
-//        try {
-//            ObjectMapper mapper = new ObjectMapper();
-//            //Object to JSON in String
-//            String jsonInString = mapper.writeValueAsString(ind);
-//
-//        }
-//        catch(IOException e){
-//            e.printStackTrace();
-//        }
-//        return true;
-//    }
-
     //add an entry to the index file
     //process thread safe
     public static boolean addEntry(IndexFile ind, IndexEntry ent){
         //get consent then add
         ind.add(ent);
+        ind.indexChunks(ent);
         //-----------
         //update() file on disk
+        return true;
+    }
+    //add an entry to the index file
+    //process thread safe
+    public static boolean removeEntry(IndexFile ind, IndexEntry ent){
+        //get consent then add
+        ind.remove(ent);
         return true;
     }
 
