@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  *This class is responsible for scheduling task for doing health checks on all units in the config files( HARM or STALKERS)
  */
-public class HealthChecker {
+public class HealthChecker implements Runnable{
 
     // every 30 seconds for now
     private final long interval = 1000 * 30;
@@ -22,30 +22,25 @@ public class HealthChecker {
 
     private Map<Integer, String> stalkerList;
     private Map<Integer, String> harmList;
+    private Module requestSender;
     private AtomicLong spaceAvailableSoFar;
 
 
     /**
-     * This constructor is meant to be used from JCP to do health checks on STALKERS
-     * @param stalkers
-     * @param spaceAvailableSoFar
+     * This constructor is meant to be used from JCP and STALKER to do health checks on STALKERS
+     * @param  checker health check request sender module
+     * @param spaceAvailableSoFar stalker will have this null
      */
-    public HealthChecker(Map<Integer, String> stalkers, AtomicLong spaceAvailableSoFar){
+    public HealthChecker(Module checker, AtomicLong spaceAvailableSoFar){
+        requestSender = checker;
+        HashMap<Integer, String> stalkers =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
         stalkerList = stalkers;
+
+        if(checker == Module.STALKER){
+            HashMap<Integer, String> harms =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
+            harmList = harms;
+        }
         this.spaceAvailableSoFar = spaceAvailableSoFar;
-    }
-
-
-    /**
-     * This constructor should be used from STALKER units to do health checks on other STALKERS and HARM lists
-     * @param stalkers
-     * @param harms
-     *
-     */
-    public HealthChecker(Map<Integer, String> stalkers,
-                         Map<Integer, String> harms){
-        this.stalkerList = stalkers;
-        this.harmList = harms;
     }
 
 
@@ -53,20 +48,21 @@ public class HealthChecker {
      * This method schedules TimerTask for each node in the config file
      * TimerTask is a runnable that executes run method at fixed interval
      */
-    public void startTask() {
+    @Override
+    public void run() {
 
         Timer timer = new Timer();
+
 
         // for each node in the stalker list, scheduling a task to occur at interval
         if(stalkerList != null) {
             for (Map.Entry<Integer, String> entry : stalkerList.entrySet()) {
                 System.out.println("Starting scheduled health task for stalker node: " + entry.getValue());
-                timer.scheduleAtFixedRate(new HealthCheckerTask(entry.getKey(),
-                                entry.getValue(),
-                                spaceAvailableSoFar,
-                                Module.STALKER),
-                        intialDelay,
-                        interval);
+                addTimerTask(timer,
+                        entry.getKey(),
+                        entry.getValue(),
+                        spaceAvailableSoFar,
+                        Module.STALKER);
             }
         }
 
@@ -74,40 +70,82 @@ public class HealthChecker {
             ObjectMapper mapper = new ObjectMapper();
             // for each node in the harm list, scheduling a task to occur at interval
             for (Map.Entry<Integer, String> entry : harmList.entrySet()) {
-                NodeAttribute attributes = null;
-                try {
-                    attributes = mapper.readValue(entry.getValue(), NodeAttribute.class);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                System.out.println("Starting scheduled health task for harm node: " + attributes.getAddress());
-                timer.scheduleAtFixedRate(new HealthCheckerTask(entry.getKey(),
-                        attributes.getAddress(),
-                        null,
-                        Module.HARM),
-                        intialDelay,
-                        interval);
+                addTimerTaskForHarm(timer, mapper, entry);
             }
         }
+
+        while (!Thread.interrupted()){
+            try {
+                Map<Integer, String> newStalkers =  NetworkUtils.mapFromJson(NetworkUtils
+                        .fileToString("config/stalkers.list"));
+
+                if(!this.stalkerList.equals(newStalkers)){
+                    for(Map.Entry<Integer, String> entry : newStalkers.entrySet()){
+                        if(!this.stalkerList.containsKey(entry.getKey())){
+                            addTimerTask(timer,
+                                    entry.getKey(),
+                                    entry.getValue(),
+                                    spaceAvailableSoFar,
+                                    Module.STALKER);
+                        }
+                    }
+
+                    this.stalkerList = new HashMap<>();
+                    this.stalkerList.putAll(newStalkers);
+                }
+
+                if(this.requestSender == Module.STALKER){
+                    Map<Integer, String> newHarms =  NetworkUtils.mapFromJson(NetworkUtils
+                            .fileToString("config/harm.list"));
+
+                    if(!this.harmList.equals(newHarms)) {
+                        ObjectMapper mapper = new ObjectMapper();
+                        for (Map.Entry<Integer, String> entry : newHarms.entrySet()) {
+                            addTimerTaskForHarm(timer, mapper, entry);
+                        }
+                        this.harmList = new HashMap<>();
+                        this.harmList.putAll(newHarms);
+                    }
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try{Thread.sleep(interval * 1000);}catch (Exception e){};
+        }
+
 
 
     }
 
+    private void addTimerTaskForHarm(Timer timer, ObjectMapper mapper, Map.Entry<Integer, String> entry) {
+        NodeAttribute attributes = null;
+        try {
+            attributes = mapper.readValue(entry.getValue(), NodeAttribute.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Starting scheduled health task for harm node: " + attributes.getAddress());
+        addTimerTask(timer, entry.getKey(),
+                attributes.getAddress(),
+                null,
+                Module.HARM);
+    }
 
-    /**
-     ******This is a placeholder method, not sure how to use it yet
-     * Should be used to restart health check for a newly found node after initial discovery
-     * @param stalkerIp
-     * @param target
-     */
-    public void restartTask(String stalkerIp, Module target) {
 
-        Timer timer = new Timer();
 
-        System.out.println("Starting scheduled health task for node: " + stalkerIp);
-        // TO:DO  FIX THIS NOT CORRECT
-        timer.scheduleAtFixedRate(new HealthCheckerTask(0, stalkerIp, null, target), 0, interval);
-
+    private void addTimerTask(Timer timer,
+                              Integer uuid,
+                              String host,
+                              AtomicLong spaceAvailableSoFar,
+                              Module stalker) {
+        timer.scheduleAtFixedRate(new HealthCheckerTask(uuid,
+                        host,
+                        spaceAvailableSoFar,
+                        stalker),
+                intialDelay,
+                interval);
     }
 
 

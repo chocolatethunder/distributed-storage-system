@@ -41,6 +41,7 @@ public class App {
         //this beast will be running at all times
         Thread discManager = new Thread(new DiscoveryManager(Module.JCP, discoveryTimeout, false));
         discManager.start();
+
         System.out.println(NetworkUtils.timeStamp(1) + "Waiting for stalker list to update");
         try{
             Thread.sleep((discoveryTimeout * 1000) + 5000);
@@ -48,6 +49,7 @@ public class App {
         catch (InterruptedException e){
             e.printStackTrace();
         }
+
         System.out.println(NetworkUtils.timeStamp(1) + "List updated!");
         initJFrame();
 
@@ -59,9 +61,9 @@ public class App {
         requestSender = RequestSender.getInstance();
 
 
-//        //starting health checker tasks for each stalker in the stalker list
-//        HealthChecker checker = new HealthChecker(m, totalDiskSpace);
-//        checker.startTask();
+        //starting health checker tasks for each stalker in the stalker list
+        Thread healthChecker= new Thread(new HealthChecker(Module.JCP, totalDiskSpace));
+        healthChecker.start();
 
 
         //ip of stalker we'll just use the one at index 1 for now

@@ -39,9 +39,17 @@ public class App {
         System.out.println(NetworkUtils.timeStamp(1) + "Stalker Online");
         //testing
 
-        //starting health check listener
-        //ListenerThread healthCheckHandler = new ListenerThread();
-        //healthCheckHandler.run();
+        //starting listener thread for health check and leader election
+        Thread healthCheckthread = new Thread( new ListenerThread());
+        healthCheckthread.start();
+
+
+
+        //starting task for health checks on STALKERS and HARM targets
+        Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null));
+        healthChecker.start();
+
+
 
         //election based on networkDiscovery
         while (true){
