@@ -13,6 +13,7 @@ import java.net.SocketException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class App {
 
@@ -22,12 +23,19 @@ public class App {
     static JTextArea consoleOutput = new JTextArea();
     static DefaultListModel listModel = new DefaultListModel();
     static RequestSender requestSender;
-    public volatile int TotalDiskSpace = 0 ;
+
     //jcp main
     public static void main(String[] args) {
         int test  = 0;
 
         int discoveryTimeout = 5;
+
+        // to capture total disk space in the system and will be updated with each health check
+        // AtomicLong is already synchronized
+        // value in bytes
+        AtomicLong totalDiskSpace = new AtomicLong(0);
+
+
         System.out.println(NetworkUtils.timeStamp(1) + "JCP online");
         //make a discovery manager and start it, prints results to file
         //this beast will be running at all times
@@ -50,10 +58,12 @@ public class App {
         //get sorted list from targets
         requestSender = RequestSender.getInstance();
 
-////
-////        //HealthChecker checker = new HealthChecker();
-////        //checker.start(m);
-////
+
+//        //starting health checker tasks for each stalker in the stalker list
+//        HealthChecker checker = new HealthChecker(m, totalDiskSpace);
+//        checker.startTask();
+
+
         //ip of stalker we'll just use the one at index 1 for now
         while(true){
             try{
