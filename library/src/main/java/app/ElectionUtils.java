@@ -5,10 +5,10 @@ import java.util.List;
 public class ElectionUtils {
 
     /** Identifies the role of a Stalker based on the leader and its id*/
-    public static int identifyRole(int leader, List<Integer> ids)
+    public static int identifyRole(List<Integer> ids)
     {
         // if your id is the same as the leader ids
-        if(leader == NetworkUtils.getMacID())
+        if(ids.get(0) == NetworkUtils.getMacID())
         {
             return 0;
         }

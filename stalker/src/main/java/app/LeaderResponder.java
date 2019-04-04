@@ -28,7 +28,7 @@ public class LeaderResponder implements Runnable {
         this.socket = socket;
         String stalkerList = NetworkUtils.fileToString("config/stalkers.list");
         this.stalkerMap = NetworkUtils.mapFromJson(stalkerList);
-        // IDS HERE!!!
+        ids = NetworkUtils.mapToSList(stalkerMap);
     }
 
     public void sendLeader()

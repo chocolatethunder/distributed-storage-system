@@ -50,20 +50,17 @@ public class App {
         checker.startTask();
 
         // initiaze ids
-        List<Integer> ids = new ArrayList<>();
+        List<Integer> ids = NetworkUtils.mapToSList(NetworkUtils.mapFromJson(stalkerList));
         // Leader election by asking for a leader
-        LeaderCheck Leaderchecker = new LeaderCheck(NetworkUtils.mapFromJson(stalkerList),ids);
-        leaderUuid = Leaderchecker.getLeaderUuid();
-
-
-
-
+        Thread Leaderchecker = new Thread( new LeaderCheck(NetworkUtils.mapFromJson(stalkerList),ids));
+        Leaderchecker.start();
+        leaderUuid = LeaderCheck.getLeaderUuid();
 
 
 
         while (true) {
 
-            int role = ElectionUtils.identifyRole(leaderUuid, ids);
+            int role = ElectionUtils.identifyRole(ids);
 
             switch (role) {
                 case 0:

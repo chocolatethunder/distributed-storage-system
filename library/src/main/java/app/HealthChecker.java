@@ -206,6 +206,18 @@ public class HealthChecker {
 
         private void updateConfigAndEndTask(){
             if(this.target == Module.STALKER) {
+                // Identify which STALKER went down
+                String stalkerList = NetworkUtils.fileToString("config/stalkers.list");
+                List<Integer> ids = NetworkUtils.mapToSList(NetworkUtils.mapFromJson(stalkerList));
+
+                int role = ElectionUtils.identifyRole(ids);
+
+                if(role == 0)
+                {
+                    Thread Leaderchecker = new Thread( new LeaderCheck(NetworkUtils.mapFromJson(stalkerList),ids));
+                    Leaderchecker.start();
+                }
+
                 // remove node from STALKER LIST in config file stalkers.list
                 NetworkUtils.deleteNodeFromConfig("config/stalkers.list", String.valueOf(this.uuid));
             }else{
