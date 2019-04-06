@@ -6,17 +6,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
-/** !!! Have to load stalker Map and ids List<>
+/**
  *
  *  Responds to other people leader ship election request and update its the leader
  *
  * */
+
 public class LeaderResponder implements Runnable {
 
     private Socket socket;
