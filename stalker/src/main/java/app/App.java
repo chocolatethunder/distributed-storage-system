@@ -19,7 +19,7 @@ public class App {
         //First thing to do is locate all other stalkers and print the stalkers to file
         //check the netDiscovery class to see where the file is being created
         Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, discoveryinterval, false));
-        //DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
+       // DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
         discManager.start();
         //we will wait for network discovery to do its thing
         System.out.println(NetworkUtils.timeStamp(1) + "Waiting for system discovery...");
@@ -40,13 +40,13 @@ public class App {
         //testing
 
         //starting listener thread for health check and leader election
-        Thread healthCheckthread = new Thread( new ListenerThread());
-        healthCheckthread.start();
+        Thread listenerForHealth = new Thread( new ListenerThread());
+        listenerForHealth.start();
 
 
 
         //starting task for health checks on STALKERS and HARM targets
-        Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null));
+        Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, true));
         healthChecker.start();
 
 

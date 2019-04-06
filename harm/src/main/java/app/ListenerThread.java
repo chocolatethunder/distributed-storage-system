@@ -18,9 +18,11 @@ public class ListenerThread implements Runnable {
 
     private final int serverPort = 11114;
     private boolean running = true;
+    private boolean debugMode = false;
 
 
-    public ListenerThread(){
+    public ListenerThread(boolean debugMode){
+        this.debugMode = debugMode;
     }
 
     @Override
@@ -43,14 +45,18 @@ public class ListenerThread implements Runnable {
             try {
                 //accept connection from a STALKER
                 Socket client = server.accept();
-                System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection from stalker : " + client);
+                if(debugMode) {
+                    System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection from stalker : " + client);
+                }
 
                 // receive packet on the socket link
                 TcpPacket req = commLink.receivePacket(client);
 
                 //checking for request type if health check
                 if (req.getMessageType() == MessageType.HEALTH_CHECK) {
-                    System.out.println("Received health Check request");
+                    if(debugMode) {
+                        System.out.println("Received health Check request");
+                    }
 
                     //_______TO:DO check for corrupted chunks here
 
@@ -84,10 +90,14 @@ public class ListenerThread implements Runnable {
             try {
                 FileStore store = Files.getFileStore(root);
                 total += store.getUsableSpace();
-                System.out.println("available=" + nf.format(store.getUsableSpace())
-                        + ", total=" + nf.format(store.getTotalSpace()));
+                if(debugMode) {
+                    System.out.println("available=" + nf.format(store.getUsableSpace())
+                            + ", total=" + nf.format(store.getTotalSpace()));
+                }
             } catch (IOException e) {
-                System.out.println("error querying space: " + e.toString());
+                if(debugMode) {
+                    System.out.println("error querying space: " + e.toString());
+                }
             }
         }
 

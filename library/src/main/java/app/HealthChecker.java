@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class HealthChecker implements Runnable{
 
+
     // every 30 seconds for now
     private final long interval = 1000 * 30;
 
@@ -24,6 +25,7 @@ public class HealthChecker implements Runnable{
     private Map<Integer, String> harmList;
     private Module requestSender;
     private AtomicLong spaceAvailableSoFar;
+    private boolean debugMode;
 
 
     /**
@@ -31,7 +33,7 @@ public class HealthChecker implements Runnable{
      * @param  checker health check request sender module
      * @param spaceAvailableSoFar stalker will have this null
      */
-    public HealthChecker(Module checker, AtomicLong spaceAvailableSoFar){
+    public HealthChecker(Module checker, AtomicLong spaceAvailableSoFar, boolean debugMode){
         requestSender = checker;
         HashMap<Integer, String> stalkers =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
         stalkerList = stalkers;
@@ -41,6 +43,7 @@ public class HealthChecker implements Runnable{
             harmList = harms;
         }
         this.spaceAvailableSoFar = spaceAvailableSoFar;
+        this.debugMode = debugMode;
     }
 
 
@@ -74,14 +77,24 @@ public class HealthChecker implements Runnable{
             }
         }
 
+
+        /***
+         * This block is going to check changes in the list every interval and if there is any new entry
+         * it will start a timer Task for it
+         */
         while (!Thread.interrupted()){
             try {
                 Map<Integer, String> newStalkers =  NetworkUtils.mapFromJson(NetworkUtils
                         .fileToString("config/stalkers.list"));
 
+
+                //checking if new stalker list contains any new node
                 if(!this.stalkerList.equals(newStalkers)){
                     for(Map.Entry<Integer, String> entry : newStalkers.entrySet()){
                         if(!this.stalkerList.containsKey(entry.getKey())){
+                            if(debugMode) {
+                                System.out.println("New node detected");
+                            }
                             addTimerTask(timer,
                                     entry.getKey(),
                                     entry.getValue(),
@@ -94,6 +107,7 @@ public class HealthChecker implements Runnable{
                     this.stalkerList.putAll(newStalkers);
                 }
 
+                //checking if harm list contains any new harm node
                 if(this.requestSender == Module.STALKER){
                     Map<Integer, String> newHarms =  NetworkUtils.mapFromJson(NetworkUtils
                             .fileToString("config/harm.list"));
@@ -101,7 +115,9 @@ public class HealthChecker implements Runnable{
                     if(!this.harmList.equals(newHarms)) {
                         ObjectMapper mapper = new ObjectMapper();
                         for (Map.Entry<Integer, String> entry : newHarms.entrySet()) {
-                            addTimerTaskForHarm(timer, mapper, entry);
+                            if(!this.harmList.containsKey(entry.getKey())) {
+                                addTimerTaskForHarm(timer, mapper, entry);
+                            }
                         }
                         this.harmList = new HashMap<>();
                         this.harmList.putAll(newHarms);
@@ -112,13 +128,19 @@ public class HealthChecker implements Runnable{
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            try{Thread.sleep(interval * 1000);}catch (Exception e){};
+            try{Thread.sleep(interval);}catch (Exception e){};
         }
 
 
 
     }
 
+    /**
+     * Creates a Timer task for Harm
+     * @param timer
+     * @param mapper
+     * @param entry
+     */
     private void addTimerTaskForHarm(Timer timer, ObjectMapper mapper, Map.Entry<Integer, String> entry) {
         NodeAttribute attributes = null;
         try {
@@ -127,6 +149,7 @@ public class HealthChecker implements Runnable{
             e.printStackTrace();
         }
         System.out.println("Starting scheduled health task for harm node: " + attributes.getAddress());
+
         addTimerTask(timer, entry.getKey(),
                 attributes.getAddress(),
                 null,
@@ -134,7 +157,14 @@ public class HealthChecker implements Runnable{
     }
 
 
-
+    /**
+     * creates timer task for stalker node
+     * @param timer
+     * @param uuid
+     * @param host
+     * @param spaceAvailableSoFar
+     * @param stalker
+     */
     private void addTimerTask(Timer timer,
                               Integer uuid,
                               String host,
@@ -150,7 +180,8 @@ public class HealthChecker implements Runnable{
 
 
     /**
-     * This is the actual runnable task that will execute run method at the given interval
+     * This is the actual runnable task that will execute run method at the given interval to
+     * health check each node
      */
     class HealthCheckerTask extends TimerTask {
 
@@ -174,7 +205,10 @@ public class HealthChecker implements Runnable{
 
         @Override
         public void run() {
-            System.out.println("Health Checker Task for host: "+ host + " started at: " + NetworkUtils.timeStamp(1));
+            if(debugMode) {
+                System.out.println("Health Checker Task for host: " + host +
+                        " started at: " + NetworkUtils.timeStamp(1));
+            }
             Socket socket = null;
             try {
 
@@ -206,8 +240,10 @@ public class HealthChecker implements Runnable{
                 if(status.equals("SUCCESS")){
                     if(target == Module.STALKER && this.spaceToUpdate != null) {
                         this.spaceToUpdate.set(availableSpace);
-                        System.out.println("Status was success for health check and disk space available "
-                                + this.spaceToUpdate.get());
+                        if(debugMode) {
+                            System.out.println("Status was success for health check and disk space available "
+                                    + this.spaceToUpdate.get());
+                        }
                     }else if(target == Module.HARM){
                         // need to add the space for all HARMS in config file
                         NetworkUtils.updateHarmList(String.valueOf(this.uuid),
@@ -228,16 +264,22 @@ public class HealthChecker implements Runnable{
             } catch (SocketException e) {
                 // server has not replied within expected timeoutTime
                 updateConfigAndEndTask();
-                e.printStackTrace();
+                if(debugMode) {
+                    e.printStackTrace();
+                }
             } catch (IOException e) {
 
                 // any other IO exception, also stop the task and assume the node is dead
                 updateConfigAndEndTask();
-                e.printStackTrace();
+                if(debugMode) {
+                    e.printStackTrace();
+                }
             }finally {
                 try{
                     if(socket != null) {
-                        System.out.println("Task completed closing Socket");
+                        if(debugMode) {
+                            System.out.println("Task completed closing Socket");
+                        }
                         socket.close();
                     }
                 } catch (IOException e) {
@@ -257,7 +299,7 @@ public class HealthChecker implements Runnable{
             }
 
             //cancel task
-            System.out.println("Cancelling scheduled task for " + this.host);
+            System.out.println("Error Occurred Cancelling scheduled task for " + this.host);
             cancel();
         }
     }

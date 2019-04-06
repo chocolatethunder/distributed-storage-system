@@ -36,6 +36,7 @@ public class App {
         AtomicLong totalDiskSpace = new AtomicLong(0);
 
 
+
         System.out.println(NetworkUtils.timeStamp(1) + "JCP online");
         //make a discovery manager and start it, prints results to file
         //this beast will be running at all times
@@ -54,15 +55,14 @@ public class App {
         initJFrame();
 
         System.out.println("here");
-//
-        //get the stalkers from file
-        HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
-        //get sorted list from targets
+
+
         requestSender = RequestSender.getInstance();
 
 
+
         //starting health checker tasks for each stalker in the stalker list
-        Thread healthChecker= new Thread(new HealthChecker(Module.JCP, totalDiskSpace));
+        Thread healthChecker= new Thread(new HealthChecker(Module.JCP, totalDiskSpace, true));
         healthChecker.start();
 
 
