@@ -14,6 +14,7 @@ import java.util.List;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import app.FileStreamer;
 
 /**
  *
@@ -40,7 +41,7 @@ public class UploadServiceHandler implements Runnable {
 
 
         CommsHandler commsLink = new CommsHandler();
-        ServerSocket listener;
+
         try{
 //          1. get permissions from leader
 //------------------------------------------------------------
@@ -53,29 +54,22 @@ public class UploadServiceHandler implements Runnable {
 //          2. Wait for Leader to grant job permission
 ///------------------------------------------------------------
             TcpPacket req;
-            Socket leader;
-            try{
-                listener = new ServerSocket(server_port);
-                leader = listener.accept();
-                System.out.println(NetworkUtils.timeStamp(1) + "Connected to leader: ");
-                req = commsLink.receivePacket(leader);
-                System.out.println(NetworkUtils.timeStamp(1) + "Permission from leader granted");
-            }
-            catch (IOException e){
-                e.printStackTrace();
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Could not use server port");
-            }
-            if (!(req.getMessageType() == MessageType.START)){
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Request denied by leader.");
+            Socket leader = commsLink.getLeaderResponse(server_port);
+            if(leader == null){
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error with leader connection");
             }
 ///------------------------------------------------------------
 
 //          3. ACK request from JCP and perform download of file
 ///------------------------------------------------------------
             commsLink.sendResponse(socket, MessageType.ACK);
-            if (!getFileFromJCP()){
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error when getting file from JCP.");
-            }
+            FileStreamer fileStreamer = new FileStreamer(socket);
+            fileStreamer.receiveFileFromSocket(filePath);
+
+
+//            if (!getFileFromJCP()){
+//                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error when getting file from JCP.");
+//            }
 ///------------------------------------------------------------
 //          4. distribute to harm targets
             IndexEntry update = distributeToHarm();
@@ -85,26 +79,24 @@ public class UploadServiceHandler implements Runnable {
 ///------------------------------------------------------------
 //          5. Send done status to leader
             commsLink.sendResponse(leader, MessageType.DONE);
-
             try {
-                if(commsLink.receivePacket(leader).getMessageType() == MessageType.ACK){
+                TcpPacket t = commsLink.receivePacket(leader);
+                if(t.getMessageType() == MessageType.ACK){
                     //we are done with the connection to the leader
-                    leader.close();
                     //then update index
+
                     updateIndex(update);
+                    System.out.println("Indexfile saved!");
+                    leader.close();
                 }
             }
             catch(IOException e){
-
             }
+
         }
         catch(RuntimeException e){
-            try{
-                socket.close();
-            }
-            catch(IOException ex){
-                ex.printStackTrace();
-            }
+            try{ socket.close(); }
+            catch(IOException ex){ ex.printStackTrace(); }
             e.printStackTrace();
             return;
         }
@@ -116,34 +108,8 @@ public class UploadServiceHandler implements Runnable {
     }
 
 
-    public boolean getFileFromJCP(){
-        byte[] chunkArray = new byte[1024];
-        int bytesRead = 0;
-        try {
-            in = new DataInputStream(socket.getInputStream());
-            bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(filePath));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        try {
-            while ((bytesRead = in.read(chunkArray)) != -1) {
-
-                bufferedOutputStream.write(chunkArray, 0, bytesRead);
-                bufferedOutputStream.flush();
-                System.out.println("File "
-                        + " downloaded (" + bytesRead + " bytes read)");
-            }
-            bufferedOutputStream.close();
-        }catch (IOException e){
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
     public IndexEntry distributeToHarm(){
-        List<String> harm_list = getHarms(0);
+        List<Integer> harm_list = getHarms(0);
         FileChunker f = new FileChunker(chunk_dir);
         ChunkDistributor cd = new ChunkDistributor(chunk_dir, harm_list);
         ///////////////////////chunk file and get the index entry object
@@ -184,11 +150,11 @@ public class UploadServiceHandler implements Runnable {
     }
 
     //temp hard code function
-    public List<String>getHarms(int i){
-        List<String> temp = new ArrayList<String>();
+    public List<Integer>getHarms(int i){
+        List<Integer> temp = new ArrayList<Integer>();
         HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
         for (Integer key : m.keySet()) {
-            temp.add(m.get(key));
+            temp.add(key);
         }
         return temp;
     }

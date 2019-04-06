@@ -8,7 +8,9 @@ import java.net.*;
 
 public class DiscoveryReply implements Runnable {
 
+    private DatagramSocket receiverSocket;
     private DatagramSocket socket;
+    private DatagramPacket packet;
     private byte[] req = new byte[1024];
     private final int STK_JCP = 10000;
     private final int JCP_STK = 11000;
@@ -16,98 +18,111 @@ public class DiscoveryReply implements Runnable {
     private final int STK_HARM = 10001;
     private final int HARM_STK = 11001;
 
+    private boolean verbose;
     private static int listening_timeout;
     Module module;
     private int[] ports;
 
     //listen for packets from a certain module
     //module is listening module, expected is the one being listened for
-    public DiscoveryReply(Module module, Module expected, int listening_timeout) {
+    public DiscoveryReply(Module module, Module expected, int listening_timeout, boolean verbose) {
         this.module = module;
         this.ports = NetworkUtils.getPortTargets(expected.name(), module.name());
         this.listening_timeout = listening_timeout;
-        try {
-            //where to listen
-            socket = new DatagramSocket(ports[0]);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.verbose = verbose;
     }
 
     @Override
     public void run() {
         // runs for 15 sec for a udp broadcast
-        while (true)
-        {
-            DatagramPacket packet = new DatagramPacket(req, req.length);
+        packet = new DatagramPacket(req, req.length);
+        boolean bound = false;
+        while (!bound){
             try {
-                socket.setSoTimeout(listening_timeout*1000);
-                socket.receive(packet);
-            }catch (SocketTimeoutException e)
-            {
-                break;
+                //where to listen
+                //breaks here...
+                receiverSocket = new DatagramSocket(ports[0]);
+                socket = new DatagramSocket();
+                receiverSocket.setSoTimeout(listening_timeout * 1000);
+                bound = true;
+            } catch (Exception e) {
+                //e.printStackTrace();
             }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
+        }
+        while(!Thread.interrupted()){
+            listenServer();
+        }
 
+    }
+
+    public void listenServer(){
+        ObjectMapper mapper = new ObjectMapper();
+        String req_targ = receiveSignal(mapper);
+        if (req_targ != null){
+            sendSignal(mapper, req_targ);
+        }
+
+    }
+
+    public String receiveSignal(ObjectMapper mapper){
+        String req_target = null;
+        try {
+            receiverSocket.receive(packet);
             // parse the packet
             String received = new String(packet.getData(), 0, packet.getLength());
-            System.out.println("A discovery probe was received: " + received);
-            ObjectMapper mapper = new ObjectMapper();
+            if(verbose){System.out.println(NetworkUtils.timeStamp(1) + "A discovery probe was received: " + received);}
             JsonNode request = null;
-            String req_type = null;
-            String req_target = null;
-            String req_address = null;
-            try {
-                request = mapper.readTree(received);
-                req_type = request.get("type").textValue();
-                req_target = request.get("target").textValue();
-                req_address = request.get("address").textValue();
+            request = mapper.readTree(received);
+            req_target = request.get("target").textValue();
 
+        }catch (SocketTimeoutException e)
+        {
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return req_target;
+    }
+
+    public boolean sendSignal(ObjectMapper mapper, String req_target){
+        // Make sure the broadcast is targeting this module
+        if(req_target.equals(module.name()))
+        {
+            // get Info about the packet
+            InetAddress address = packet.getAddress();
+            // make the response JSON
+            UDPPacket reply = null;
+            //we must designate what type of device is responding to the message
+            MessageType m;
+            switch(module){
+                case HARM:
+                    m = MessageType.DISC_HARM_R;
+                    break;
+                case STALKER:
+                    m = MessageType.DISC_STK_R;
+                    break;
+                default:
+                    m = MessageType.ERROR;
+                    break;
+            }
+            reply = new UDPPacket(m, String.valueOf(NetworkUtils.getMacID()), module.name(), NetworkUtils.getIP());
+            //byte[] req = new byte[0];
+            try {
+                req = mapper.writeValueAsString(reply).getBytes();
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return false;
+            }
+            DatagramPacket replyPkt = new DatagramPacket(req, req.length, address, ports[1]);
+            try {
+                socket.send(replyPkt);
             } catch (IOException e) {
                 e.printStackTrace();
+                return false;
             }
-
-            // Make sure the broadcast is targeting this module
-            if(req_target.equals(module.name()))
-            {
-                // get Info about the packet
-                InetAddress address = packet.getAddress();
-
-                // make the response JSON
-                UDPPacket reply = null;
-                //we must designate what type of device is responding to the message
-                MessageType m;
-                switch(module){
-                    case HARM:
-                        m = MessageType.DISC_HARM_R;
-                        break;
-                    case STALKER:
-                        m = MessageType.DISC_STK_R;
-                        break;
-                    default:
-                        m = MessageType.ERROR;
-                        break;
-                }
-                reply = new UDPPacket(m, String.valueOf(NetworkUtils.getMacID()), module.name(), NetworkUtils.getIP());
-                byte[] req = new byte[0];
-                try {
-                    req = mapper.writeValueAsString(reply).getBytes();
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
-                DatagramPacket replyPkt = new DatagramPacket(req, req.length, address, ports[1]);
-                try {
-                    socket.send(replyPkt);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
         }
-        socket.close();
-
+        return true;
     }
 
 }

@@ -35,9 +35,7 @@ public class IndexEntry {
         chunkCount = chunks.size();
         chunkList = chunks;
     }
-    public List<Chunk> getChunkList(){
-        return(chunkList);
-    }
+
 
 
 
@@ -67,7 +65,7 @@ public class IndexEntry {
         return("Filename: " + file_prefix + "; File Type: " + file_type + "; File Size: " + file_size);
     }
 
-    ///////////////////////////////////////////////getter/setters
+
     public String getFile_prefix() { return file_prefix; }
     public void setFile_prefix(String file_prefix) { this.file_prefix = file_prefix; }
     public String getFile_type() { return file_type; }
@@ -76,8 +74,7 @@ public class IndexEntry {
     public void setFile_size(long file_size) { this.file_size = file_size; }
     public int getChunkCount() { return chunkCount; }
     public void setChunkCount(int chunkCount) { this.chunkCount = chunkCount; }
+    public List<Chunk> getChunkList() { return chunkList; }
     public void setChunkList(List<Chunk> chunkList) { this.chunkList = chunkList; }
-
-
 
 }

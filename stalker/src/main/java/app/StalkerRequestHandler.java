@@ -1,5 +1,6 @@
 package app;
 
+import app.LeaderUtils.CRUDQueue;
 import app.LeaderUtils.QueueEntry;
 import app.LeaderUtils.QueueHandler;
 
@@ -18,9 +19,9 @@ public class StalkerRequestHandler implements Runnable {
 
     private int serverPort = 11112;
     private boolean running = true;
-    private PriorityQueue<QueueEntry> pQueue;
-    public StalkerRequestHandler(PriorityQueue<QueueEntry> q){
-
+    private CRUDQueue pQueue;
+    public StalkerRequestHandler(CRUDQueue q){
+        this.pQueue = q;
     }
     @Override
     public void run(){
@@ -45,7 +46,7 @@ public class StalkerRequestHandler implements Runnable {
                 System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + client + ", Request type: " + req.getMessageType().name() + ".");
                 //Acknowlegde that the request has been recieved and that
                 //the socket can be closed client side
-                commLink.sendPacket(client, MessageType.ACK, "");
+                commLink.sendPacket(client, MessageType.ACK, "", true);
                 //make a queueEntry with the request and Inet addr for later connection
                 QueueEntry toPut = new QueueEntry(req, client.getInetAddress());
                 System.out.println("here1");

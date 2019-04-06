@@ -79,12 +79,10 @@ public class FileChunker {
         }
         catch (FileNotFoundException e){
             e.printStackTrace();
-            System.out.println("ASS");
             return null;
         }
         catch (IOException e) {
             e.printStackTrace();
-            System.out.println("FUCK");
             return(null);
         }
         return(tChunk);

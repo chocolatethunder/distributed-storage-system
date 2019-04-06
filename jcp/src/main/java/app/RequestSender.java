@@ -46,19 +46,20 @@ public class RequestSender {
     /**
      * This is the request for uploading file
      *
-     * @param fileName absolute file path
+     * @param filePath absolute file path
      */
-    public void sendFile(String fileName){
+    public void sendFile(String filePath){
         MessageType m = MessageType.UPLOAD;
-        if(NetworkUtils.checkFile(fileName)){
+        if(NetworkUtils.checkFile(filePath)){
+            String fileName = FilenameUtils.getName(filePath);
             //send a request and wait for ACK before proceeding
-            if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m)) == MessageType.ACK) {
+            if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m), true) == MessageType.ACK) {
                 FileStreamer fileStreamer = new FileStreamer(socket);
-                fileStreamer.sendFileToSocket(fileName);
+                fileStreamer.sendFileToSocket(filePath);
             }else{
                 //need a way to connect to another STALKER
                 //DEBUG
-                System.out.println("SERVER BUSY");
+                System.out.println(NetworkUtils.timeStamp(1) + "SERVER BUSY");
             }
         }
     }
@@ -69,20 +70,21 @@ public class RequestSender {
     public void deleteFile(String fileName){
 
         MessageType m = MessageType.DELETE;
-        if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m)) == MessageType.ACK) {
+        if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m), true) == MessageType.ACK) {
         }
     }
     /**
      * This will download a file given the filename
      *
-     * @param fileName
+     * @param filePath
      */
-    public void getFile(String fileName){
+    public void getFile(String filePath){
         MessageType m = MessageType.DOWNLOAD;
         // TO:DO need logic to verify file size  here
-        if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m)) == MessageType.ACK) {
+        String fileName = FilenameUtils.getName(filePath);
+        if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m), true) == MessageType.ACK) {
             FileStreamer fileStreamer = new FileStreamer(socket);
-            fileStreamer.receiveFileFromSocket(fileName);
+            fileStreamer.receiveFileFromSocket(filePath);
 
         }
 
@@ -92,12 +94,14 @@ public class RequestSender {
 //     * This will fetch a list of all file names in the system
 //     * @return list of filenames
 //     */
-//    public List<String> getFileList(){
-//
-//
-//        if(handShakeSuccess(MessageType.LIST)) {
-//
-//        }
-//        return null;
-//    }
+    public List<String> getFileList(){
+
+        List<String> files = null;
+        MessageType m = MessageType.LIST;
+        if(commLink.sendPacket(socket, m, "", true) == MessageType.ACK) {
+            TcpPacket t =  commLink.receivePacket(socket);
+            files = NetworkUtils.listFromJson(t.getMessage());
+        }
+        return(files);
+    }
 }

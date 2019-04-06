@@ -13,13 +13,14 @@ public class App {
 
     public static void main(String[] args) {
 
-        DiscoveryManager DM = new DiscoveryManager(Module.HARM, 35);
-        DM.start();
+        //this will always be running
+        Thread discManager = new Thread(new DiscoveryManager(Module.HARM, 20, true));
+        discManager.start();
 
 
 
         //Starting the listenerthread for health check requests
-        Thread listenerThread = new Thread(new ListenerThread());
+        Thread listenerThread = new Thread(new ListenerThread(true));
         listenerThread.start();
 
 
@@ -38,7 +39,7 @@ public class App {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(NetworkUtils.timeStamp(1) + "Waiting...");
+        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for requests...");
 
         // will keep on listening for requests from STALKERs
         while (true) {

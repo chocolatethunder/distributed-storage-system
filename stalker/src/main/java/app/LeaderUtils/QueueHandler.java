@@ -16,8 +16,8 @@ public class QueueHandler implements  Runnable {
 
     private int mode;
     private QueueEntry q;
-    private PriorityQueue<QueueEntry> pQueue;
-    public QueueHandler(int mode, QueueEntry q, PriorityQueue<QueueEntry> pQueue){
+    private CRUDQueue pQueue;
+    public QueueHandler(int mode, QueueEntry q, CRUDQueue pQueue){
         this.pQueue = pQueue;
         this.mode = mode;
         this.q = q;
@@ -25,7 +25,6 @@ public class QueueHandler implements  Runnable {
 
     @Override
     public void run(){
-        System.out.println("inside function");
         switch(mode){
             case 0:
                 queueJob();
@@ -34,7 +33,7 @@ public class QueueHandler implements  Runnable {
                 getJob();
                 if (!processJob()){
                     //if it fails we'll put it back in the queue
-                    //queueJob();
+                    queueJob();
                 }
                 break;
         }
@@ -46,12 +45,12 @@ public class QueueHandler implements  Runnable {
             System.out.println(NetworkUtils.timeStamp(1) + " Processing job...");
             worker = NetworkUtils.createConnection(q.getInetAddr().getHostAddress(), 11113);
             //connect and grant permission to edit file
-            commLink.sendPacket(worker, MessageType.START, "");
             //get ack that job is done
-            TcpPacket response = commLink.receivePacket(worker);
-            if (response.getMessageType() == MessageType.DONE){
-                //send permission to worker
-                commLink.sendPacket(worker, MessageType.ACK, "");
+            if (commLink.sendPacket(worker, MessageType.START, "", true) == MessageType.DONE){
+                //send permission to worker to update index
+                commLink.sendPacket(worker, MessageType.ACK, "", false);
+                System.out.println(NetworkUtils.timeStamp(1) + " job complete");
+                worker.close();
             }
         }
         catch (IOException e){
@@ -65,17 +64,13 @@ public class QueueHandler implements  Runnable {
     //put an entry into the queue
     public void queueJob(){
         System.out.println(NetworkUtils.timeStamp(1) + "Queuing job.");
-        synchronized(lock1){
-            pQueue.add(q);
-            System.out.println(NetworkUtils.timeStamp(1) + "Job Queued");
-        }
+        pQueue.add(q);
+        System.out.println(NetworkUtils.timeStamp(1) + "Job Queued");
+
     }
     //remove entry from queue
     public void getJob(){
-        synchronized(lock1){
-            q = pQueue.remove();
-        }
-
+        q = pQueue.remove();
     }
 
 }

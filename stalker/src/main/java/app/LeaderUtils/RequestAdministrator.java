@@ -11,8 +11,8 @@ import java.util.concurrent.Executors;
  */
 public class RequestAdministrator implements Runnable {
 
-    private PriorityQueue<QueueEntry> pQueue;
-    public RequestAdministrator(PriorityQueue<QueueEntry> q){
+    private CRUDQueue pQueue;
+    public RequestAdministrator(CRUDQueue q){
         this.pQueue = q;
     }
 
