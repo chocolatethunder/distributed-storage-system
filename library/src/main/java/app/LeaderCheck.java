@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LeaderCheck implements Runnable {
+public class LeaderCheck {
 
     private static HashMap<Integer, String> stalkerMap;   // stalker list
     private static List<Integer> ids = new ArrayList<>();                   // stalker uuids
@@ -19,24 +19,21 @@ public class LeaderCheck implements Runnable {
     private static int leaderUuid = -1;
     private static String leaderIP = "x.x.x.x";
 
-    public LeaderCheck(HashMap<Integer, String> stalkerMap, List<Integer> ids)
+    public LeaderCheck()
     {
-        this.stalkerMap = stalkerMap;
-        this.ids = ids;
+        this.stalkerMap = NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
+        this.ids = NetworkUtils.mapToSList(stalkerMap);
     }
 
 
-    @Override
-    public void run() {
 
-        askForLeader();
-
-    }
-
-    public static void askForLeader()
+    public static void election()
     {
+        Map<Integer, Integer> voteCount = new HashMap<>();
+
         // ask for leader
-        for(Map.Entry<Integer, String> entry : stalkerMap.entrySet()) {
+        for(Map.Entry<Integer, String> entry : stalkerMap.entrySet())
+        {
             int port = 11114;
             int timeoutForReply = 5;
 
@@ -60,6 +57,16 @@ public class LeaderCheck implements Runnable {
                 leaderUuid = Integer.valueOf(leaderReply.get("uuid").asText());
                 leaderIP = leaderReply.get("ip").textValue();
 
+                if(!voteCount.containsKey(leaderUuid))
+                {
+                    voteCount.put(leaderUuid,1);
+                }else
+                {
+                    int newCount = voteCount.get(leaderUuid) + 1;
+                    voteCount.put(leaderUuid,newCount);
+
+                }
+
             } catch (SocketException e) {
                 // ask another stalker for the leader if fails to establish connection with one of the stalker
                 e.printStackTrace();
@@ -75,6 +82,17 @@ public class LeaderCheck implements Runnable {
             }
 
         }
+
+        int max = Integer.MIN_VALUE;
+        for(Integer i: voteCount.keySet())
+        {
+            if(voteCount.get(i) > max)
+            {
+                max = voteCount.get(i);
+                leaderUuid = i;
+            }
+        }
+
     }
 
 

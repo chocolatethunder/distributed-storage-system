@@ -9,17 +9,18 @@ import app.chunk_utils.Indexer;
 import app.chunk_utils.IndexFile;
 import org.apache.commons.io.FilenameUtils;
 import java.io.*;
-import javax.swing.*;
-import javax.swing.filechooser.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Comparator;
 
 public class App {
-    public static void main(String[] args) {
 
-        int leaderUuid = -1;
+    private static int leaderUuid = -1;
+
+    public int getLeaderUuid()
+    {
+        return leaderUuid;
+    }
+
+    public static void main(String[] args) {
 
         int discoveryinterval = 15;
         //First thing to do is locate all other stalkers and print the stalkers to file
@@ -56,22 +57,18 @@ public class App {
         healthChecker.start();
         String stalkerList = NetworkUtils.fileToString("config/stalkers.list");
         String harmlist = NetworkUtils.fileToString("config/harm.list");
-        HealthChecker checker = new HealthChecker(NetworkUtils.mapFromJson(stalkerList),
-                NetworkUtils.mapFromJson(harmlist));
-        checker.startTask();
 
         // initiaze ids
         List<Integer> ids = NetworkUtils.mapToSList(NetworkUtils.mapFromJson(stalkerList));
-        // Leader election by asking for a leader
-        Thread Leaderchecker = new Thread( new LeaderCheck(NetworkUtils.mapFromJson(stalkerList),ids));
-        Leaderchecker.start();
-        leaderUuid = LeaderCheck.getLeaderUuid();
-
-
 
         //election based on networkDiscovery
         while (true){
-            int role = ElectionUtils.identifyRole(ids);
+            // Leader election by asking for a leader
+            LeaderCheck leaderchecker = new LeaderCheck();
+            leaderchecker.election();
+            leaderUuid = LeaderCheck.getLeaderUuid();
+
+            int role = ElectionUtils.identifyRole(ids,leaderUuid);
             switch (role){
                 case 0:
                     //This means that this STK is the leader

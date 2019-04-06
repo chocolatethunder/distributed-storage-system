@@ -286,21 +286,36 @@ public class HealthChecker implements Runnable{
 
         private void updateConfigAndEndTask(){
             if(this.target == Module.STALKER) {
-                // Identify which STALKER went down
-                String stalkerList = NetworkUtils.fileToString("config/stalkers.list");
-                List<Integer> ids = NetworkUtils.mapToSList(NetworkUtils.mapFromJson(stalkerList));
-
-                int role = ElectionUtils.identifyRole(ids);
-
-                if(role == 0)
-                {
-                    Thread Leaderchecker = new Thread( new LeaderCheck(NetworkUtils.mapFromJson(stalkerList),ids));
-                    Leaderchecker.start();
-                }
 
                 // remove node from STALKER LIST in config file stalkers.list
                 NetworkUtils.deleteNodeFromConfig("config/stalkers.list", String.valueOf(this.uuid));
-            }else{
+
+                // Identify which STALKER went down
+                String stalkerList = NetworkUtils.fileToString("config/stalkers.list");
+                HashMap<Integer, String> stalkerMap = NetworkUtils.mapFromJson(stalkerList);
+                List<Integer> ids = NetworkUtils.mapToSList(NetworkUtils.mapFromJson(stalkerList));
+
+
+                if(stalkerMap.keySet().contains(LeaderCheck.getLeaderUuid()))
+                {
+                    // kill and the threads
+                    for(Map.Entry<Integer, String> entry : stalkerMap.entrySet())
+                    {
+                        int port = 11112;
+                        Socket socket;
+                        try {
+                            socket = NetworkUtils.createConnection(entry.getValue(), port);
+                            // create a leader packet and send it to this host
+                            CommsHandler commsHandler = new CommsHandler();
+                            commsHandler.sendPacketWithoutAck(socket, MessageType.KILL, "KILL");
+
+                        }catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+            }else {
                 // don't remove but mark as dead in HARM list
                 NetworkUtils.updateHarmList(String.valueOf(this.uuid), -1, false );
             }
