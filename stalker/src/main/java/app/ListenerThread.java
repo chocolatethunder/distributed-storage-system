@@ -36,7 +36,7 @@ public class ListenerThread implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for health check or Leader Election requests..");
+        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for health check, Leader Election requests, or updates");
         // will keep on listening for requests
         while (running) {
             try {
@@ -55,7 +55,7 @@ public class ListenerThread implements Runnable{
                             Module.STALKER));
                 }
 
-                //@Masroor add the Leader election logic here
+                //When a leader request is recieved
                 else if(req.getMessageType() == MessageType.LEADER){
                     // reply to with leader
                     executorService.execute(new LeaderResponder(client));

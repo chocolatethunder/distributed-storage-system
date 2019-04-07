@@ -87,7 +87,7 @@ public class NetworkUtils {
         // establish a connection
         //TO:DO Need logic for getting the stalker in round robin fashion
         socket = new Socket(host, port);
-        System.out.println("Connected");
+        //System.out.println("Connected");
         return socket;
     }
 

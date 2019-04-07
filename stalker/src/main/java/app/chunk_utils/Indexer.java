@@ -7,10 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Optional;
-import java.nio.charset.StandardCharsets;
 import app.NetworkUtils;
 
 //This class will be in control of the indexFiles
@@ -18,7 +15,7 @@ import app.NetworkUtils;
 public class Indexer {
     public static final String indexPath = "index/main.index";
     //loads the json from file and converts it to an IndexFile object
-    public static IndexFile loadFromFile(){
+    public static synchronized IndexFile loadFromFile(){
         ObjectMapper mapper = new ObjectMapper();
         Optional<IndexFile> ind = Optional.empty();
         try {
@@ -41,7 +38,7 @@ public class Indexer {
     }
 
     //Save index to file
-    public static boolean saveToFile(IndexFile ind){
+    public static synchronized boolean saveToFile(IndexFile ind){
         String tempfile = "index/main";
         try{
             ObjectMapper mapper = new ObjectMapper();
@@ -79,7 +76,7 @@ public class Indexer {
     }
     //add an entry to the index file
     //process thread safe
-    public static boolean addEntry(IndexFile ind, IndexEntry ent){
+    public static synchronized boolean addEntry(IndexFile ind, IndexEntry ent){
         //get consent then add
         ind.add(ent);
         ind.indexChunks(ent);
@@ -89,7 +86,7 @@ public class Indexer {
     }
     //add an entry to the index file
     //process thread safe
-    public static boolean removeEntry(IndexFile ind, IndexEntry ent){
+    public static synchronized boolean removeEntry(IndexFile ind, IndexEntry ent){
         //get consent then add
         ind.remove(ent);
         return true;
