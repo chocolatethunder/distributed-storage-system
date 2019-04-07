@@ -19,6 +19,7 @@ import java.util.Map;
 
 public class LeaderResponder implements Runnable {
 
+    private static boolean verbose = false;
     private Socket socket;
     private static HashMap<Integer, String> stalkerMap;   // stalker list
     private static List<Integer> ids;                   // stalker uuids
@@ -55,7 +56,7 @@ public class LeaderResponder implements Runnable {
         String electionPkt = "";
         ObjectMapper mapper = new ObjectMapper();
         try {
-            System.out.println("Sending out broadcast with signature: " + mapper.writeValueAsString(elecPacket) + "\n");
+            if (verbose){System.out.println("Sending out broadcast with signature: " + mapper.writeValueAsString(elecPacket) + "\n");}
             electionPkt = mapper.writeValueAsString(elecPacket);
         } catch (JsonProcessingException e) {
             e.printStackTrace();

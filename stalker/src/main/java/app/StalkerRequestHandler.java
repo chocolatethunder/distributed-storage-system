@@ -49,9 +49,8 @@ public class StalkerRequestHandler implements Runnable {
                 commLink.sendPacket(client, MessageType.ACK, "", true);
                 //make a queueEntry with the request and Inet addr for later connection
                 QueueEntry toPut = new QueueEntry(req, client.getInetAddress());
-                System.out.println("here1");
                 executorService.submit(new QueueHandler(0, toPut, pQueue));
-                System.out.println("here2");
+
             }
             catch (IOException e){
                 e.printStackTrace();

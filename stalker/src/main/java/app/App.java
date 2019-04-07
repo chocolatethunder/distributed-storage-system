@@ -50,7 +50,7 @@ public class App {
         System.out.println(NetworkUtils.timeStamp(1) + "Stalker Online");
 
         //starting task for health checks on STALKERS and HARM targets
-        Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, true));
+        Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, false));
         healthChecker.start();
         String stalkerList = NetworkUtils.fileToString("config/stalkers.list");
         String harmlist = NetworkUtils.fileToString("config/harm.list");

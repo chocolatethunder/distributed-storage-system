@@ -16,7 +16,7 @@ public class ListenerThread implements Runnable{
 
     private final int serverPort = 11114;
     private boolean running = true;
-
+    private boolean verbose = false;
 
 
     public ListenerThread(){}
@@ -42,14 +42,13 @@ public class ListenerThread implements Runnable{
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();
-                System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + client);
-
+                if (verbose){System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + client);}
                 // receive packet on the socket link
                 TcpPacket req = commLink.receivePacket(client);
 
                 //checking for request type if health check
                 if (req.getMessageType() == MessageType.HEALTH_CHECK){
-                    System.out.println("Received health Check request");
+                    if (verbose){System.out.println("Received health Check request");}
                     executorService.submit(new HealthCheckResponder(client,
                             "SUCCESS",
                             getTotalSpaceFromHarms(),
