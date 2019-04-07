@@ -237,10 +237,9 @@ public class App {
         deleteButton.addActionListener(deleteListener);
 
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setSize(400,500);
-        mainFrame.setLayout(null);
-        mainFrame.setResizable(false);
-        mainFrame.setVisible(true);
+		mainFrame.setPreferredSize(new Dimension(500,400));
+		mainFrame.pack();
+		mainFrame.setVisible(true);
 
         //bring window to front
         mainFrame.setAlwaysOnTop(true);
