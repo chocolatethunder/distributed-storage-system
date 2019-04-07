@@ -8,13 +8,14 @@ public class ElectionPacket {
     public String uuid = "";
     public String ip = "";
 
+    public ElectionPacket(){}
+
     public ElectionPacket(String leaderUuid,String leaderIp)
     {
         this.uuid = leaderUuid;
         this.ip = leaderIp;
 
     }
-
     public String getUuid() {
         return uuid;
     }

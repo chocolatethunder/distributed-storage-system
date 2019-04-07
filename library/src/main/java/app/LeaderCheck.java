@@ -32,7 +32,7 @@ public class LeaderCheck {
         for(Integer entry : stalkerMap.keySet())
         {
             int port = 11114;
-            int timeoutForReply = 5;
+            int timeoutForReply = 20;
 
             System.out.println("Asking for a leader");
             Socket socket = null;
