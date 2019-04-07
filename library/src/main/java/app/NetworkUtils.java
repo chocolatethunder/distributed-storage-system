@@ -385,4 +385,18 @@ public class NetworkUtils {
     }
 
 
+    public static synchronized NodeAttribute getHarmNodeAttribute(String jsonString) {
+        ObjectMapper mapper = new ObjectMapper();
+        // for each node in the harm list, scheduling a task to occur at interval
+        NodeAttribute attributes = null;
+        try {
+            attributes = mapper.readValue(jsonString, NodeAttribute.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return attributes;
+    }
+
+
 }
