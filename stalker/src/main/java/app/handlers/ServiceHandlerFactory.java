@@ -18,10 +18,9 @@ public class ServiceHandlerFactory {
      * @param request
      * @param socket
      * @param socket
-     * @param index
      * @return
      */
-    public static Runnable getServiceHandler(TcpPacket request, Socket socket, IndexFile index) {
+    public static Runnable getServiceHandler(TcpPacket request, Socket socket) {
         MessageType requestType = request.getMessageType();
         Request toProcess = null;
         if (requestType != MessageType.LIST){
@@ -29,13 +28,13 @@ public class ServiceHandlerFactory {
         }
         switch (requestType) {
             case DOWNLOAD:
-                return new DownloadServiceHandler(socket, toProcess, index);
+                return new DownloadServiceHandler(socket, toProcess);
             case UPLOAD:
-                return new UploadServiceHandler(socket, toProcess, index);
+                return new UploadServiceHandler(socket, toProcess);
             case DELETE:
-                return new DeleteServiceHandler(socket, toProcess, index);
+                return new DeleteServiceHandler(socket, toProcess);
             case LIST:
-                return new FileListServiceHandler(socket, index);
+                return new FileListServiceHandler(socket);
             default:
                 //
                // throw new Exception("Wrong request type");

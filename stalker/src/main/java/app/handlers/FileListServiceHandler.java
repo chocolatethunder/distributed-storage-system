@@ -2,9 +2,8 @@ package app.handlers;
 
 import app.CommsHandler;
 import app.MessageType;
-import app.chunk_utils.IndexFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import app.chunk_utils.Indexer;
 import java.net.Socket;
 import java.util.List;
 
@@ -15,12 +14,10 @@ import java.util.List;
 public class FileListServiceHandler implements Runnable {
 
     private final Socket socket;
-    private IndexFile index;
     private CommsHandler commLink;
 
-    public FileListServiceHandler(Socket socket, IndexFile ind){
+    public FileListServiceHandler(Socket socket){
         this.socket = socket;
-        this.index = ind;
         commLink = new CommsHandler();
     }
 
@@ -30,7 +27,7 @@ public class FileListServiceHandler implements Runnable {
 
     @Override
     public void run(){
-        List<String> l = index.fileList();
+        List<String> l = Indexer.fileList();
         ObjectMapper mapper = new ObjectMapper();
         String message = "";
         try{

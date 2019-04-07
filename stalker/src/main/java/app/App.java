@@ -45,7 +45,7 @@ public class App {
         System.out.println("This Stalker's macID" + NetworkUtils.getMacID());
         int test = 0;
         initStalker();
-        IndexFile ind = Indexer.loadFromFile();
+        Indexer.loadFromFile();
         //ind.summary();
         System.out.println(NetworkUtils.timeStamp(1) + "Stalker Online");
 
@@ -86,7 +86,7 @@ public class App {
                     }
                     break;
                 case 1:
-                    Thread jcpReq = new Thread(new JcpRequestHandler(ind));
+                    Thread jcpReq = new Thread(new JcpRequestHandler());
 //                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
 //                jcpRequestHandler.run();
                     jcpReq.start();
@@ -98,7 +98,7 @@ public class App {
                     }
                     break;
                 case 2:
-                    Thread vice = new Thread(new JcpRequestHandler(ind));
+                    Thread vice = new Thread(new JcpRequestHandler());
 //                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
 //                jcpRequestHandler.run();
                     vice.start();

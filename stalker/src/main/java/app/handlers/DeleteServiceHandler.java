@@ -20,10 +20,9 @@ public class DeleteServiceHandler implements Runnable {
     private IndexFile index;
     private CommsHandler commsLink;
 
-    public DeleteServiceHandler(Socket socket, Request req, IndexFile ind){
+    public DeleteServiceHandler(Socket socket, Request req){
         this.socket = socket;
         this.fileName = req.getFileName();
-        this.index = ind;
         commsLink = new CommsHandler();
     }
 
@@ -66,8 +65,10 @@ public class DeleteServiceHandler implements Runnable {
                 if(t.getMessageType() == MessageType.ACK){
                     //we are done with the connection to the leader
                     //then update index by removing the entry
-                    Indexer.removeEntry(index, toRemove);
-                    Indexer.saveToFile(index);
+                    Indexer.removeEntry(toRemove);
+
+                    ///maybe let leader do this???
+                    Indexer.saveToFile();
                     System.out.println("File removed from system!");
                     commsLink.sendResponse(socket, MessageType.ACK);
                     leader.close();

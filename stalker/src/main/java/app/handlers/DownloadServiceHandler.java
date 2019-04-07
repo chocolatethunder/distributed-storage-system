@@ -4,6 +4,7 @@ import app.*;
 import app.chunk_utils.ChunkAssembler;
 import app.chunk_utils.IndexEntry;
 import app.chunk_utils.IndexFile;
+import app.chunk_utils.Indexer;
 
 import java.io.IOException;
 import java.io.File;
@@ -18,14 +19,12 @@ public class DownloadServiceHandler implements Runnable {
     private final int server_port = 11113;
     private final Socket socket;
     private String fileName;
-    private IndexFile index;
     private final String c_dir = "temp/chunks/";
     private final String ass_dir = "temp/reassembled/";
 
-    public DownloadServiceHandler(Socket socket, Request req, IndexFile ind){
+    public DownloadServiceHandler(Socket socket, Request req){
         this.socket = socket;
         this.fileName = req.getFileName();
-        this.index = ind;
     }
 
     @Override
@@ -34,7 +33,7 @@ public class DownloadServiceHandler implements Runnable {
         try {
             // 0. we are going to check to see if the file exists first...
 
-            IndexEntry e = index.search(fileName);
+            IndexEntry e = Indexer.search(fileName);
             if (e == null){
                 throw new RuntimeException(NetworkUtils.timeStamp(1) + "File does not exist.");
             }

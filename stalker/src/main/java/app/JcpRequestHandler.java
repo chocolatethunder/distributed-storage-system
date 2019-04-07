@@ -16,9 +16,7 @@ public class JcpRequestHandler implements Runnable {
 
      private final int serverPort = 11111;
      private boolean running = true;
-     private IndexFile index;
-     public JcpRequestHandler(IndexFile ind){
-         this.index = ind;
+     public JcpRequestHandler(){
      }
 
     /**
@@ -51,7 +49,7 @@ public class JcpRequestHandler implements Runnable {
                 //creating a specific type of service handler using factory method
                 //Submit a task to the handler queue and move on
                 if (req.getMessageType() != MessageType.KILL){
-                    executorService.submit(ServiceHandlerFactory.getServiceHandler(req, client, index));
+                    executorService.submit(ServiceHandlerFactory.getServiceHandler(req, client));
                 }
                 else{
                     running = false;

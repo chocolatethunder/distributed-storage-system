@@ -28,12 +28,10 @@ public class UploadServiceHandler implements Runnable {
     private String temp_dir = "temp/toChunk/";
     private String chunk_dir = "temp/chunks/";
     private String filePath;
-    private IndexFile index;
 
-    public UploadServiceHandler(Socket socket, Request req, IndexFile ind){
+    public UploadServiceHandler(Socket socket, Request req){
          this.socket = socket;
          this.filePath = temp_dir + req.getFileName();
-         this.index = ind;
     }
 
     @Override
@@ -132,10 +130,11 @@ public class UploadServiceHandler implements Runnable {
 
 
     //in the future will update other harms
+    //maybe hand this off to leader
     public boolean updateIndex(IndexEntry entry){
-        Indexer.addEntry(index, entry);
+        Indexer.addEntry(entry);
         /////////Save that shit
-        Indexer.saveToFile(index);
+        Indexer.saveToFile();
         return true;
     }
 
