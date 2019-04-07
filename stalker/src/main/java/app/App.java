@@ -23,6 +23,10 @@ public class App {
     public static void main(String[] args) {
 
         int discoveryinterval = 15;
+        //starting listener thread for health check and leader election
+        Thread listenerForHealth = new Thread( new ListenerThread());
+        listenerForHealth.start();
+
         //First thing to do is locate all other stalkers and print the stalkers to file
         //check the netDiscovery class to see where the file is being created
         Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, discoveryinterval, false));
@@ -44,13 +48,6 @@ public class App {
         IndexFile ind = Indexer.loadFromFile();
         //ind.summary();
         System.out.println(NetworkUtils.timeStamp(1) + "Stalker Online");
-        //testing
-
-        //starting listener thread for health check and leader election
-        Thread listenerForHealth = new Thread( new ListenerThread());
-        listenerForHealth.start();
-
-
 
         //starting task for health checks on STALKERS and HARM targets
         Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, true));
@@ -59,11 +56,12 @@ public class App {
         String harmlist = NetworkUtils.fileToString("config/harm.list");
 
         // initiaze ids
-        List<Integer> ids = NetworkUtils.mapToSList(NetworkUtils.mapFromJson(stalkerList));
+
 
         //election based on networkDiscovery
         while (true){
             // Leader election by asking for a leader
+            List<Integer> ids = NetworkUtils.mapToSList(NetworkUtils.mapFromJson(stalkerList));
             LeaderCheck leaderchecker = new LeaderCheck();
             leaderchecker.election();
             leaderUuid = LeaderCheck.getLeaderUuid();
