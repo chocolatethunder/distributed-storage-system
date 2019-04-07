@@ -51,7 +51,7 @@ public class LeaderResponder implements Runnable {
         // entry.getValue(); // get the IP of the this UUID
         // entry.getKey();   // uuid;
         int leader = ids.get(0);
-        ElectionPacket elecPacket = new ElectionPacket(String.valueOf(stalkerMap.get(leader)), String.valueOf(leader));
+        ElectionPacket elecPacket = new ElectionPacket(String.valueOf(leader), String.valueOf(stalkerMap.get(leader)));
         String electionPkt = "";
         ObjectMapper mapper = new ObjectMapper();
         try {
