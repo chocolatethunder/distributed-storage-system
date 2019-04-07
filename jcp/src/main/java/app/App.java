@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.swing.*;
 import javax.swing.filechooser.*;
+import java.awt.*;
 
 public class App {
 	static JFrame mainFrame = new JFrame("KRATOS");
@@ -86,26 +87,62 @@ public class App {
 		
 		//set up the gui
 		JButton uploadButton = new JButton("Upload");
-		uploadButton.setBounds(250,30,100,40);
 		JButton listButton = new JButton("List Files");
-		listButton.setBounds(250,80,100,40);
 		JButton downloadButton = new JButton("Download");
-		downloadButton.setBounds(50,350,100,40);
 		JButton deleteButton = new JButton("Delete");
-		deleteButton.setBounds(250,350,100,40);
 		JScrollPane scrollableList = new JScrollPane(listOfFiles);
-		scrollableList.setBounds(50,150,300,200);
 		listOfFiles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollableConsole = new JScrollPane(consoleOutput);
-		scrollableConsole.setBounds(50,30,180,90);
 		consoleOutput.setEditable(false);
 		
-		mainFrame.add(uploadButton);
-		mainFrame.add(listButton);
-		mainFrame.add(downloadButton);
-		mainFrame.add(deleteButton);
-		mainFrame.add(scrollableList);
-		mainFrame.add(scrollableConsole);
+		//mainFrame.getContentPane().getLayout().setHgap(50);
+		//mainFrame.getContentPane().getLayout().setVgap(50);
+		
+		GridBagConstraints c = new GridBagConstraints();
+		
+		mainFrame.getContentPane().setLayout(new GridBagLayout());
+		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0;
+		c.weighty = 0;
+		c.insets.top = 10;
+		c.insets.left = 10;
+		c.insets.right = 10;
+		c.insets.bottom = 10;
+		
+		c.gridx = 1;
+		c.gridy = 0;
+		mainFrame.getContentPane().add(uploadButton, c);
+		
+		c.gridx = 2;
+		c.gridy = 0;
+		mainFrame.getContentPane().add(listButton, c);
+		
+		c.gridx = 1;
+		c.gridy = 2;
+		mainFrame.getContentPane().add(downloadButton, c);
+		
+		c.gridx = 2;
+		c.gridy = 2;
+		mainFrame.getContentPane().add(deleteButton, c);
+		
+		c.fill = GridBagConstraints.BOTH;
+		c.weightx = 0.7;
+		c.weighty = 0.7;
+		
+		c.gridx = 0;
+		c.gridy = 0;
+		scrollableConsole.setPreferredSize(new Dimension(50, 30));
+		mainFrame.getContentPane().add(scrollableConsole, c);
+		
+		c.weightx = 1;
+		c.weighty = 1;
+		
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 3;
+		scrollableList.setPreferredSize(new Dimension(500, 300));
+		mainFrame.getContentPane().add(scrollableList, c);
 		
 		//set up listeners
 		UploadListener uploadListener = new UploadListener();
@@ -121,9 +158,9 @@ public class App {
 		
 		
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainFrame.setSize(400,500);
-		mainFrame.setLayout(null);
-		mainFrame.setResizable(false);
+		mainFrame.setPreferredSize(new Dimension(500,400));
+		//mainFrame.setResizable(false);
+		mainFrame.pack();
 		mainFrame.setVisible(true);
 		
 		//bring window to front
