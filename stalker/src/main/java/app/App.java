@@ -98,6 +98,16 @@ public class App {
                     }
                     break;
                 case 2:
+                    Thread vice = new Thread(new JcpRequestHandler(ind));
+//                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
+//                jcpRequestHandler.run();
+                    vice.start();
+                    try {
+                        vice.join();
+                    }
+                    catch(InterruptedException e){
+                        e.printStackTrace();
+                    }
                     break;
             }
         }
