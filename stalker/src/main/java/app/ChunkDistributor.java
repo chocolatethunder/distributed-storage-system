@@ -81,7 +81,7 @@ public class ChunkDistributor {
                 System.out.println("Sending chunk");
 
                 //make sure the harm meets the requirements of the chunk size
-                if (targ.getSpace() > c.getChunk_size()){
+                if (targ.getSpace() < c.getChunk_size()){
                     throw new RuntimeException("Harm server at address: " + targ.getAddress() + " does not have sufficient space: required: " + c.getChunk_size() + " available: " + targ.getSpace());
                 }
                 else if (!targ.isAlive()){

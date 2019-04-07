@@ -78,7 +78,7 @@ public class App {
         List<Integer> s_list = NetworkUtils.mapToSList(m);
         Socket stalker = null;
         for (Integer id : s_list){
-            String stalkerip =  m.get(s_list.get(id));
+            String stalkerip =  m.get(id);
             stalker = requestSender.connect(stalkerip, port);
             if (stalker != null){
                 break;
