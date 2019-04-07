@@ -9,10 +9,17 @@ import app.chunk_utils.Indexer;
 import app.chunk_utils.IndexFile;
 import org.apache.commons.io.FilenameUtils;
 import java.io.*;
-import javax.swing.*;
-import javax.swing.filechooser.*;
+import java.util.List;
 
 public class App {
+
+    private static int leaderUuid = -1;
+
+    public int getLeaderUuid()
+    {
+        return leaderUuid;
+    }
+
     public static void main(String[] args) {
 
         int discoveryinterval = 15;
@@ -48,12 +55,20 @@ public class App {
         //starting task for health checks on STALKERS and HARM targets
         Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, true));
         healthChecker.start();
+        String stalkerList = NetworkUtils.fileToString("config/stalkers.list");
+        String harmlist = NetworkUtils.fileToString("config/harm.list");
 
-
+        // initiaze ids
+        List<Integer> ids = NetworkUtils.mapToSList(NetworkUtils.mapFromJson(stalkerList));
 
         //election based on networkDiscovery
         while (true){
-            int role = getRole();
+            // Leader election by asking for a leader
+            LeaderCheck leaderchecker = new LeaderCheck();
+            leaderchecker.election();
+            leaderUuid = LeaderCheck.getLeaderUuid();
+
+            int role = ElectionUtils.identifyRole(ids,leaderUuid);
             switch (role){
                 case 0:
                     //This means that this STK is the leader
@@ -91,9 +106,7 @@ public class App {
 
     }
 
-    public static int getRole(){
-        return(1);
-    }
+
 
     //cleans chunk folders on startup
     public static void initStalker(){
@@ -120,11 +133,6 @@ public class App {
         }
 
     }
-
-
-
-
-
 
 
 }
