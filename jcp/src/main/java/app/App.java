@@ -53,14 +53,9 @@ public class App {
 
         System.out.println(NetworkUtils.timeStamp(1) + "List updated!");
         initJFrame();
-
         System.out.println("here");
 
-
         requestSender = RequestSender.getInstance();
-
-
-
         //starting health checker tasks for each stalker in the stalker list
         Thread healthChecker= new Thread(new HealthChecker(Module.JCP, totalDiskSpace, true));
         healthChecker.start();
@@ -76,12 +71,20 @@ public class App {
             }
         }
     }
+    //round robin through the stalkers and try to get a connection
     public static Socket connectToStalker(){
         int port = 11111;
         HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
         List<Integer> s_list = NetworkUtils.mapToSList(m);
-        String stalkerip =  m.get(s_list.get(1));
-        return(requestSender.connect(stalkerip, port));
+        Socket stalker = null;
+        for (Integer id : s_list){
+            String stalkerip =  m.get(s_list.get(id));
+            stalker = requestSender.connect(stalkerip, port);
+            if (stalker != null){
+                break;
+            }
+        }
+        return(stalker);
     }
 //
 //    //load a config (stalker ip) from file while we get network discovery working

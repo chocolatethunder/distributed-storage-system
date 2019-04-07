@@ -335,6 +335,22 @@ public class NetworkUtils {
     }
 
 
+    public static synchronized Map<Integer, NodeAttribute> getNodeMap(String harmFile){
+        Map<Integer, String> raw_map = mapFromJson(NetworkUtils.fileToString(harmFile));
+        Map<Integer, NodeAttribute> nodeMap = new HashMap<>();
+        ObjectMapper mapper = new ObjectMapper();
+        for(Integer i : raw_map.keySet()){
+            try{
+                nodeMap.put(i, mapper.readValue(raw_map.get(i),NodeAttribute.class));
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+        return nodeMap;
+    }
+
     /**
      * This method is used for updating harm.list
      * @param nodeUuid

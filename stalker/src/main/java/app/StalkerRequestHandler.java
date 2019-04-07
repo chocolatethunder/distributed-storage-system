@@ -45,6 +45,7 @@ public class StalkerRequestHandler implements Runnable {
                 TcpPacket req = commLink.receivePacket(client);
                 System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + client + ", Request type: " + req.getMessageType().name() + ".");
                 //Acknowlegde that the request has been recieved and that
+
                 //the socket can be closed client side
                 commLink.sendPacket(client, MessageType.ACK, "", true);
                 //make a queueEntry with the request and Inet addr for later connection
