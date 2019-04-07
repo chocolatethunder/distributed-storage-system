@@ -1,5 +1,8 @@
 package app;
 
+import app.LeaderUtils.IndexManager;
+import app.chunk_utils.IndexFile;
+import app.chunk_utils.Indexer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -17,10 +20,10 @@ public class ListenerThread implements Runnable{
     private final int serverPort = 11114;
     private boolean running = true;
     private boolean verbose = false;
-
+    private volatile IndexFile index;
 
     public ListenerThread(){}
-
+    public ListenerThread(IndexFile ind){index = ind;}
 
     @Override
     public void run() {
@@ -58,8 +61,13 @@ public class ListenerThread implements Runnable{
                 //When a leader request is recieved
                 else if(req.getMessageType() == MessageType.LEADER){
                     // reply to with leader
-                    executorService.execute(new LeaderResponder(client));
+                    executorService.submit(new LeaderResponder(client));
 
+                }
+                else if(req.getMessageType() == MessageType.UPDATE){
+                    // Update the indexfile
+                    commLink.sendResponse(client, MessageType.ACK);
+                    executorService.submit(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
                 }
             } catch (IOException e) {
                 e.printStackTrace();

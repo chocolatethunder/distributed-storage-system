@@ -14,17 +14,17 @@ import java.util.List;
 public class App {
 
     private static int leaderUuid = -1;
-
+    private static volatile IndexFile ind;
     public int getLeaderUuid()
     {
         return leaderUuid;
     }
 
     public static void main(String[] args) {
-
+        ind = Indexer.loadFromFile();
         int discoveryinterval = 15;
         //starting listener thread for health check and leader election
-        Thread listenerForHealth = new Thread( new ListenerThread());
+        Thread listenerForHealth = new Thread( new ListenerThread(ind));
         listenerForHealth.start();
 
         //First thing to do is locate all other stalkers and print the stalkers to file
@@ -45,7 +45,7 @@ public class App {
         System.out.println("This Stalker's macID" + NetworkUtils.getMacID());
         int test = 0;
         initStalker();
-        IndexFile ind = Indexer.loadFromFile();
+
         //ind.summary();
         System.out.println(NetworkUtils.timeStamp(1) + "Stalker Online");
 

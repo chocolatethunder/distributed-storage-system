@@ -1,6 +1,9 @@
 package app.chunk_utils;
 
 
+import app.MessageType;
+import app.NodeAttribute;
+import app.Request;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.FileNotFoundException;
@@ -90,6 +93,30 @@ public class Indexer {
         //get consent then add
         ind.remove(ent);
         return true;
+    }
+
+    public static String serializeUpdate(IndexUpdate update){
+        String serialized = null;
+        ObjectMapper mapper = new ObjectMapper();
+        try{
+            serialized =  mapper.writeValueAsString(update);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        return serialized;
+    }
+
+    public static IndexUpdate deserializeUpdate(String update){
+        ObjectMapper mapper = new ObjectMapper();
+        IndexUpdate temp = null;
+        try{
+            temp = mapper.readValue(update, IndexUpdate.class);
+        }
+        catch (Exception e){
+
+        }
+        return(temp);
     }
 
 }

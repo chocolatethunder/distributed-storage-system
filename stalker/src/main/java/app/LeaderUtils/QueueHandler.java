@@ -4,9 +4,14 @@ import app.CommsHandler;
 import app.MessageType;
 import app.NetworkUtils;
 import app.TcpPacket;
+import app.chunk_utils.IndexFile;
+import app.chunk_utils.IndexUpdate;
+import app.chunk_utils.Indexer;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.List;
 import java.util.PriorityQueue;
 
 public class QueueHandler implements  Runnable {
@@ -48,7 +53,16 @@ public class QueueHandler implements  Runnable {
             //get ack that job is done
             if (commLink.sendPacket(worker, MessageType.START, "", true) == MessageType.DONE){
                 //send permission to worker to update index
-                commLink.sendPacket(worker, MessageType.ACK, "", false);
+
+                //we may need to update the other stalkers
+                if (q.getMessageType() == MessageType.UPLOAD || q.getMessageType() == MessageType.DELETE){
+                    TcpPacket t = null;
+                    t = commLink.receivePacket(worker);
+                    sendUpdates(t);
+                    System.out.println("Stalkers have been updated");
+
+                }
+                commLink.sendResponse(worker, MessageType.ACK);
                 System.out.println(NetworkUtils.timeStamp(1) + " job complete");
                 worker.close();
             }
@@ -71,6 +85,34 @@ public class QueueHandler implements  Runnable {
     //remove entry from queue
     public void getJob(){
         q = pQueue.remove();
+    }
+
+    //send index update to all stalkers
+    public boolean sendUpdates(TcpPacket t){
+        CommsHandler commLink = new CommsHandler();
+        int port = 11114;
+        HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
+        List<Integer> s_list = NetworkUtils.mapToSList(m);
+        Socket stalker = null;
+        for (Integer id : s_list){
+            String stalkerip =  m.get(id);
+            try{
+                stalker = NetworkUtils.createConnection(stalkerip, port);
+                if (commLink.sendPacket(stalker,MessageType.UPDATE, t.getMessage(), true) == MessageType.ACK){
+                    stalker.close();
+                }
+
+            }
+            catch (IOException e){
+                e.printStackTrace();
+                return(false);
+            }
+
+            if (stalker != null){
+                break;
+            }
+        }
+        return(true);
     }
 
 }

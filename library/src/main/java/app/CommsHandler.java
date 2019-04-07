@@ -59,10 +59,13 @@ public class CommsHandler {
         return receivedPacket.get();
     }
 
-    //send a response packet on a socket stream
     public boolean sendResponse(Socket socket, MessageType messageType){
+        return (sendResponse(socket, messageType, ""));
+    }
+    //send a response packet on a socket stream
+    public boolean sendResponse(Socket socket, MessageType messageType, String message){
         ObjectMapper mapper = new ObjectMapper();
-        TcpPacket sendAvail = new TcpPacket(messageType, "AVAIL");
+        TcpPacket sendAvail = new TcpPacket(messageType, message);
         String jsonInString;
         try {
             jsonInString = mapper.writeValueAsString(sendAvail);

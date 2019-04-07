@@ -1,10 +1,7 @@
 package app.handlers;
 
 import app.*;
-import app.chunk_utils.FileChunker;
-import app.chunk_utils.IndexEntry;
-import app.chunk_utils.IndexFile;
-import app.chunk_utils.Indexer;
+import app.chunk_utils.*;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -79,13 +76,16 @@ public class UploadServiceHandler implements Runnable {
 ///------------------------------------------------------------
 //          5. Send done status to leader
             commsLink.sendResponse(leader, MessageType.DONE);
+            //send the update to the leader for distribution
+            commsLink.sendPacket(leader, MessageType.UPLOAD, Indexer.serializeUpdate(new IndexUpdate(MessageType.UPLOAD, update)), false);
             try {
+                //get an ack that tells us we are done
                 TcpPacket t = commsLink.receivePacket(leader);
                 if(t.getMessageType() == MessageType.ACK){
                     //we are done with the connection to the leader
                     //then update index
 
-                    updateIndex(update);
+                    //updateIndex(update);
                     System.out.println("Indexfile saved!");
                     leader.close();
                 }
