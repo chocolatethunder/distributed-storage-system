@@ -16,6 +16,7 @@ import app.NetworkUtils;
 public class Indexer {
     private static volatile IndexFile index;
     public static final String indexPath = "index/main.index";
+
     //loads the json from file and converts it to an IndexFile object
     public static synchronized void loadFromFile(){
         ObjectMapper mapper = new ObjectMapper();
