@@ -28,6 +28,7 @@ public class FileListServiceHandler implements Runnable {
     @Override
     public void run(){
         List<String> l = Indexer.fileList();
+        System.out.println("ADADWDAWDWDWD");
         ObjectMapper mapper = new ObjectMapper();
         String message = "";
         try{
