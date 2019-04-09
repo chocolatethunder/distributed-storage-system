@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 
 public class Debugger {
 
-    public static boolean initialized = false;
+    public static boolean[] initialized = {false, false};
     private static int mode = 0;
     private static boolean to_file = false;
     private static boolean console = true;
@@ -23,7 +23,8 @@ public class Debugger {
     }
 
     public static synchronized void log(String message, Exception e){
-        String s = "";
+        String messageString = "";
+        String exceptionString = "";
         switch (mode){
             case 0:
                 //off
@@ -31,29 +32,29 @@ public class Debugger {
             case 1:
                 //print message
                 if (!message.equals("")){
-                    s = NetworkUtils.timeStamp(1) + message;
+                    messageString = NetworkUtils.timeStamp(1) + message;
                 }
                 break;
             case 2:
                 //print stacktrace
                 if (e != null){
-                    s = NetworkUtils.timeStamp(1) + traceString(e);
+                    exceptionString = NetworkUtils.timeStamp(1) + traceString(e);
                 }
                 break;
             case 3:
                 if (e!=null){
                     if (message.equals("")){
-                        s = NetworkUtils.timeStamp(1) + traceString(e);
+                        exceptionString = NetworkUtils.timeStamp(1) + traceString(e);
                     }
                     else{
-                        s = NetworkUtils.timeStamp(1) + traceString(e) + "\n\n" + NetworkUtils.timeStamp(1) + message;
+                        messageString = NetworkUtils.timeStamp(1) + message;
+                        exceptionString = NetworkUtils.timeStamp(1) + traceString(e) + "\n\n";
                     }
                 }
                 else{
                     if (!message.equals("")){
-                        s = NetworkUtils.timeStamp(1) + message;
+                        messageString = NetworkUtils.timeStamp(1) + message;
                     }
-
                 }
                 //print stack and message
                 break;
@@ -61,21 +62,23 @@ public class Debugger {
                 break;
         }
         if(console){
-            System.out.println(s);
+            System.out.println(exceptionString);
+            System.out.println(messageString);
         }
         if (to_file){
-            appendToLog(s + "\n\n");
+            appendToLog(messageString + "\n\n", "messages.log", 0);
+            appendToLog(exceptionString + "\n\n", "exceptions.log", 1);
         }
     }
 
-    public static synchronized void appendToLog(String s){
+    public static synchronized void appendToLog(String content, String logname, int index){
         Charset c = null;
         try{
-            if (!initialized){
-                FileUtils.writeStringToFile(new File(logDir + "output.log"), "\n\n" + NetworkUtils.timeStamp(0) + "\n", c, true);
-                initialized = true;
+            if (!initialized[index]){
+                FileUtils.writeStringToFile(new File(logDir + logname), "\n\n" + NetworkUtils.timeStamp(0) + "\n", c, true);
+                initialized[index] = true;
             }
-            FileUtils.writeStringToFile(new File(logDir + "output.log"), s, c, true);
+            FileUtils.writeStringToFile(new File(logDir + logname), content, c, true);
         }
         catch (IOException e){
         }

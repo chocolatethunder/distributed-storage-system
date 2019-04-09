@@ -33,6 +33,7 @@ public class App {
         Debugger.setMode(3);
         Debugger.toggleFileMode();
         initJCP();
+        initJFrame();
         int discoveryTimeout = 5;
 
         // to capture total disk space in the system and will be updated with each health check
@@ -71,7 +72,7 @@ public class App {
             attempts++;
         }
         Debugger.log("JCP Main: System ready to take requests!", null);
-        initJFrame();
+
         requestSender = RequestSender.getInstance();
         //starting health checker tasks for each stalker in the stalker list
         Thread healthChecker= new Thread(new HealthChecker(Module.JCP, totalDiskSpace, true));
