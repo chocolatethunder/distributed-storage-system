@@ -14,7 +14,7 @@ public class ChunkDistributor {
     private boolean debug = false;
     private String chunkDir;
     private CommsHandler commLink;
-    private int port = 22222;
+    private int port = ConfigManager.getCurrent().getHarm_listen();
 
     //we are going to hard code this for now
     private int harm_count = 4;
@@ -66,7 +66,7 @@ public class ChunkDistributor {
 
     //placeholder chunk sending function
     public boolean sendChunk(Chunk c, Integer target){
-        Map<Integer, NodeAttribute> n = NetworkUtils.getNodeMap("config/harm.list");
+        Map<Integer, NodeAttribute> n = NetworkUtils.getNodeMap(ConfigManager.getCurrent().getHarm_list_path());
         //HashMap<Integer, String > m = NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
         int attempts = 0;
         while(true){

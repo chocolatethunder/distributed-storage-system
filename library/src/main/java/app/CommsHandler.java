@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
 import java.net.ServerSocket;
+import java.util.Map;
 import java.util.Optional;
 import java.net.Socket;
 
@@ -82,11 +83,14 @@ public class CommsHandler {
         return (true);
     }
 
+    //must fix now
     public boolean sendRequestToLeader(MessageType m) {
         try {
             //connect to leader and send request
             //currently hard coded
-            Socket leader = NetworkUtils.createConnection("192.168.1.121", 11112);
+            ConfigFile cfg = ConfigManager.getCurrent();
+            Map<Integer, String> slist = NetworkUtils.getStalkerMap(cfg.getStalker_list_path());
+            Socket leader = NetworkUtils.createConnection(slist.get(cfg.getLeader_id()), cfg.getLeader_report());
             if (!(sendPacket(leader, m, "", true) == MessageType.ACK)) {
                 return false;
             } else {

@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
  */
 public class JcpRequestHandler implements Runnable {
 
-     private final int serverPort = 11111;
+     private final int serverPort = ConfigManager.getCurrent().getJcp_req_port();
      private boolean running = true;
      private IndexFile index;
      public JcpRequestHandler(IndexFile ind){

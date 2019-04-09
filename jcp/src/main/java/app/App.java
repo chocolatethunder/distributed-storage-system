@@ -60,7 +60,7 @@ public class App {
         while (!connected){
             //we will wait for network discovery to do its thing
             wait((discoveryTimeout * 1000) + 5000);
-            stalkerList = NetworkUtils.getStalkerList("config/stalkers.list");
+            stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
             try{
                 if (stalkerList != null && stalkerList.size() >= 1){
                     connected = true;
@@ -97,14 +97,16 @@ public class App {
     public static void initJCP(){
         List<File> dirs = new ArrayList();
         dirs.add(new File("logs"));
+        dirs.add(new File("index"));
+        dirs.add(new File("index/lists"));
         dirs.add(new File("config"));
-        NetworkUtils.initDirs(dirs, true, 1);
+        NetworkUtils.initDirs(dirs, true, 2);
     }
 
     //round robin through the stalkers and try to get a connection
     public static Socket connectToStalker(){
         int port = cfg.getJcp_req_port();
-        HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
+        HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString(cfg.getStalker_list_path()));
         List<Integer> s_list = NetworkUtils.mapToSList(m);
         Socket stalker = null;
         for (Integer id : s_list){

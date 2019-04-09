@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import app.ConfigManager;
 
 /**
  *This listener thread is dedicated to listening for HEALTH check requests
@@ -18,7 +19,7 @@ public class ListenerThread implements Runnable {
 
 
     private ConfigFile cfg;
-    private final int serverPort = 11114;
+    private final int serverPort = ConfigManager.getCurrent().getElection_port();
     private boolean running = true;
     private boolean debugMode = false;
 
@@ -29,7 +30,7 @@ public class ListenerThread implements Runnable {
 
     @Override
     public void run() {
-
+        ConfigManager.getCurrent().getElection_port();
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
 

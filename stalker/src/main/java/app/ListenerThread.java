@@ -17,7 +17,8 @@ import java.util.concurrent.Executors;
  */
 public class ListenerThread implements Runnable{
 
-    private final int serverPort = 11114;
+
+    private final int serverPort = ConfigManager.getCurrent().getElection_port();
     private boolean running = true;
     private boolean verbose = false;
     private volatile IndexFile index;
@@ -86,7 +87,7 @@ public class ListenerThread implements Runnable{
     public long getTotalSpaceFromHarms(){
         long total = 0;
 
-        Map<Integer, String> harms = NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
+        Map<Integer, String> harms = NetworkUtils.mapFromJson(NetworkUtils.fileToString(ConfigManager.getCurrent().getHarm_list_path()));
         ObjectMapper mapper = new ObjectMapper();
         for (Map.Entry<Integer, String> entry : harms.entrySet()) {
             NodeAttribute attributes = null;

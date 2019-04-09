@@ -419,7 +419,7 @@ public class NetworkUtils {
         ObjectMapper mapper = new ObjectMapper();
 
         ObjectNode node = null;
-        String configStringContent = NetworkUtils.fileToString("config/harm.list");
+        String configStringContent = NetworkUtils.fileToString(ConfigManager.getCurrent().getHarm_list_path());
 
 
         try {
@@ -442,7 +442,7 @@ public class NetworkUtils {
                 String jsonInString = mapper.writeValueAsString(node);
                 // System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newAttributes));
 
-                PrintWriter out = new PrintWriter("config/harm.list");
+                PrintWriter out = new PrintWriter(ConfigManager.getCurrent().getHarm_list_path());
                 out.print(jsonInString);
                 out.close();
 

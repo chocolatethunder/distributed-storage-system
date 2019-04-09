@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import sun.security.krb5.Config;
 
 
 public class NetDiscovery implements Runnable{
@@ -41,12 +42,12 @@ public class NetDiscovery implements Runnable{
                     if (target == Module.STALKER.name()){
                         //write to file
                         Debugger.log("NetDiscovery: STALKER list updated", null);
-                        NetworkUtils.toFile("config/stalkers.list", listOfAddrs);
+                        NetworkUtils.toFile(ConfigManager.getCurrent().getStalker_list_path() , listOfAddrs);
                     }
                     else{
                         //write to file
                         Debugger.log("NetDiscovery: HARM list updated", null);
-                        NetworkUtils.toFile("config/harm.list", listOfAddrs);
+                        NetworkUtils.toFile(ConfigManager.getCurrent().getHarm_list_path(), listOfAddrs);
                     }
                 }
             } catch (Exception e) {
@@ -83,7 +84,7 @@ public class NetDiscovery implements Runnable{
     //send out a UDP broadcast
     public boolean sendSignal(MessageType request, ObjectMapper mapper) throws IOException{
         // To broadcast change this to 255.255.255.255
-        InetAddress address = InetAddress.getByName("192.168.1.255");       // broadcast address
+        InetAddress address = InetAddress.getByName(ConfigManager.getCurrent().getBroadcast_ip());       // broadcast address
         //we want a map of MAC -> ip
         //the ports must be specific to target/origin
         int[] ports = NetworkUtils.getPortTargets(origin, target);

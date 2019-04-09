@@ -40,7 +40,7 @@ public class ChunkRetriever {
     public boolean retrieveChunk(Chunk c){
         //get the map of harm ids
         //HashMap<Integer, String > m = NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
-        Map<Integer, NodeAttribute> n = NetworkUtils.getNodeMap("config/harm.list");
+        Map<Integer, NodeAttribute> n = NetworkUtils.getNodeMap(ConfigManager.getCurrent().getHarm_list_path());
         int attempts = 0;
         for (Integer s : c.getReplicas()){
             NodeAttribute targ = n.get(s);
@@ -54,7 +54,7 @@ public class ChunkRetriever {
                     break;
                 }
                 try{
-                    Socket harmServer = NetworkUtils.createConnection(targ.getAddress(), 22222);
+                    Socket harmServer = NetworkUtils.createConnection(targ.getAddress(), ConfigManager.getCurrent().getHarm_listen());
                     if(commLink.sendPacket(harmServer, MessageType.DOWNLOAD, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.DOWNLOAD), true) == MessageType.ACK){
                         FileStreamer fileStreamer = new FileStreamer(harmServer);
                         fileStreamer.receiveFileFromSocket(chunkDir + c.getUuid());

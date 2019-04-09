@@ -18,7 +18,7 @@ public class LeaderCheck {
     private static ConfigFile cfg;
     public LeaderCheck()
     {
-        this.stalkerMap = NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
+        this.stalkerMap = NetworkUtils.mapFromJson(NetworkUtils.fileToString(ConfigManager.getCurrent().getStalker_list_path()));
         this.ids = NetworkUtils.mapToSList(stalkerMap);
 
     }

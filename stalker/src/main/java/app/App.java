@@ -97,6 +97,7 @@ public class App {
             if (role != 0){
                 //we kind of assume we'll get an indexfile from the leader
                 getConfirmation(leaderUuid);
+                cfg.setLeader_id(leaderUuid);
             }
             switch (role){
                 case 0:
@@ -167,7 +168,7 @@ public class App {
         directories.add(new File("temp/chunks"));
         directories.add(new File("temp/toChunk"));
         directories.add(new File("temp/reassembled"));
-        NetworkUtils.initDirs(directories, true, 4);
+        NetworkUtils.initDirs(directories, true, 5);
     }
     //will block worker from doing anythin until the leader is confirmed
     public static boolean getConfirmation(int uuid) {

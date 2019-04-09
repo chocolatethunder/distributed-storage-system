@@ -1,9 +1,6 @@
 package app.LeaderUtils;
 
-import app.CommsHandler;
-import app.MessageType;
-import app.NetworkUtils;
-import app.TcpPacket;
+import app.*;
 import app.chunk_utils.IndexFile;
 import app.chunk_utils.IndexUpdate;
 import app.chunk_utils.Indexer;
@@ -48,7 +45,7 @@ public class QueueHandler implements  Runnable {
         Socket worker;
         try{
             System.out.println(NetworkUtils.timeStamp(1) + " Processing job...");
-            worker = NetworkUtils.createConnection(q.getInetAddr().getHostAddress(), 11113);
+            worker = NetworkUtils.createConnection(q.getInetAddr().getHostAddress(), ConfigManager.getCurrent().getLeader_admin_port());
             //connect and grant permission to edit file
             //get ack that job is done
             if (commLink.sendPacket(worker, MessageType.START, "", true) == MessageType.DONE){
@@ -91,7 +88,7 @@ public class QueueHandler implements  Runnable {
     public boolean sendUpdates(TcpPacket t){
         CommsHandler commLink = new CommsHandler();
         int port = 11114;
-        HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
+        HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString(ConfigManager.getCurrent().getStalker_list_path()));
         List<Integer> s_list = NetworkUtils.mapToSList(m);
         Socket stalker = null;
         for (Integer id : s_list){

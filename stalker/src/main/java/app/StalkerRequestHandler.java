@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
 // the leader does this by maintaining a queue of requests sent by the stalkers
 public class StalkerRequestHandler implements Runnable {
 
-    private int serverPort = 11112;
+    private int serverPort = ConfigManager.getCurrent().getLeader_report();
     private boolean running = true;
     private CRUDQueue pQueue;
     private static volatile IndexFile indexFile;
@@ -37,7 +37,6 @@ public class StalkerRequestHandler implements Runnable {
             server = new ServerSocket(serverPort);
         }
         catch (IOException e){
-
             Debugger.log("", e);
             return;
         }

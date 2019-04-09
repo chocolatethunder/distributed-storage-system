@@ -36,10 +36,6 @@ public class IndexEntry {
         chunkList = chunks;
     }
 
-
-
-
-
     public void addChunk(Chunk c){
         chunkList.add(c);
     }

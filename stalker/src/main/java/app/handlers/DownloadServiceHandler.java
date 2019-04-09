@@ -15,7 +15,8 @@ import java.net.Socket;
  */
 public class DownloadServiceHandler implements Runnable {
 
-    private final int server_port = 11113;
+    private ConfigFile cfg = ConfigManager.getCurrent();
+    private final int server_port = cfg.getLeader_admin_port();
     private final Socket socket;
     private String fileName;
     private IndexFile index;

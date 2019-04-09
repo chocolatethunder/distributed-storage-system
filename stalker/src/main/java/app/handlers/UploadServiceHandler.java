@@ -14,7 +14,7 @@ import app.FileStreamer;
  */
 public class UploadServiceHandler implements Runnable {
 
-    private final int server_port = 11113;
+    private final int server_port = ConfigManager.getCurrent().getLeader_admin_port();
     private final Socket socket;
     private DataInputStream in = null;
     private BufferedOutputStream bufferedOutputStream = null;
@@ -57,8 +57,6 @@ public class UploadServiceHandler implements Runnable {
             commsLink.sendResponse(socket, MessageType.ACK);
             FileStreamer fileStreamer = new FileStreamer(socket);
             fileStreamer.receiveFileFromSocket(filePath);
-
-
 //            if (!getFileFromJCP()){
 //                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error when getting file from JCP.");
 //            }
@@ -87,7 +85,6 @@ public class UploadServiceHandler implements Runnable {
             catch(IOException e){
                 Debugger.log("", e);
             }
-
         }
         catch(RuntimeException e){
             try{ socket.close();}
@@ -108,14 +105,14 @@ public class UploadServiceHandler implements Runnable {
         FileChunker f = new FileChunker(chunk_dir);
         ChunkDistributor cd = new ChunkDistributor(chunk_dir, harm_list);
         ///////////////////////chunk file and get the index entry object
-        IndexEntry entry = f.chunkFile(filePath, 3);
+        IndexEntry entry = f.chunkFile(filePath, ConfigManager.getCurrent().getChunk_count());
         if (entry != null){
             File file = new File(filePath);
             file.delete();
         }
         entry.summary();
         ////////////////distribute file
-        if(cd.distributeChunks(entry, 3)){
+        if(cd.distributeChunks(entry, ConfigManager.getCurrent().getReplica_count())){
             entry.cleanLocalChunks();
             entry.summary();
             return entry;
@@ -135,19 +132,10 @@ public class UploadServiceHandler implements Runnable {
     }
 
 
-    //temp hard code function
-    public List<String>getHarms(){
-        List<String> temp = new ArrayList<String>();
-        temp.add("192.168.1.131");
-        temp.add("192.168.1.107");
-        temp.add("192.168.1.146");
-        return temp;
-    }
-
-    //temp hard code function
+    //get harm list by id
     public List<Integer>getHarms(int i){
         List<Integer> temp = new ArrayList<Integer>();
-        HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
+        HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString(ConfigManager.getCurrent().getHarm_list_path()));
         for (Integer key : m.keySet()) {
             temp.add(key);
         }

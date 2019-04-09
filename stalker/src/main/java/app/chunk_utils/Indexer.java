@@ -53,7 +53,7 @@ public class Indexer {
 
     //Save index to file
     public static synchronized boolean saveToFile(IndexFile ind){
-        String tempfile = "index/main";
+        String tempfile = "index//indexFile/main";
         try{
             ObjectMapper mapper = new ObjectMapper();
             String jsonInString = mapper.writeValueAsString(ind);

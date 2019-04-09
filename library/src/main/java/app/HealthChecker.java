@@ -26,6 +26,7 @@ public class HealthChecker implements Runnable{
     private Module requestSender;
     private AtomicLong spaceAvailableSoFar;
     private boolean debugMode;
+    private  ConfigFile cfg;
 
 
     /**
@@ -35,11 +36,11 @@ public class HealthChecker implements Runnable{
      */
     public HealthChecker(Module checker, AtomicLong spaceAvailableSoFar, boolean debugMode){
         requestSender = checker;
-        HashMap<Integer, String> stalkers =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
+        HashMap<Integer, String> stalkers =  NetworkUtils.mapFromJson(NetworkUtils.fileToString(ConfigManager.getCurrent().getStalker_list_path()));
         stalkerList = stalkers;
 
         if(checker == Module.STALKER){
-            HashMap<Integer, String> harms =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
+            HashMap<Integer, String> harms =  NetworkUtils.mapFromJson(NetworkUtils.fileToString(ConfigManager.getCurrent().getHarm_list_path()));
             harmList = harms;
         }
         this.spaceAvailableSoFar = spaceAvailableSoFar;
@@ -55,8 +56,7 @@ public class HealthChecker implements Runnable{
     public void run() {
 
         Timer timer = new Timer();
-
-
+        cfg = ConfigManager.getCurrent();
         // for each node in the stalker list, scheduling a task to occur at interval
         if(stalkerList != null) {
             for (Map.Entry<Integer, String> entry : stalkerList.entrySet()) {
@@ -85,7 +85,7 @@ public class HealthChecker implements Runnable{
         while (!Thread.interrupted()){
             try {
                 Map<Integer, String> newStalkers =  NetworkUtils.mapFromJson(NetworkUtils
-                        .fileToString("config/stalkers.list"));
+                        .fileToString(cfg.getStalker_list_path()));
 
 
                 //checking if new stalker list contains any new node
@@ -110,7 +110,7 @@ public class HealthChecker implements Runnable{
                 //checking if harm list contains any new harm node
                 if(this.requestSender == Module.STALKER){
                     Map<Integer, String> newHarms =  NetworkUtils.mapFromJson(NetworkUtils
-                            .fileToString("config/harm.list"));
+                            .fileToString(cfg.getHarm_list_path()));
 
                     if(!this.harmList.equals(newHarms)) {
                         ObjectMapper mapper = new ObjectMapper();
@@ -186,7 +186,7 @@ public class HealthChecker implements Runnable{
 
         private final String host ;
         private final int uuid;
-        private final int port = 11114;
+        private final int port = ConfigManager.getCurrent().getElection_port();
 
         //will wait 30 seconds for reply, if not then it will be considered dead
         private final int timeoutForReply = 1000 * 30;
@@ -286,12 +286,11 @@ public class HealthChecker implements Runnable{
 
         private void updateConfigAndEndTask(){
             if(this.target == Module.STALKER) {
-
                 // remove node from STALKER LIST in config file stalkers.list
-                NetworkUtils.deleteNodeFromConfig("config/stalkers.list", String.valueOf(this.uuid));
+                NetworkUtils.deleteNodeFromConfig(cfg.getStalker_list_path(), String.valueOf(this.uuid));
 
                 // Identify which STALKER went down
-                String stalkerList = NetworkUtils.fileToString("config/stalkers.list");
+                String stalkerList = NetworkUtils.fileToString(cfg.getStalker_list_path());
                 HashMap<Integer, String> stalkerMap = NetworkUtils.mapFromJson(stalkerList);
                 List<Integer> ids = NetworkUtils.mapToSList(NetworkUtils.mapFromJson(stalkerList));
                 if(stalkerMap.keySet().contains(LeaderCheck.getLeaderUuid()))
@@ -299,7 +298,7 @@ public class HealthChecker implements Runnable{
                     // kill and the threads
                     for(Map.Entry<Integer, String> entry : stalkerMap.entrySet())
                     {
-                        int port = 11112;
+                        int port = cfg.getLeader_report();
                         Socket socket;
                         try {
                             socket = NetworkUtils.createConnection(entry.getValue(), port);
@@ -310,7 +309,6 @@ public class HealthChecker implements Runnable{
                         }catch (IOException e) {
                             Debugger.log("", e);
                         }
-
                     }
                 }
             }else {

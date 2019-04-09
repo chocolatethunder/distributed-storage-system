@@ -2,15 +2,14 @@ package app;
 
 public class ConfigFile {
     private String conf_path;
-
-
+    private int leader_id;
 
     private boolean random = false;
 
     private int chunk_count = 5;
     private int replica_count = 10;
 
-
+    private String broadcast_ip = "192.168.1.255";
 
     private int election_threshold_s = 3;
     private int election_threshold_h = 3;
@@ -37,23 +36,54 @@ public class ConfigFile {
     private int leader_admin_port = 11113;
     //health check as welll
     private int election_port = 11114;
+
+    private int harm_listen_port = 11115;
     private int harm_listen = 22222;
 
     private int debug_mode = 3;
 
-
     private String harm_list_path = "index/lists/harm.list";
-    private String stalker_list_path = "index/lists/harm.list";
+    private String stalker_list_path = "index/lists/stalker.list";
     private String index_file_path = "index/index_file/main.index";
     private String config_path = "config/";
 
-    public ConfigFile(){}
-    public ConfigFile(String config_path){
+    private String stalker_temp_dir = "temp";
+    private String stalker_assembled_dir = "temp/assembled";
+    private String stalker_toChunk_dir = "temp/toChunk";
+    private String stalker_chunk_dir = "temp/chunks";
+
+
+
+    public ConfigFile() {
+    }
+
+    public String getBroadcast_ip() {
+        return broadcast_ip;
+    }
+
+    public void setBroadcast_ip(String broadcast_ip) {
+        this.broadcast_ip = broadcast_ip;
+    }
+
+    public int getLeader_id() {
+        return leader_id;
+    }
+
+    public void setLeader_id(int leader_id) {
+        this.leader_id = leader_id;
+    }
+
+    public ConfigFile(String config_path) {
         this.conf_path = config_path;
     }
 
-    public boolean isRandom() { return random; }
-    public void setRandom(boolean random) { this.random = random; }
+    public boolean isRandom() {
+        return random;
+    }
+
+    public void setRandom(boolean random) {
+        this.random = random;
+    }
 
     public String getConf_path() {
         return conf_path;
@@ -207,6 +237,14 @@ public class ConfigFile {
         this.election_port = election_port;
     }
 
+    public int getHarm_listen_port() {
+        return harm_listen_port;
+    }
+
+    public void setHarm_listen_port(int harm_listen_port) {
+        this.harm_listen_port = harm_listen_port;
+    }
+
     public int getHarm_listen() {
         return harm_listen;
     }
@@ -253,5 +291,37 @@ public class ConfigFile {
 
     public void setConfig_path(String config_path) {
         this.config_path = config_path;
+    }
+
+    public String getStalker_temp_dir() {
+        return stalker_temp_dir;
+    }
+
+    public void setStalker_temp_dir(String stalker_temp_dir) {
+        this.stalker_temp_dir = stalker_temp_dir;
+    }
+
+    public String getStalker_assembled_dir() {
+        return stalker_assembled_dir;
+    }
+
+    public void setStalker_assembled_dir(String stalker_assembled_dir) {
+        this.stalker_assembled_dir = stalker_assembled_dir;
+    }
+
+    public String getStalker_toChunk_dir() {
+        return stalker_toChunk_dir;
+    }
+
+    public void setStalker_toChunk_dir(String stalker_toChunk_dir) {
+        this.stalker_toChunk_dir = stalker_toChunk_dir;
+    }
+
+    public String getStalker_chunk_dir() {
+        return stalker_chunk_dir;
+    }
+
+    public void setStalker_chunk_dir(String stalker_chunk_dir) {
+        this.stalker_chunk_dir = stalker_chunk_dir;
     }
 }

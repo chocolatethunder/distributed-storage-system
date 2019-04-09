@@ -11,14 +11,12 @@ import java.util.HashMap;
  * This runnable class is responsible for handling delete file request
  */
 public class DeleteServiceHandler implements Runnable {
-    private final int server_port = 11113;
+    private ConfigFile cfg = ConfigManager.getCurrent();
+    private final int server_port = cfg.getLeader_admin_port();
     private final Socket socket;
     private String fileName;
     private IndexFile index;
     private CommsHandler commsLink;
-
-
-
     @Override
     public void run() {
         Socket leader = null;
@@ -89,8 +87,8 @@ public class DeleteServiceHandler implements Runnable {
         commsLink = new CommsHandler();
     }
     public boolean removeChunks(IndexEntry e) {
-        int port = 22222;
-        HashMap<Integer, String> m = NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
+        int port = cfg.getHarm_listen();
+        HashMap<Integer, String> m = NetworkUtils.mapFromJson(NetworkUtils.fileToString(cfg.getHarm_list_path()));
         for (Chunk c : e.getChunkList()) {
             for (Integer i : c.getReplicas()) {
                 try {

@@ -18,11 +18,12 @@ public class App {
         //debugging modes: 0 - none; 1 - message only; 2 - stack traces only; 3 - stack and message
         Debugger.setMode(3);
         Debugger.toggleFileMode();
+        initHarm();
         ConfigManager.loadFromFile("config/config.cfg", "default", true);
         cfg = ConfigManager.getCurrent();
         NetworkUtils.loadConfig(cfg);
         Debugger.setMode(cfg.getDebug_mode());
-        initHarm();
+
         //this will always be running
         Thread discManager = new Thread(new DiscoveryManager(Module.HARM, cfg.getHarm_update_freq(), true));
         discManager.start();
@@ -78,8 +79,9 @@ public class App {
     public static void initHarm(){
         List<File> dirs = new ArrayList();
         dirs.add(new File("storage"));
+        dirs.add(new File("config"));
         dirs.add(new File("logs"));
-        NetworkUtils.initDirs(dirs, false, 0);
+        NetworkUtils.initDirs(dirs, false, 1);
     }
     /**
      * Method to wait until all threads are done

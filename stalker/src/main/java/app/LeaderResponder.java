@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketException;
+
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import app.ConfigManager;
 
 
 /**
@@ -27,7 +27,7 @@ public class LeaderResponder implements Runnable {
     public LeaderResponder (Socket socket)
     {
         this.socket = socket;
-        String stalkerList = NetworkUtils.fileToString("config/stalkers.list");
+        String stalkerList = NetworkUtils.fileToString(ConfigManager.getCurrent().getStalker_list_path());
         this.stalkerMap = NetworkUtils.mapFromJson(stalkerList);
         ids = NetworkUtils.mapToSList(stalkerMap);
     }
