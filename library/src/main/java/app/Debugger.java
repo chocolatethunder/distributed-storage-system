@@ -48,7 +48,7 @@ public class Debugger {
                     }
                     else{
                         messageString = NetworkUtils.timeStamp(1) + message;
-                        exceptionString = NetworkUtils.timeStamp(1) + traceString(e) + "\n\n";
+                        exceptionString = NetworkUtils.timeStamp(1) + traceString(e);
                     }
                 }
                 else{
@@ -66,8 +66,14 @@ public class Debugger {
             System.out.println(messageString);
         }
         if (to_file){
-            appendToLog(messageString + "\n\n", "messages.log", 0);
-            appendToLog(exceptionString + "\n\n", "exceptions.log", 1);
+            if (!messageString.equals("")){
+                appendToLog(messageString + "\n", "messages.log", 0);
+            }
+            if (!exceptionString.equals("")){
+                appendToLog(exceptionString + "\n", "exceptions.log", 1);
+            }
+
+
         }
     }
 
