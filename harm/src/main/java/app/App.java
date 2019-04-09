@@ -41,14 +41,14 @@ public class App {
         } catch (IOException e) {
             Debugger.log("", e);
         }
-        Debugger.log("Waiting for requests...", null);
+        Debugger.log("Harm Main: Waiting for requests...", null);
 
 
         // will keep on listening for requests from STALKERs
         while (true) {
             try {
                 STALKER_Client = HARM_server.accept();
-                Debugger.log("Accepted connection : ", null);
+                Debugger.log("Harm Main: Accepted connection : ", null);
                 //get packet from the link and handle it
                 TcpPacket STALKER_Request = commLink.receivePacket(STALKER_Client);
                 Handler h = new Handler(STALKER_Client, STALKER_Request, macID);

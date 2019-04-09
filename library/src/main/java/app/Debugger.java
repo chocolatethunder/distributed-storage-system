@@ -30,7 +30,9 @@ public class Debugger {
                 break;
             case 1:
                 //print message
-                s = NetworkUtils.timeStamp(1) + message;
+                if (!message.equals("")){
+                    s = NetworkUtils.timeStamp(1) + message;
+                }
                 break;
             case 2:
                 //print stacktrace
@@ -40,10 +42,18 @@ public class Debugger {
                 break;
             case 3:
                 if (e!=null){
-                    s = NetworkUtils.timeStamp(1) + traceString(e) + "\n\n" + NetworkUtils.timeStamp(1) + message + "\n";
+                    if (message.equals("")){
+                        s = NetworkUtils.timeStamp(1) + traceString(e);
+                    }
+                    else{
+                        s = NetworkUtils.timeStamp(1) + traceString(e) + "\n\n" + NetworkUtils.timeStamp(1) + message;
+                    }
                 }
                 else{
-                    s = NetworkUtils.timeStamp(1) + message + "\n";
+                    if (!message.equals("")){
+                        s = NetworkUtils.timeStamp(1) + message;
+                    }
+
                 }
                 //print stack and message
                 break;
@@ -62,10 +72,10 @@ public class Debugger {
         Charset c = null;
         try{
             if (!initialized){
-                FileUtils.writeStringToFile(new File(logDir + "log.txt"), "\n\n" + NetworkUtils.timeStamp(0) + "\n", c, true);
+                FileUtils.writeStringToFile(new File(logDir + "output.log"), "\n\n" + NetworkUtils.timeStamp(0) + "\n", c, true);
                 initialized = true;
             }
-            FileUtils.writeStringToFile(new File(logDir + "log.txt"), s, c, true);
+            FileUtils.writeStringToFile(new File(logDir + "output.log"), s, c, true);
         }
         catch (IOException e){
         }
