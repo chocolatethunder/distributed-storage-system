@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LeaderCheck {
 
@@ -32,40 +29,45 @@ public class LeaderCheck {
         Map<Integer, Integer> voteCount = new HashMap<>();
 
         // ask for leader
-        for(Map.Entry<Integer, String> entry : stalkerMap.entrySet())
+        System.out.println("Voting has started...");
+        for(Integer entry : stalkerMap.keySet())
         {
             int port = 11114;
-            int timeoutForReply = 5;
+            int timeoutForReply = 20;
 
-            System.out.println("Asking for a leader");
+
             Socket socket = null;
             try {
-                socket = NetworkUtils.createConnection(entry.getValue(), port);
+                socket = NetworkUtils.createConnection(stalkerMap.get(entry), port);
                 socket.setSoTimeout(1000 * timeoutForReply);
 
                 // create a leader packet and send it to this host
                 CommsHandler commsHandler = new CommsHandler();
-                commsHandler.sendPacketWithoutAck(socket, MessageType.LEADER, "Asking for a Leader");
+                if (commsHandler.sendPacket(socket, MessageType.LEADER, "Asking for a Leader", true) == MessageType.ACK){
+                    // listen for other people leader
+                    TcpPacket tcpPacket = commsHandler.receivePacket(socket);
+                    String  content = tcpPacket.getMessage();
+                    //get the result of the vote
+                    ObjectMapper mapper = new ObjectMapper();
+                    Optional<ElectionPacket> ep = null;
+                    ep = Optional.of(mapper.readValue(content, ElectionPacket.class));
 
-                // listen for other people leader
-                TcpPacket tcpPacket = commsHandler.receivePacket(socket);
-                String  content = tcpPacket.getMessage();
+                    leaderUuid = Integer.valueOf(ep.get().getUuid());
+                    leaderIP = ep.get().getIp();
 
-                // parse the content to to get the leader uuid
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode leaderReply = mapper.readTree(content);
-                leaderUuid = Integer.valueOf(leaderReply.get("uuid").asText());
-                leaderIP = leaderReply.get("ip").textValue();
+                    //System.out.println("Election vote: " + leaderUuid + ", " + leaderIP);
+                    if(!voteCount.containsKey(leaderUuid))
+                    {
+                        voteCount.put(leaderUuid,1);
+                    }else
+                    {
+                        int newCount = voteCount.get(leaderUuid) + 1;
+                        voteCount.put(leaderUuid,newCount);
 
-                if(!voteCount.containsKey(leaderUuid))
-                {
-                    voteCount.put(leaderUuid,1);
-                }else
-                {
-                    int newCount = voteCount.get(leaderUuid) + 1;
-                    voteCount.put(leaderUuid,newCount);
-
+                    }
                 }
+
+
 
             } catch (SocketException e) {
                 // ask another stalker for the leader if fails to establish connection with one of the stalker
@@ -80,9 +82,7 @@ public class LeaderCheck {
                     e.printStackTrace();
                 }
             }
-
         }
-
         int max = Integer.MIN_VALUE;
         for(Integer i: voteCount.keySet())
         {
@@ -92,6 +92,7 @@ public class LeaderCheck {
                 leaderUuid = i;
             }
         }
+        System.out.println("Leader selected: " + leaderUuid);
 
     }
 

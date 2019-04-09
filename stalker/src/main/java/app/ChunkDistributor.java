@@ -6,7 +6,7 @@ package app;
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
-
+import java.util.Random;
 import app.chunk_utils.Chunk;
 import app.chunk_utils.IndexEntry;
 
@@ -35,8 +35,8 @@ public class ChunkDistributor {
     public boolean distributeChunks(IndexEntry iEnt, int num_reps) {
         //we go through each chunk in the IndexEntry object
         //token represents which harm target we are currently sending to
-
-        int token = 0;
+        Random rand = new Random();
+        int token = rand.nextInt(harm_count);
         for (Chunk c : iEnt.getChunkList()){
             //for each replica
             for (int i = 0; i < num_reps; i++){
@@ -66,7 +66,8 @@ public class ChunkDistributor {
 
     //placeholder chunk sending function
     public boolean sendChunk(Chunk c, Integer target){
-        HashMap<Integer, String > m = NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
+        Map<Integer, NodeAttribute> n = NetworkUtils.getNodeMap("config/harm.list");
+        //HashMap<Integer, String > m = NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
         int attempts = 0;
         while(true){
             if (attempts == 3){
@@ -74,11 +75,20 @@ public class ChunkDistributor {
                 return false;
             }
             try{
+                NodeAttribute targ = n.get(target);
                 //old way
                 //FileUtils.copyFile(new File(c.path()),new File(target));
                 System.out.println("Sending chunk");
+
+                //make sure the harm meets the requirements of the chunk size
+                if (targ.getSpace() < c.getChunk_size()){
+                    throw new RuntimeException("Harm server at address: " + targ.getAddress() + " does not have sufficient space: required: " + c.getChunk_size() + " available: " + targ.getSpace());
+                }
+                else if (!targ.isAlive()){
+                    throw new RuntimeException("Harm server at address: " + targ.getAddress() + " is not responding");
+                }
                 //make a connection to the harm target
-                Socket harmServer = NetworkUtils.createConnection(m.get(target), port);
+                Socket harmServer = NetworkUtils.createConnection(targ.getAddress(), port);
                 //if everything went well then we can send the damn file
                 //send the packet to the harm target
                 if(commLink.sendPacket(harmServer, MessageType.UPLOAD, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.UPLOAD), true) == MessageType.ACK){
@@ -101,6 +111,10 @@ public class ChunkDistributor {
                     ex.printStackTrace();
                 }
                 attempts++;
+            }
+            catch (RuntimeException ex){
+                ex.printStackTrace();
+                break;
             }
         }
 

@@ -40,11 +40,11 @@ public class JcpRequestHandler implements Runnable {
         }
         System.out.println(NetworkUtils.timeStamp(1) + "Waiting...");
         // will keep on listening for requests
-        while (true) {
+        while (running) {
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();
-                System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + client);
+                System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection from JCP client: " + client);
                 // receive packet on the socket link
                 TcpPacket req = commLink.receivePacket(client);
 

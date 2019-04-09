@@ -1,5 +1,8 @@
 package app;
 
+import app.LeaderUtils.IndexManager;
+import app.chunk_utils.IndexFile;
+import app.chunk_utils.Indexer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -16,11 +19,11 @@ public class ListenerThread implements Runnable{
 
     private final int serverPort = 11114;
     private boolean running = true;
-
-
+    private boolean verbose = false;
+    private volatile IndexFile index;
 
     public ListenerThread(){}
-
+    public ListenerThread(IndexFile ind){index = ind;}
 
     @Override
     public void run() {
@@ -36,31 +39,35 @@ public class ListenerThread implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for health check or Leader Election requests..");
+        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for health check, Leader Election requests, or updates");
         // will keep on listening for requests
         while (running) {
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();
-                System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + client);
-
+                if (verbose){System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + client);}
                 // receive packet on the socket link
                 TcpPacket req = commLink.receivePacket(client);
 
                 //checking for request type if health check
                 if (req.getMessageType() == MessageType.HEALTH_CHECK){
-                    System.out.println("Received health Check request");
+                    if (verbose){System.out.println("Received health Check request");}
                     executorService.submit(new HealthCheckResponder(client,
                             "SUCCESS",
                             getTotalSpaceFromHarms(),
                             Module.STALKER));
                 }
 
-                //@Masroor add the Leader election logic here
+                //When a leader request is recieved
                 else if(req.getMessageType() == MessageType.LEADER){
                     // reply to with leader
-                    executorService.execute(new LeaderResponder(client));
+                    executorService.submit(new LeaderResponder(client));
 
+                }
+                else if(req.getMessageType() == MessageType.UPDATE){
+                    // Update the indexfile
+                    commLink.sendResponse(client, MessageType.ACK);
+                    executorService.submit(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
                 }
             } catch (IOException e) {
                 e.printStackTrace();

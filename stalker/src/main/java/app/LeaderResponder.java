@@ -19,6 +19,7 @@ import java.util.Map;
 
 public class LeaderResponder implements Runnable {
 
+    private static boolean verbose = false;
     private Socket socket;
     private static HashMap<Integer, String> stalkerMap;   // stalker list
     private static List<Integer> ids;                   // stalker uuids
@@ -35,7 +36,8 @@ public class LeaderResponder implements Runnable {
     {
         // create a election packet and send it to this host
         CommsHandler commsHandler = new CommsHandler();
-        commsHandler.sendPacketWithoutAck(this.socket, MessageType.ELECTION,electionPakcet());
+        commsHandler.sendResponse(this.socket, MessageType.ACK);
+        commsHandler.sendPacketWithoutAck(this.socket, MessageType.ELECTION, electionPacket());
 
         try{
             socket.close();
@@ -45,21 +47,20 @@ public class LeaderResponder implements Runnable {
     }
 
     // Response Packet not using rn because assuming everyone knows everyone
-    public static String electionPakcet()
+    public static String electionPacket()
     {
         // entry.getValue(); // get the IP of the this UUID
         // entry.getKey();   // uuid;
         int leader = ids.get(0);
-        ElectionPacket elecPacket = new ElectionPacket(String.valueOf(stalkerMap.get(leader)), String.valueOf(ids.get(0)));
+        ElectionPacket elecPacket = new ElectionPacket(String.valueOf(leader), String.valueOf(stalkerMap.get(leader)));
         String electionPkt = "";
         ObjectMapper mapper = new ObjectMapper();
         try {
-            System.out.println("Sending out broadcast with signature: " + mapper.writeValueAsString(elecPacket) + "\n");
+            if (verbose){System.out.println("Sending out broadcast with signature: " + mapper.writeValueAsString(elecPacket) + "\n");}
             electionPkt = mapper.writeValueAsString(elecPacket);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
         return electionPkt;
 
     }
@@ -84,7 +85,7 @@ public class LeaderResponder implements Runnable {
                 //sending the health check request
                 // create a election packet and send it to this host
                 CommsHandler commsHandler = new CommsHandler();
-                String electionPacket = electionPakcet();
+                String electionPacket = electionPacket();
                 commsHandler.sendPacketWithoutAck(socket, MessageType.ELECTION, electionPacket);
 
                 // listen for other people leader

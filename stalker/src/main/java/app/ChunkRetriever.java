@@ -7,10 +7,13 @@ package app;
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Map;
 
 import app.chunk_utils.Chunk;
 import app.chunk_utils.IndexEntry;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javax.xml.soap.Node;
 
 public class ChunkRetriever {
     private boolean debug = false;
@@ -42,16 +45,22 @@ public class ChunkRetriever {
     //in the future will retrieve it from a remote node
     public boolean retrieveChunk(Chunk c){
         //get the map of harm ids
-        HashMap<Integer, String > m = NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
+        //HashMap<Integer, String > m = NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
+        Map<Integer, NodeAttribute> n = NetworkUtils.getNodeMap("config/harm.list");
         int attempts = 0;
         for (Integer s : c.getReplicas()){
+            NodeAttribute targ = n.get(s);
             while(true){
+                //no pint in checking if target is dead
+                if (!targ.isAlive()){
+                    break;
+                }
                 if (attempts == 3){
                     System.out.println("Failed to receive file from HARM target after multiple attempts");
                     break;
                 }
                 try{
-                    Socket harmServer = NetworkUtils.createConnection(m.get(s), 22222);
+                    Socket harmServer = NetworkUtils.createConnection(targ.getAddress(), 22222);
                     if(commLink.sendPacket(harmServer, MessageType.DOWNLOAD, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.DOWNLOAD), true) == MessageType.ACK){
                         FileStreamer fileStreamer = new FileStreamer(harmServer);
                         fileStreamer.receiveFileFromSocket(chunkDir + c.getUuid());

@@ -1,10 +1,7 @@
 package app.handlers;
 
 import app.*;
-import app.chunk_utils.Chunk;
-import app.chunk_utils.IndexEntry;
-import app.chunk_utils.IndexFile;
-import app.chunk_utils.Indexer;
+import app.chunk_utils.*;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -60,14 +57,15 @@ public class DeleteServiceHandler implements Runnable {
             }
 //          4. Send done status to leader
             commsLink.sendResponse(leader, MessageType.DONE);
-
+            commsLink.sendPacket(leader, MessageType.DELETE, Indexer.serializeUpdate(new IndexUpdate(MessageType.DELETE, toRemove)), false);
             try {
                 TcpPacket t = commsLink.receivePacket(leader);
                 if(t.getMessageType() == MessageType.ACK){
                     //we are done with the connection to the leader
                     //then update index by removing the entry
-                    Indexer.removeEntry(index, toRemove);
-                    Indexer.saveToFile(index);
+
+                    //Indexer.removeEntry(index, toRemove);
+                    //Indexer.saveToFile(index);
                     System.out.println("File removed from system!");
                     commsLink.sendResponse(socket, MessageType.ACK);
                     leader.close();

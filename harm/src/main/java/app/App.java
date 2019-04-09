@@ -20,7 +20,7 @@ public class App {
 
 
         //Starting the listenerthread for health check requests
-        Thread listenerThread = new Thread(new ListenerThread(true));
+        Thread listenerThread = new Thread(new ListenerThread(false));
         listenerThread.start();
 
 

@@ -14,15 +14,19 @@ import java.util.List;
 public class App {
 
     private static int leaderUuid = -1;
-
+    private static volatile IndexFile ind;
     public int getLeaderUuid()
     {
         return leaderUuid;
     }
 
     public static void main(String[] args) {
-
+        ind = Indexer.loadFromFile();
         int discoveryinterval = 15;
+        //starting listener thread for health check and leader election
+        Thread listenerForHealth = new Thread( new ListenerThread(ind));
+        listenerForHealth.start();
+
         //First thing to do is locate all other stalkers and print the stalkers to file
         //check the netDiscovery class to see where the file is being created
         Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, discoveryinterval, false));
@@ -41,29 +45,23 @@ public class App {
         System.out.println("This Stalker's macID" + NetworkUtils.getMacID());
         int test = 0;
         initStalker();
-        IndexFile ind = Indexer.loadFromFile();
+
         //ind.summary();
         System.out.println(NetworkUtils.timeStamp(1) + "Stalker Online");
-        //testing
-
-        //starting listener thread for health check and leader election
-        Thread listenerForHealth = new Thread( new ListenerThread());
-        listenerForHealth.start();
-
-
 
         //starting task for health checks on STALKERS and HARM targets
-        Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, true));
+        Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, false));
         healthChecker.start();
         String stalkerList = NetworkUtils.fileToString("config/stalkers.list");
         String harmlist = NetworkUtils.fileToString("config/harm.list");
 
         // initiaze ids
-        List<Integer> ids = NetworkUtils.mapToSList(NetworkUtils.mapFromJson(stalkerList));
+
 
         //election based on networkDiscovery
         while (true){
             // Leader election by asking for a leader
+            List<Integer> ids = NetworkUtils.mapToSList(NetworkUtils.mapFromJson(stalkerList));
             LeaderCheck leaderchecker = new LeaderCheck();
             leaderchecker.election();
             leaderUuid = LeaderCheck.getLeaderUuid();
@@ -100,6 +98,16 @@ public class App {
                     }
                     break;
                 case 2:
+                    Thread vice = new Thread(new JcpRequestHandler(ind));
+//                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
+//                jcpRequestHandler.run();
+                    vice.start();
+                    try {
+                        vice.join();
+                    }
+                    catch(InterruptedException e){
+                        e.printStackTrace();
+                    }
                     break;
             }
         }

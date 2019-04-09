@@ -21,12 +21,12 @@ public class IndexFile {
         }
     }
 
-    public IndexEntry search(String filename){
+    public synchronized IndexEntry search(String filename){
         return(entries.get(UUID.nameUUIDFromBytes(filename.getBytes()).toString()));
     }
 
     //get the info to be sent
-    public List<String> fileList(){
+    public synchronized List<String> fileList(){
         List<String> temp = new ArrayList<>();
         for(IndexEntry e: entries.values()){
             temp.add(e.fileName());
@@ -34,11 +34,11 @@ public class IndexFile {
         return temp;
     }
 
-    public void add(IndexEntry e){
+    public synchronized void add(IndexEntry e){
         entries.put(UUID.nameUUIDFromBytes(e.fileName().getBytes()).toString(), e);
     }
-    public void remove(IndexEntry e){entries.remove(UUID.nameUUIDFromBytes(e.fileName().getBytes()).toString());}
-    public void indexChunks(IndexEntry e){
+    public synchronized void remove(IndexEntry e){entries.remove(UUID.nameUUIDFromBytes(e.fileName().getBytes()).toString());}
+    public synchronized void indexChunks(IndexEntry e){
         for (Chunk c : e.getChunkList()){
             chunkIndex.put(c.getUuid(), c.getReplicas());
         }
