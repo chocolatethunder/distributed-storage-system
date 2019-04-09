@@ -58,8 +58,8 @@ public class App {
         while (!connected){
             //we will wait for network discovery to do its thing
             wait((disc_timeout * 1000) + 5000);
-            stalkerList = NetworkUtils.getStalkerList(stalker_path);
-            harmlist = NetworkUtils.getNodeMap(harm_path);
+            stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
+            harmlist = NetworkUtils.getNodeMap(cfg.getHarm_list_path());
             try{
                 if (harmlist != null && !harmlist.isEmpty()){
                 }
