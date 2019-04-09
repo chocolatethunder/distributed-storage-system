@@ -3,7 +3,7 @@
 
 # Ignore Gradle build output directory
 build
-.idea
+*.idea
 .idea/workspace.xml
 *.xml
 *.index
@@ -11,4 +11,5 @@ build
 *.xml
 .idea/workspace.xml
 local.properties
-.list
+*.list
+*.class
