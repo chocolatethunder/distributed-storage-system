@@ -92,9 +92,9 @@ public class App {
         //main loop
         while (true){
             // Leader election by asking for a leader
-            //LeaderCheck leaderchecker = new LeaderCheck();
-            //leaderchecker.election();
-            //leaderUuid = LeaderCheck.getLeaderUuid();
+            LeaderCheck leaderchecker = new LeaderCheck();
+            leaderchecker.election();
+            leaderUuid = LeaderCheck.getLeaderUuid();
 
             int role = ElectionUtils.identifyRole(stalkerList,leaderUuid);
             if (role != 0){
@@ -179,7 +179,7 @@ public class App {
         boolean success = false;
         while (!success) {
             try {
-                Socket leader = NetworkUtils.createConnection(NetworkUtils.getStalkerMap(stalker_path).get(uuid), cfg.getLeader_report());
+                Socket leader = NetworkUtils.createConnection(NetworkUtils.getStalkerMap(cfg.getStalker_list_path()).get(uuid), cfg.getLeader_report());
                 if (leader != null) {
                     //get confirmation from leader
                     if (commLink.sendPacket(leader, MessageType.CONFIRM, "", true) == MessageType.CONFIRM) {
