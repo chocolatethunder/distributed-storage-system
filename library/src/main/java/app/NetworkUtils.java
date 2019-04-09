@@ -67,10 +67,12 @@ public class NetworkUtils {
         Calendar cal = Calendar.getInstance();
         Date date = cal.getTime();
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
+
         String formattedDate = dateFormat.format(date);
         switch (option) {
             case 0:
-                formattedDate = "---__--__--__--__--> " + formattedDate;
+                String day = (new SimpleDateFormat("EEEE, dd/MM/yyyy")).format(date);
+                formattedDate = "<------------>" + day + " : " +  formattedDate + "<------------>";
                 break;
             case 1:
                 formattedDate = formattedDate + " --->>>: ";
@@ -407,5 +409,36 @@ public class NetworkUtils {
         return attributes;
     }
 
+    public static void initDirs(List<File> directories, boolean clean){
+        //clear chunk folder
+        for (File theDir : directories){
+            if (!theDir.exists()) {
+                System.out.println("creating directory: " + theDir.getName());
+                boolean result = false;
+                try{
+                    theDir.mkdir();
+                    result = true;
+                }
+                catch(SecurityException se){
+                    //handle it
+                }
+                if(result) {
+                    System.out.println("DIR created");
+                }
+            }
+// if the directory does not exist, create it
 
+        }
+        if (clean){
+            //delete any files in these folders
+            for (int i = 1; i < directories.size(); i++){
+                File[] folder_contents = directories.get(i).listFiles();
+                if(folder_contents != null) {
+                    for (File f : folder_contents) {
+                        f.delete();
+                    }
+                }
+            }
+        }
+    }
 }

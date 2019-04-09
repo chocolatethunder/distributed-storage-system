@@ -26,7 +26,6 @@ public class App {
 
     public static void main(String[] args) {
         initStalker();
-
         ind = Indexer.loadFromFile();
         int discoveryinterval = 5;
         //starting listener thread for health check and leader election
@@ -73,7 +72,6 @@ public class App {
         }
         System.out.println(NetworkUtils.timeStamp(1) + "System discovery complete!");
         int test = 0;
-        initStalker();
         //starting task for health checks on STALKERS and HARM targets
         Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, false));
         healthChecker.start();
@@ -139,6 +137,16 @@ public class App {
 
     }
 
+    public static void initStalker(){
+        List<File> directories = new ArrayList<>();
+        directories.add(new File("temp"));
+        directories.add(new File("config"));
+        directories.add(new File("index"));
+        directories.add(new File("temp/chunks"));
+        directories.add(new File("temp/toChunk"));
+        directories.add(new File("temp/reassembled"));
+        NetworkUtils.initDirs(directories, true);
+    }
     //will block worker from doing anythin until the leader is confirmed
     public static void getConfirmation(int uuid) {
         CommsHandler commLink = new CommsHandler();
@@ -172,16 +180,7 @@ public class App {
         }
     }
     //cleans chunk folders on startup
-    public static void initStalker(){
-        //clear chunk folder
-        List<File> directories = new ArrayList<>();
-        directories.add(new File("temp"));
-        directories.add(new File("config"));
-        directories.add(new File("index"));
-        directories.add(new File("temp/chunks"));
-        directories.add(new File("temp/toChunk"));
-        directories.add(new File("temp/reassembled"));
-
+    public static void initDirs(List<File> directories, boolean clean){
         for (File theDir : directories){
             if (!theDir.exists()) {
                 System.out.println("creating directory: " + theDir.getName());
@@ -200,17 +199,19 @@ public class App {
 // if the directory does not exist, create it
 
         }
-        //delete any files in these folders
-        for (int i = 1; i < directories.size(); i++){
-            File[] folder_contents = directories.get(i).listFiles();
-            if(folder_contents != null) {
-                for (File f : folder_contents) {
+
+        if (clean){
+            //delete any files in these folders
+            for (int i = 1; i < directories.size(); i++){
+                File[] folder_contents = directories.get(i).listFiles();
+                if(folder_contents != null) {
+                    for (File f : folder_contents) {
                         f.delete();
                     }
                 }
             }
         }
-
+    }
 
 
 

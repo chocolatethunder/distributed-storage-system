@@ -5,6 +5,8 @@ package app;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -13,7 +15,11 @@ public class App {
 
     public static void main(String[] args) {
 
-        initHarm();
+        List<File> dirs = new ArrayList();
+        dirs.add(new File("storage"));
+        dirs.add(new File("logs"));
+
+        NetworkUtils.initDirs(dirs, false);
         //this will always be running
         Thread discManager = new Thread(new DiscoveryManager(Module.HARM, 20, true));
         discManager.start();
@@ -83,27 +89,5 @@ public class App {
             Thread.currentThread().interrupt();
         }
 
-    }
-
-
-    //cleans chunk folders on startup
-    public static void initHarm(){
-        //clear chunk folder
-        File theDir = new File("storage");
-        // if the directory does not exist, create it
-        if (!theDir.exists()) {
-            System.out.println("creating storage directory: " + theDir.getName());
-            boolean result = false;
-            try{
-                theDir.mkdir();
-                result = true;
-            }
-            catch(SecurityException se){
-                se.printStackTrace();
-            }
-            if(result) {
-                System.out.println("DIR created");
-            }
-        }
     }
 }

@@ -6,14 +6,9 @@
 package app;
 import java.io.*;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.Map;
-
 import app.chunk_utils.Chunk;
 import app.chunk_utils.IndexEntry;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import javax.xml.soap.Node;
 
 public class ChunkRetriever {
     private boolean debug = false;

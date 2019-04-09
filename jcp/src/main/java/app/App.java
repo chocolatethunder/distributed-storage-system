@@ -9,8 +9,6 @@ import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
