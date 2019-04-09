@@ -158,7 +158,6 @@ public class App {
         stalker_path = cfg.getStalker_list_path();
         Indexer.init(cfg.getIndex_file_path());
         NetworkUtils.loadConfig(cfg);
-
     }
 
     public static void initStalker(){
