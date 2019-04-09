@@ -52,12 +52,16 @@ public class ConfigFile {
         this.conf_path = config_path;
     }
 
-
-    public String getConf_path() { return conf_path; }
-    public void setConf_path(String conf_path) { this.conf_path = conf_path; }
     public boolean isRandom() { return random; }
     public void setRandom(boolean random) { this.random = random; }
 
+    public String getConf_path() {
+        return conf_path;
+    }
+
+    public void setConf_path(String conf_path) {
+        this.conf_path = conf_path;
+    }
 
     public int getChunk_count() {
         return chunk_count;
@@ -187,6 +191,14 @@ public class ConfigFile {
         this.leader_report = leader_report;
     }
 
+    public int getLeader_admin_port() {
+        return leader_admin_port;
+    }
+
+    public void setLeader_admin_port(int leader_admin_port) {
+        this.leader_admin_port = leader_admin_port;
+    }
+
     public int getElection_port() {
         return election_port;
     }
@@ -241,12 +253,5 @@ public class ConfigFile {
 
     public void setConfig_path(String config_path) {
         this.config_path = config_path;
-    }
-    public int getLeader_admin_port() {
-        return leader_admin_port;
-    }
-
-    public void setLeader_admin_port(int leader_admin_port) {
-        this.leader_admin_port = leader_admin_port;
     }
 }

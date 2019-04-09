@@ -15,6 +15,7 @@ import java.util.Map;
 
 public class App {
 
+
     private static int leaderUuid = -1;
     private static volatile IndexFile ind;
     public int getLeaderUuid()
@@ -24,19 +25,20 @@ public class App {
     private static String stalker_path;
     private static String harm_path;
     private static int disc_timeout;
-    private static int debug_mode;
+    private static int debug_mode = 3;
 
 
     public static void main(String[] args) {
-
-        ConfigManager.loadFromFile("config/config.cfg", "default", true);
-
-
-
         //debugging modes: 0 - none; 1 - message only; 2 - stack traces only; 3 - stack and
-        Debugger.setMode(debug_mode);
+        Debugger.setMode(3);
         Debugger.toggleFileMode();
+
         initStalker();
+        ConfigManager.loadFromFile("config/config.cfg", "default", true);
+        loadConfig(ConfigManager.getCurrent());
+        System.out.println(ConfigManager.getCurrent().getHarm_list_path());
+
+
         ind = Indexer.loadFromFile();
 
         //starting listener thread for health check and leader election
@@ -48,7 +50,7 @@ public class App {
         Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, disc_timeout, false));
         discManager.start();
         boolean connected = false;
-        Debugger.log("Stalker Main: This Stalker's macID" + NetworkUtils.getMacID() + "\n\n", null);
+        Debugger.log("Stalker Main: This Stalker's macID: " + NetworkUtils.getMacID() + "\n\n", null);
         Debugger.log("Stalker Main: Discovering nodes on network...", null);
 
         List<Integer> stalkerList = null;
@@ -90,9 +92,9 @@ public class App {
         //main loop
         while (true){
             // Leader election by asking for a leader
-            LeaderCheck leaderchecker = new LeaderCheck();
-            leaderchecker.election();
-            leaderUuid = LeaderCheck.getLeaderUuid();
+            //LeaderCheck leaderchecker = new LeaderCheck();
+            //leaderchecker.election();
+            //leaderUuid = LeaderCheck.getLeaderUuid();
 
             int role = ElectionUtils.identifyRole(stalkerList,leaderUuid);
             if (role != 0){
@@ -169,7 +171,6 @@ public class App {
         directories.add(new File("temp/toChunk"));
         directories.add(new File("temp/reassembled"));
         NetworkUtils.initDirs(directories, true, 4);
-        loadConfig(ConfigManager.getCurrent());
     }
     //will block worker from doing anythin until the leader is confirmed
     public static boolean getConfirmation(int uuid) {

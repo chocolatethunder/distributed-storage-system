@@ -114,11 +114,17 @@ public class NetworkUtils {
         return socket;
     }
 
+    public static String fileToString(String fileName){
+        return(fileToString(fileName, false));
+    }
     //turn a file to string to be read by objectmapper
-    public static synchronized String fileToString(String fileName) {
+    public static synchronized String fileToString(String fileName, boolean remove_newline) {
         String fileString = "";
         try {
             fileString = new String(Files.readAllBytes(Paths.get(fileName)), StandardCharsets.UTF_8);
+            if (remove_newline){
+                fileString = newLineRemove(fileString);
+            }
         } catch (IOException e) {
             Debugger.log("", e);
             return (null);
@@ -159,11 +165,15 @@ public class NetworkUtils {
         return list;
     }
 
+    public static boolean toFile(String path, Object s){return (toFile(path, s, false));}
     //print an object to a file as json
-    public static synchronized boolean toFile(String path, Object s) {
+    public static synchronized boolean toFile(String path, Object s, boolean make_readable) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             String jsonInString = mapper.writeValueAsString(s);
+            if (make_readable){
+                jsonInString = newLineInsert(jsonInString);
+            }
             PrintWriter out = new PrintWriter(path);
             out.print(jsonInString);
             out.close();
@@ -173,6 +183,25 @@ public class NetworkUtils {
         }
         return true;
     }
+
+    public static String newLineRemove(String to_convert){
+        String temp = "";
+        to_convert.replaceAll("\n", "");
+        return(temp);
+    }
+
+    public static String newLineInsert(String to_convert){
+        String temp = "";
+        for( int i=0;i<to_convert.length();i++){
+            temp += to_convert.charAt(i);
+            if (to_convert.charAt(i) == ','){
+                temp += "\n";
+            }
+        }
+        return(temp);
+    }
+
+
 
 
     // gets the MAC address of the System

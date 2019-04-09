@@ -37,7 +37,6 @@ public class App {
         try {
             //initializing harm server
             HARM_server = new ServerSocket(22222);
-
         } catch (IOException e) {
             Debugger.log("", e);
         }
