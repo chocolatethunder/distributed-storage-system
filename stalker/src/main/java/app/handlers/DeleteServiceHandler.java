@@ -63,7 +63,7 @@ public class DeleteServiceHandler implements Runnable {
                 if(t.getMessageType() == MessageType.ACK){
                     //we are done with the connection to the leader
                     //then update index by removing the entry
-                    
+
                     //Indexer.removeEntry(index, toRemove);
                     //Indexer.saveToFile(index);
                     System.out.println("File removed from system!");
