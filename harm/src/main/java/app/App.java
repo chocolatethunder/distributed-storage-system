@@ -31,7 +31,7 @@ public class App {
             e.printStackTrace();
         }
         System.out.println(NetworkUtils.timeStamp(1) + "Waiting...");
-
+        // TODO -  Add Periodic Health Checks (call HealthStat.healthCheck(IndexFile) for a check up and HealthStat.status() for a report)
         // will keep on listening for requests from STALKERs
         while (true) {
             try {
