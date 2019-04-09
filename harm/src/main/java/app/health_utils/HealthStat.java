@@ -31,6 +31,7 @@ public class HealthStat{
     // Function to be called for periodic health check
     // preferably once every 1 minute, this can get pretty intensive computational-power wise
     public void healthCheck(IndexFile ind){
+        System.out.println("Commencing Health Check");
         refresh();
         Map<String, String> entries = ind.getEntries();
         // Looping through the entries and checking the files
@@ -62,7 +63,7 @@ public class HealthStat{
                 // eq, good  hash do nothing (?)
             }else{
                 // corrupted, add to list
-                System.out.println(entry.getKey() + " is corrupted.");
+                System.out.println(entry.getKey() + " is corrupted, adding to corrupted list.");
                 corruptList.put(entry.getKey(),entry.getValue());
             }
         }
@@ -71,6 +72,7 @@ public class HealthStat{
     // Function to be called for Health Report
     // returns a nicely formatted string for report
     public String status(){
+        System.out.println("Requesting Health Report");
         ObjectMapper mapper = new ObjectMapper();
         String strRes = "";
         if(corruptList.isEmpty()) {
@@ -82,6 +84,7 @@ public class HealthStat{
                 e.printStackTrace();
                 System.out.println("Error generating response message.");
             }
+            System.out.println(strRes);
             return strRes;
         }
         // Corruption detected
@@ -92,6 +95,7 @@ public class HealthStat{
             e.printStackTrace();
             System.out.println("Error generating response message.");
         }
+        System.out.println(strRes);
         return strRes;
     }
 
