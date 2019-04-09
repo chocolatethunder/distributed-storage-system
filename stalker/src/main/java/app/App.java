@@ -21,24 +21,31 @@ public class App {
     {
         return leaderUuid;
     }
-    private static final String stalker_path = "config/stalkers.list";
-    private static final String harm_path = "config/stalkers.list";
+    private static String stalker_path;
+    private static String harm_path;
+    private static int disc_timeout;
+    private static int debug_mode;
+
 
     public static void main(String[] args) {
-        //debugging modes: 0 - none; 1 - message only; 2 - stack traces only; 3 - stack and
-        Debugger.setMode(3);
-        Debugger.toggleFileMode();
 
+        ConfigManager.loadFromFile("config/config.cfg", "default", true);
+
+
+
+        //debugging modes: 0 - none; 1 - message only; 2 - stack traces only; 3 - stack and
+        Debugger.setMode(debug_mode);
+        Debugger.toggleFileMode();
         initStalker();
         ind = Indexer.loadFromFile();
-        int discoveryinterval = 5;
+
         //starting listener thread for health check and leader election
         Thread listenerForHealth = new Thread( new ListenerThread(ind));
         listenerForHealth.start();
 
         //First thing to do is locate all other stalkers and print the stalkers to file
         //check the netDiscovery class to see where the file is being created
-        Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, discoveryinterval, false));
+        Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, disc_timeout, false));
         discManager.start();
         boolean connected = false;
         Debugger.log("Stalker Main: This Stalker's macID" + NetworkUtils.getMacID() + "\n\n", null);
@@ -51,7 +58,7 @@ public class App {
         //wait for at least 2 connections
         while (!connected){
             //we will wait for network discovery to do its thing
-            wait((discoveryinterval * 1000) + 5000);
+            wait((disc_timeout * 1000) + 5000);
             stalkerList = NetworkUtils.getStalkerList(stalker_path);
             harmlist = NetworkUtils.getNodeMap(harm_path);
             try{
@@ -61,7 +68,7 @@ public class App {
                     Debugger.log("Stalker Main: No HARM targets detected...", null);
                 }
 
-                if (stalkerList != null && stalkerList.size() >= 2){
+                if (stalkerList != null && stalkerList.size() >= 3){
                     connected = true;
                 }
                 else{
@@ -79,7 +86,8 @@ public class App {
         //starting task for health checks on STALKERS and HARM targets
         Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, false));
         healthChecker.start();
-        //election based on networkDiscovery
+        //election based on networkDiscovery results
+        //main loop
         while (true){
             // Leader election by asking for a leader
             LeaderCheck leaderchecker = new LeaderCheck();
@@ -88,6 +96,7 @@ public class App {
 
             int role = ElectionUtils.identifyRole(stalkerList,leaderUuid);
             if (role != 0){
+                //we kind of assume we'll get an indexfile from the leader
                 getConfirmation(leaderUuid);
             }
             switch (role){
@@ -96,11 +105,10 @@ public class App {
                     //This means that this STK is the leader
                     //create a priority comparator for the Priority queue
                     CRUDQueue syncQueue = new CRUDQueue();
-                    Thread t1 = new Thread(new StalkerRequestHandler(syncQueue));
+                    Thread t1 = new Thread(new StalkerRequestHandler(syncQueue, ind));
                     Thread t2 =  new Thread(new RequestAdministrator(syncQueue));
                     t1.start();
                     t2.start();
-
                     try{
                         t1.join();
                         t2.join();
@@ -140,28 +148,53 @@ public class App {
 
     }
 
+    public static void loadConfig(ConfigFile cfg){
+        disc_timeout = cfg.getStalker_update_freq();
+        debug_mode = cfg.getDebug_mode();
+        harm_path = cfg.getHarm_list_path();
+        stalker_path = cfg.getStalker_list_path();
+        Indexer.init(cfg.getIndex_file_path());
+
+    }
+
     public static void initStalker(){
         List<File> directories = new ArrayList<>();
         directories.add(new File("temp"));
         directories.add(new File("logs"));
         directories.add(new File("index"));
         directories.add(new File("config"));
+        directories.add(new File("index/index_file"));
+        directories.add(new File("index/lists"));
         directories.add(new File("temp/chunks"));
         directories.add(new File("temp/toChunk"));
         directories.add(new File("temp/reassembled"));
-        NetworkUtils.initDirs(directories, true, 3);
+        NetworkUtils.initDirs(directories, true, 4);
+        loadConfig(ConfigManager.getCurrent());
     }
     //will block worker from doing anythin until the leader is confirmed
-    public static void getConfirmation(int uuid) {
+    public static boolean getConfirmation(int uuid) {
         CommsHandler commLink = new CommsHandler();
         boolean success = false;
         while (!success) {
             try {
                 Socket leader = NetworkUtils.createConnection(NetworkUtils.getStalkerMap(stalker_path).get(uuid), 11112);
                 if (leader != null) {
+                    //get confirmation from leader
                     if (commLink.sendPacket(leader, MessageType.CONFIRM, "", true) == MessageType.CONFIRM) {
-                        success = true;
-                        Debugger.log("Leader has granted permission to start!", null);
+                        //get the indexfile from the leader
+                        IndexFile temp = Indexer.fromString(commLink.receivePacket(leader).getMessage());
+                        if (temp != null){
+                            ind = temp;
+                            Indexer.saveToFile(ind);
+                            Debugger.log("Stalker Main: IndexFile synced with leader.", null);
+                            Debugger.log("Stalker Main: Leader has granted permission to start!", null);
+                            leader.close();
+                            success = true;
+                            return true;
+                        }
+                        else{
+                            return false;
+                        }
                     }
                 } else {
                     wait(5000);
@@ -172,6 +205,7 @@ public class App {
             }
 
         }
+        return true;
     }
 
     public static void wait(int millis){

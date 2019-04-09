@@ -40,6 +40,23 @@ public class NetworkUtils {
         return(mapFromJson(fileToString(path)));
     }
 
+
+
+
+    public static void loadConfig(ConfigFile cfg){
+
+        STK_JCP = cfg.getSTK_JCP();
+        JCP_STK = cfg.getJCP_STK();
+
+        STK_HARM = cfg.getJCP_STK();
+        HARM_STK = cfg.getHARM_STK();
+
+        STK_STK_S = cfg.getSTK_STK_S();
+        STK_STK_R = cfg.getSTK_STK_R();
+    }
+
+
+
     //gets ports based on target and origin
     public static int[] getPortTargets(String origin, String target) {
         int[] ports;
@@ -234,6 +251,21 @@ public class NetworkUtils {
         }
         return serialRequest;
     }
+
+
+    //Create a serialized request to be sent with a TCP packet
+    public static String serializeObject(Object s) {
+        //print an object to a file as json
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                String jsonInString = mapper.writeValueAsString(s);
+                return(jsonInString);
+            } catch (IOException e) {
+                Debugger.log("", e);
+                return null;
+            }
+    }
+
 
     // returns the IP of the System that can be used for internet packet transfer
     public static String getIP() {

@@ -12,7 +12,7 @@ import app.NetworkUtils;
 //This class will be in control of the indexFiles
 //all these functions are probably going to need to be thread safe
 public class Indexer {
-    public static final String indexPath = "index/main.index";
+    public static String indexPath;
     //loads the json from file and converts it to an IndexFile object
     public static synchronized IndexFile loadFromFile(){
         ObjectMapper mapper = new ObjectMapper();
@@ -35,6 +35,21 @@ public class Indexer {
         }
         return ind.get();
     }
+
+    public static synchronized IndexFile fromString(String serial){
+        ObjectMapper mapper = new ObjectMapper();
+        Optional<IndexFile> ind = Optional.empty();
+        try{
+            ind = Optional.of(mapper.readValue(serial, IndexFile.class));
+        }
+        catch(Exception e){
+           Debugger.log("", e);
+           return null;
+        }
+        System.out.println("Indexer: Indexfile loaded from file.");
+        return ind.get();
+    }
+
 
     //Save index to file
     public static synchronized boolean saveToFile(IndexFile ind){
@@ -113,5 +128,10 @@ public class Indexer {
         }
         return(temp);
     }
+
+    public static void init(String i_p){
+        indexPath = i_p;
+    }
+
 
 }

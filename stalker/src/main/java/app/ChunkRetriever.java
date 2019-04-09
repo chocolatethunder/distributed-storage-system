@@ -13,7 +13,6 @@ import app.chunk_utils.IndexEntry;
 public class ChunkRetriever {
     private boolean debug = false;
     private String chunkDir;
-    private int port = 22222;
     private CommsHandler commLink;
     //hardcoded test variables
 

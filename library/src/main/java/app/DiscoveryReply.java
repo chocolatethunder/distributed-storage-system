@@ -12,12 +12,6 @@ public class DiscoveryReply implements Runnable {
     private DatagramSocket socket;
     private DatagramPacket packet;
     private byte[] req = new byte[1024];
-    private final int STK_JCP = 10000;
-    private final int JCP_STK = 11000;
-
-    private final int STK_HARM = 10001;
-    private final int HARM_STK = 11001;
-
     private boolean verbose;
     private static int listening_timeout;
     Module module;

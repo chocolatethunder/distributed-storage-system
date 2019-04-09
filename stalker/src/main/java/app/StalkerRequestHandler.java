@@ -3,6 +3,8 @@ package app;
 import app.LeaderUtils.CRUDQueue;
 import app.LeaderUtils.QueueEntry;
 import app.LeaderUtils.QueueHandler;
+import app.chunk_utils.IndexFile;
+import app.chunk_utils.Indexer;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -20,8 +22,10 @@ public class StalkerRequestHandler implements Runnable {
     private int serverPort = 11112;
     private boolean running = true;
     private CRUDQueue pQueue;
-    public StalkerRequestHandler(CRUDQueue q){
+    private static volatile IndexFile indexFile;
+    public StalkerRequestHandler(CRUDQueue q, IndexFile index){
         this.pQueue = q;
+        this.indexFile = index;
     }
     @Override
     public void run(){
@@ -50,6 +54,7 @@ public class StalkerRequestHandler implements Runnable {
                 if (req.getMessageType() == MessageType.CONFIRM){
                     //allow a Stalker to start working
                     commLink.sendPacket(client, MessageType.CONFIRM, "", true);
+                    commLink.sendPacket(client, MessageType.UPDATE, NetworkUtils.serializeObject(indexFile), false);
                 }
                 else{
                     //the socket can be closed client side
