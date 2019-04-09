@@ -14,7 +14,7 @@ public class ConfigFile {
     private int election_threshold_s = 3;
     private int election_threshold_h = 3;
 
-    private int stalker_update_freq = 20;
+    private int stalker_update_freq = 10;
     private int harm_update_freq = 10;
     private int jcp_update_freq = 5;
 

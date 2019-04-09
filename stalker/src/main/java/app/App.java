@@ -7,6 +7,8 @@ import app.LeaderUtils.CRUDQueue;
 import app.LeaderUtils.RequestAdministrator;
 import app.chunk_utils.Indexer;
 import app.chunk_utils.IndexFile;
+import sun.nio.ch.Net;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ public class App {
         Debugger.setMode(3);
         Debugger.toggleFileMode();
         initStalker();
+
         ConfigManager.loadFromFile("config/config.cfg", "default", true);
         cfg = ConfigManager.getCurrent();
         loadConfig(cfg);
@@ -154,6 +157,7 @@ public class App {
         harm_path = cfg.getHarm_list_path();
         stalker_path = cfg.getStalker_list_path();
         Indexer.init(cfg.getIndex_file_path());
+        NetworkUtils.loadConfig(cfg);
 
     }
 
