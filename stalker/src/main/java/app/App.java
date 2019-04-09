@@ -3,12 +3,87 @@
  */
 package app;
 
+import app.LeaderUtils.QueueEntry;
+import app.LeaderUtils.RequestAdministrator;
+import app.chunk_utils.Indexer;
+import app.chunk_utils.IndexFile;
+import org.apache.commons.io.FilenameUtils;
+import java.io.*;
+import java.util.PriorityQueue;
+import java.util.Comparator;
+
 public class App {
-    public String getGreeting() {
-      return "Hello world.";
-    }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+
+        //First thing to do is locate all other stalkers and print the stalkers to file
+
+
+        DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
+        DM.start();
+
+        int test = 0;
+        initStalker();
+        IndexFile ind = Indexer.loadFromFile();
+        //ind.summary();
+        System.out.println(NetworkUtils.timeStamp(1) + "Stalker Online");
+        //testing
+
+        //election based on networkDiscovery
+        int role = getRole();
+
+        switch (role){
+            case 0:
+                //This means that this STK is the leader
+                //create a priority comparator for the Priority queue
+                Comparator<QueueEntry> entryPriorityComparator = new Comparator<QueueEntry>() {
+                    @Override
+                    public int compare(QueueEntry q1, QueueEntry q2) {
+                        return q1.getPriority() - q2.getPriority();
+                    }
+                };
+                PriorityQueue<QueueEntry> syncQueue = new PriorityQueue<>(entryPriorityComparator);
+
+                StalkerRequestHandler stalkerCoordinator = new StalkerRequestHandler(syncQueue);
+                RequestAdministrator reqAdmin = new RequestAdministrator(syncQueue);
+                stalkerCoordinator.run();
+                reqAdmin.run();
+                break;
+            case 1:
+                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
+                jcpRequestHandler.run();
+                break;
+            case 2:
+                break;
+        }
     }
+
+    public static int getRole(){
+        return(1);
+    }
+
+    //cleans chunk folders on startup
+    public static void initStalker(){
+        //clear chunk folder
+        File chunk_folder = new File("temp/chunks/");
+        File[] chunk_folder_contents = chunk_folder.listFiles();
+
+        File temp_folder = new File("temp/toChunk/");
+        File[] temp_folder_contents = temp_folder.listFiles();
+
+        for(File f : chunk_folder_contents){
+            if (!FilenameUtils.getExtension(f.getName()).equals("empty")){
+                f.delete();
+            }
+        }
+        for(File f : temp_folder_contents){
+            if (!FilenameUtils.getExtension(f.getName()).equals("empty")){
+                f.delete();
+            }
+        }
+
+    }
+
+
 }
+
