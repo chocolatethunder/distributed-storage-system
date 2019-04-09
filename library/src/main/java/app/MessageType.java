@@ -23,6 +23,7 @@ public enum MessageType {
         HEALTH_CHECK,
         ELECTION,
         LEADER,
-        UPDATE
+        UPDATE,
+        CONFIRM
 
 }

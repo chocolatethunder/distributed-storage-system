@@ -18,7 +18,7 @@ public class Handler implements Runnable {
         this.socket = socket;
         this.requestType = packet.getMessageType();
         this.request = NetworkUtils.getPacketContents(packet);
-        this.storage_path = "../../storage/";
+        this.storage_path = "storage/";
         commLink = new CommsHandler();
     }
 

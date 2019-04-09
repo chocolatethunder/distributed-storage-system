@@ -7,9 +7,11 @@ import app.LeaderUtils.CRUDQueue;
 import app.LeaderUtils.RequestAdministrator;
 import app.chunk_utils.Indexer;
 import app.chunk_utils.IndexFile;
-import org.apache.commons.io.FilenameUtils;
 import java.io.*;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class App {
 
@@ -19,10 +21,14 @@ public class App {
     {
         return leaderUuid;
     }
+    private static final String stalker_path = "config/stalkers.list";
+    private static final String harm_path = "config/stalkers.list";
 
     public static void main(String[] args) {
+        initStalker();
+
         ind = Indexer.loadFromFile();
-        int discoveryinterval = 15;
+        int discoveryinterval = 5;
         //starting listener thread for health check and leader election
         Thread listenerForHealth = new Thread( new ListenerThread(ind));
         listenerForHealth.start();
@@ -30,45 +36,62 @@ public class App {
         //First thing to do is locate all other stalkers and print the stalkers to file
         //check the netDiscovery class to see where the file is being created
         Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, discoveryinterval, false));
-       // DiscoveryManager DM = new DiscoveryManager(Module.STALKER);
         discManager.start();
-        //we will wait for network discovery to do its thing
-        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for system discovery...");
-        try{
-            Thread.sleep((long)((discoveryinterval * 1000) + 5000));
-        }
-        catch (InterruptedException e){
-            e.printStackTrace();
+        boolean connected = false;
+        System.out.println("This Stalker's macID" + NetworkUtils.getMacID() + "\n\n");
+        System.out.println(NetworkUtils.timeStamp(1) + "Discovering nodes on network...");
+
+        List<Integer> stalkerList = null;
+        Map<Integer, NodeAttribute> harmlist = null;
+        int attempts = 0;
+
+        //wait for at least 2 connections
+        while (!connected){
+            //we will wait for network discovery to do its thing
+            wait((discoveryinterval * 1000) + 5000);
+            stalkerList = NetworkUtils.getStalkerList(stalker_path);
+            harmlist = NetworkUtils.getNodeMap(harm_path);
+            try{
+                if (harmlist != null && !harmlist.isEmpty()){
+                }
+                else{
+                    System.out.println(NetworkUtils.timeStamp(1) + " No HARM targets detected...");
+                }
+
+                if (stalkerList != null && stalkerList.size() >= 2){
+                    connected = true;
+                }
+                else{
+                    System.out.println(NetworkUtils.timeStamp(1) + "No STALKERs detected yet...");
+                    System.out.println(NetworkUtils.timeStamp(1) + "Waiting for servers to become available...");
+                }
+            }
+            catch(NullPointerException e){
+                e.printStackTrace();
+            }
+            attempts++;
         }
         System.out.println(NetworkUtils.timeStamp(1) + "System discovery complete!");
-
-        System.out.println("This Stalker's macID" + NetworkUtils.getMacID());
         int test = 0;
         initStalker();
-
-        //ind.summary();
-        System.out.println(NetworkUtils.timeStamp(1) + "Stalker Online");
-
         //starting task for health checks on STALKERS and HARM targets
         Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, false));
         healthChecker.start();
-        String stalkerList = NetworkUtils.fileToString("config/stalkers.list");
-        String harmlist = NetworkUtils.fileToString("config/harm.list");
-
         // initiaze ids
-
-
         //election based on networkDiscovery
         while (true){
             // Leader election by asking for a leader
-            List<Integer> ids = NetworkUtils.mapToSList(NetworkUtils.mapFromJson(stalkerList));
             LeaderCheck leaderchecker = new LeaderCheck();
             leaderchecker.election();
             leaderUuid = LeaderCheck.getLeaderUuid();
 
-            int role = ElectionUtils.identifyRole(ids,leaderUuid);
+            int role = ElectionUtils.identifyRole(stalkerList,leaderUuid);
+            if (role != 0){
+                getConfirmation(leaderUuid);
+            }
             switch (role){
                 case 0:
+                    System.out.println(NetworkUtils.timeStamp(1) + "<<<<<<<-----Leader Online----->>>>>>>");
                     //This means that this STK is the leader
                     //create a priority comparator for the Priority queue
                     CRUDQueue syncQueue = new CRUDQueue();
@@ -86,6 +109,7 @@ public class App {
                     }
                     break;
                 case 1:
+                    System.out.println(NetworkUtils.timeStamp(1) + "<<<<<<<-----Worker Online----->>>>>>>");
                     Thread jcpReq = new Thread(new JcpRequestHandler(ind));
 //                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
 //                jcpRequestHandler.run();
@@ -98,6 +122,7 @@ public class App {
                     }
                     break;
                 case 2:
+                    System.out.println(NetworkUtils.timeStamp(1) + "<<<<<<<-----Vice Leader Online----->>>>>>>");
                     Thread vice = new Thread(new JcpRequestHandler(ind));
 //                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
 //                jcpRequestHandler.run();
@@ -114,33 +139,79 @@ public class App {
 
     }
 
+    //will block worker from doing anythin until the leader is confirmed
+    public static void getConfirmation(int uuid) {
+        CommsHandler commLink = new CommsHandler();
+        boolean success = false;
+        while (!success) {
+            try {
+                Socket leader = NetworkUtils.createConnection(NetworkUtils.getStalkerMap(stalker_path).get(uuid), 11112);
+                if (leader != null) {
+                    if (commLink.sendPacket(leader, MessageType.CONFIRM, "", true) == MessageType.CONFIRM) {
+                        success = true;
+                        System.out.println("Leader has granted permission to start!");
+                    }
+                } else {
+                    wait(5000);
+                }
+            } catch (IOException e) {
+                wait(5000);
+                e.printStackTrace();
+            }
 
+        }
+    }
 
+    public static void wait(int millis){
+        try{
+            //wait for a bit
+            Thread.sleep((long)((millis)));
+        }
+        catch (InterruptedException ex){
+            ex.printStackTrace();
+        }
+    }
     //cleans chunk folders on startup
     public static void initStalker(){
         //clear chunk folder
-        File chunk_folder = new File("temp/chunks/");
+        List<File> directories = new ArrayList<>();
+        directories.add(new File("temp"));
+        directories.add(new File("config"));
+        directories.add(new File("index"));
+        directories.add(new File("temp/chunks"));
+        directories.add(new File("temp/toChunk"));
+        directories.add(new File("temp/reassembled"));
 
-        File[] chunk_folder_contents = chunk_folder.listFiles();
-        File temp_folder = new File("temp/toChunk/");
-        File[] temp_folder_contents = temp_folder.listFiles();
+        for (File theDir : directories){
+            if (!theDir.exists()) {
+                System.out.println("creating directory: " + theDir.getName());
+                boolean result = false;
+                try{
+                    theDir.mkdir();
+                    result = true;
+                }
+                catch(SecurityException se){
+                    //handle it
+                }
+                if(result) {
+                    System.out.println("DIR created");
+                }
+            }
+// if the directory does not exist, create it
 
-        if(chunk_folder_contents != null) {
-            for (File f : chunk_folder_contents) {
-                if (!FilenameUtils.getExtension(f.getName()).equals("empty")) {
-                    f.delete();
+        }
+        //delete any files in these folders
+        for (int i = 1; i < directories.size(); i++){
+            File[] folder_contents = directories.get(i).listFiles();
+            if(folder_contents != null) {
+                for (File f : folder_contents) {
+                        f.delete();
+                    }
                 }
             }
         }
-        if(temp_folder_contents != null) {
-            for (File f : temp_folder_contents) {
-                if (!FilenameUtils.getExtension(f.getName()).equals("empty")) {
-                    f.delete();
-                }
-            }
-        }
 
-    }
+
 
 
 }

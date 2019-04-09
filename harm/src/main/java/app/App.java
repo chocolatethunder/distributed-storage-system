@@ -13,17 +13,13 @@ public class App {
 
     public static void main(String[] args) {
 
+        initHarm();
         //this will always be running
         Thread discManager = new Thread(new DiscoveryManager(Module.HARM, 20, true));
         discManager.start();
-
-
-
         //Starting the listenerthread for health check requests
         Thread listenerThread = new Thread(new ListenerThread(false));
         listenerThread.start();
-
-
 
         int macID = NetworkUtils.getMacID();
         CommsHandler commLink = new CommsHandler();
@@ -87,5 +83,27 @@ public class App {
             Thread.currentThread().interrupt();
         }
 
+    }
+
+
+    //cleans chunk folders on startup
+    public static void initHarm(){
+        //clear chunk folder
+        File theDir = new File("storage");
+        // if the directory does not exist, create it
+        if (!theDir.exists()) {
+            System.out.println("creating storage directory: " + theDir.getName());
+            boolean result = false;
+            try{
+                theDir.mkdir();
+                result = true;
+            }
+            catch(SecurityException se){
+                se.printStackTrace();
+            }
+            if(result) {
+                System.out.println("DIR created");
+            }
+        }
     }
 }

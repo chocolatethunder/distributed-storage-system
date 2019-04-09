@@ -27,5 +27,37 @@ project(':jcp') {
         compile 'com.fasterxml.jackson.core:jackson-core:2.7.3'
         compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.3'
         compile 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
+
     }
 }
+
+task buildStalker(type: Copy) {
+   def stalkerDir = file("dist/stalker")
+   def stalkerDist = file('stalker/build/distributions/stalker-shadow-1.0.zip')
+   from zipTree(stalkerDist)
+   into stalkerDir
+
+}
+
+task buildHarm(type:Copy){
+   def harmDir = file("dist/harm")
+   def harmDist = file('harm/build/distributions/harm-shadow-1.0.zip')
+   from zipTree(harmDist)
+   into harmDir
+}
+
+task buildJcp(type:Copy){
+   def jcpDir = file("dist/jcp")
+   def jcpDist = file('jcp/build/distributions/jcp-shadow-1.0.zip')
+   from zipTree(jcpDist)
+   into jcpDir
+}
+
+task buildDist(dependsOn: [
+    buildStalker,
+    buildHarm,
+    buildJcp
+])
+
+
+

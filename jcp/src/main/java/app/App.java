@@ -10,6 +10,7 @@ import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +25,12 @@ public class App {
     static JTextArea consoleOutput = new JTextArea();
     static DefaultListModel listModel = new DefaultListModel();
     static RequestSender requestSender;
+    static boolean connected;
 
     //jcp main
     public static void main(String[] args) {
         int test  = 0;
-
+        initJCP();
         int discoveryTimeout = 5;
 
         // to capture total disk space in the system and will be updated with each health check
@@ -36,30 +38,42 @@ public class App {
         // value in bytes
         AtomicLong totalDiskSpace = new AtomicLong(0);
 
-
-
         System.out.println(NetworkUtils.timeStamp(1) + "JCP online");
         //make a discovery manager and start it, prints results to file
         //this beast will be running at all times
         Thread discManager = new Thread(new DiscoveryManager(Module.JCP, discoveryTimeout, false));
         discManager.start();
+        List<Integer> stalkerList;
+        Map<Integer, NodeAttribute> harmlist;
 
-        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for stalker list to update");
-        try{
-            Thread.sleep((discoveryTimeout * 1000) + 5000);
-        }
-        catch (InterruptedException e){
-            e.printStackTrace();
-        }
+        int attempts = 0;
+        //wait for at least 1 connection
+        while (!connected){
+            //we will wait for network discovery to do its thing
+            wait((discoveryTimeout * 1000) + 5000);
+            stalkerList = NetworkUtils.getStalkerList("config/stalkers.list");
+            try{
+                if (stalkerList != null && stalkerList.size() >= 1){
+                    connected = true;
+                }
+                else{
+                    System.out.println(NetworkUtils.timeStamp(1) + "No STALKERs detected yet...");
+                    System.out.println(NetworkUtils.timeStamp(1) + "Waiting for servers to become available...");
+                }
 
-        System.out.println(NetworkUtils.timeStamp(1) + "List updated!");
+            }
+            catch(NullPointerException e){
+                e.printStackTrace();
+            }
+            attempts++;
+        }
+        System.out.println(NetworkUtils.timeStamp(1) + "System ready to take requests!");
         initJFrame();
-        System.out.println("here");
-
         requestSender = RequestSender.getInstance();
         //starting health checker tasks for each stalker in the stalker list
         Thread healthChecker= new Thread(new HealthChecker(Module.JCP, totalDiskSpace, true));
         healthChecker.start();
+        retrieveFiles();
 
 
         //ip of stalker we'll just use the one at index 1 for now
@@ -91,81 +105,113 @@ public class App {
 //    //load a config (stalker ip) from file while we get network discovery working
     public static void retrieveFiles() {
 
-        Socket connection = connectToStalker();
-        //uncomment this:
-        listModel.clear();
-        List<String> fileList = requestSender.getFileList();
-        for (int i=0; i < fileList.size(); i++) {
-            listModel.addElement(fileList.get(i));
+        if (connected){
+            Socket connection = connectToStalker();
+            //uncomment this:
+            listModel.clear();
+            List<String> fileList = requestSender.getFileList();
+            for (int i=0; i < fileList.size(); i++) {
+                listModel.addElement(fileList.get(i));
+            }
+            //remove this:
+            listOfFiles.setModel(listModel);
+            consoleOutput.append("Listed files.\n");
+            System.out.println("Listed files.");
+            try{ connection.close();}
+            catch(IOException e){ e.printStackTrace();}
         }
-        //remove this:
-        listOfFiles.setModel(listModel);
-        consoleOutput.append("Listed files.\n");
-        System.out.println("Listed files.");
-        try{ connection.close();}
-        catch(IOException e){ e.printStackTrace();}
+        else{
+            consoleOutput.append("Connecting to server, please wait.\n");
+        }
+
     }
 
     public static void chooseFile() {
-        Socket connection = connectToStalker();
-        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-        int returnValue = jfc.showOpenDialog(null);
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = jfc.getSelectedFile();
+        if (connected){
+            Socket connection = connectToStalker();
+            JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+            int returnValue = jfc.showOpenDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = jfc.getSelectedFile();
 
-            String name = FilenameUtils.separatorsToUnix(selectedFile.getAbsolutePath());
-            System.out.println(name);
-            //remove this:
-            listModel.addElement(selectedFile.getName());
-            //uncomment this:
-            requestSender.sendFile(name);
-            consoleOutput.append("Uploaded " + selectedFile + "\n");
-            System.out.println("Uploaded " + selectedFile);
+                String name = FilenameUtils.separatorsToUnix(selectedFile.getAbsolutePath());
+                System.out.println(name);
+                //remove this:
+                listModel.addElement(selectedFile.getName());
+                //uncomment this:
+                requestSender.sendFile(name);
+                consoleOutput.append("Uploaded " + selectedFile + "\n");
+                System.out.println("Uploaded " + selectedFile);
+            }
+            try{ connection.close();}
+            catch(IOException e){ e.printStackTrace();}
+            retrieveFiles();
         }
-        try{ connection.close();}
-        catch(IOException e){ e.printStackTrace();}
-        retrieveFiles();
+        else{
+            consoleOutput.append("Connecting to server, please wait.\n");
+        }
+
 
 
     }
 
     public static void deleteFile() {
-        Socket connection = connectToStalker();
-        int index = listOfFiles.getSelectedIndex();
-        Object selectedFilename = listOfFiles.getSelectedValue();
-        //remove this:
-        listModel.removeElement(selectedFilename);
-        //remove this:
-        listOfFiles.setModel(listModel);
-        //uncomment this:
-        requestSender.deleteFile(selectedFilename.toString());
-        consoleOutput.append("Deleted " + selectedFilename.toString() + "\n");
-        System.out.println("Deleted " + selectedFilename.toString());
-        try{ connection.close();}
-        catch(IOException e){ e.printStackTrace();}
-        retrieveFiles();
+        if (connected){
+            Socket connection = connectToStalker();
+            int index = listOfFiles.getSelectedIndex();
+            Object selectedFilename = listOfFiles.getSelectedValue();
+            //remove this:
+            listModel.removeElement(selectedFilename);
+            //remove this:
+            listOfFiles.setModel(listModel);
+            //uncomment this:
+            requestSender.deleteFile(selectedFilename.toString());
+            consoleOutput.append("Deleted " + selectedFilename.toString() + "\n");
+            System.out.println("Deleted " + selectedFilename.toString());
+            try{ connection.close();}
+            catch(IOException e){ e.printStackTrace();}
+            retrieveFiles();
+        }
+        else{
+            consoleOutput.append("Connecting to server, please wait.\n");
+        }
+
 
     }
 
     public static void downloadFile() {
-        Socket connection = connectToStalker();
-        String selectedFilename = listOfFiles.getSelectedValue().toString();
-        //remove this?:
-        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int returnValue = jfc.showOpenDialog(null);
-        //
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = jfc.getSelectedFile();
-            //uncomment this:
-            requestSender.getFile(selectedFile + "/" + selectedFilename);
-            consoleOutput.append("Downloaded " + selectedFilename + " to " + selectedFile + "\n");
-            System.out.println("Downloaded " + selectedFilename + " to " + selectedFile);
+        if (connected){
+            Socket connection = connectToStalker();
+            String selectedFilename = listOfFiles.getSelectedValue().toString();
+            //remove this?:
+            JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int returnValue = jfc.showOpenDialog(null);
+            //
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = jfc.getSelectedFile();
+                //uncomment this:
+                requestSender.getFile(selectedFile + "/" + selectedFilename);
+                consoleOutput.append("Downloaded " + selectedFilename + " to " + selectedFile + "\n");
+                System.out.println("Downloaded " + selectedFilename + " to " + selectedFile);
+            }
+            try{ connection.close();}
+            catch(IOException e){ e.printStackTrace();}
         }
-        try{ connection.close();}
-        catch(IOException e){ e.printStackTrace();}
-    }
+        else{
+            consoleOutput.append("Connecting to server, please wait.\n");
+        }
 
+    }
+    public static void wait(int millis){
+        try{
+            //wait for a bit
+            Thread.sleep((long)((millis)));
+        }
+        catch (InterruptedException ex){
+            ex.printStackTrace();
+        }
+    }
     public static void initJFrame(){
         String request = null;
         String filename = null;
@@ -247,6 +293,38 @@ public class App {
         //bring window to front
         mainFrame.setAlwaysOnTop(true);
         mainFrame.setAlwaysOnTop(false);
+    }
+
+    //cleans chunk folders on startup
+    public static void initJCP(){
+        //clear chunk folder
+        File theDir = new File("config");
+        // if the directory does not exist, create it
+        if (!theDir.exists()) {
+            System.out.println("creating directory: " + theDir.getName());
+            boolean result = false;
+            try{
+                theDir.mkdir();
+                result = true;
+            }
+            catch(SecurityException se){
+                se.printStackTrace();
+            }
+            if(result) {
+                System.out.println("DIR created");
+            }
+        }
+
+        //delete any files in these folders
+        File[] folder_contents = theDir.listFiles();
+        if(folder_contents != null) {
+            for (File f : folder_contents) {
+                if (!FilenameUtils.getExtension(f.getName()).equals("empty")) {
+                    f.delete();
+                }
+            }
+        }
+
     }
 
 }

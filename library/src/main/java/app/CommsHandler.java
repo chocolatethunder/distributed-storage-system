@@ -1,6 +1,7 @@
 package app;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.util.Optional;
@@ -8,10 +9,12 @@ import java.net.Socket;
 
 public class CommsHandler {
 
-    public CommsHandler(){}
+    public CommsHandler() {
+    }
+
     //Send a tcp packet on a designated socket
     //if a request is being made it should be serialized JSON string of a request
-    public MessageType sendPacket(Socket socket, MessageType messageType, String content, boolean ack){
+    public MessageType sendPacket(Socket socket, MessageType messageType, String content, boolean ack) {
         TcpPacket receivedPacket = null;
         MessageType response = null;
         try {
@@ -24,7 +27,7 @@ public class CommsHandler {
             //Object to JSON in String
             String jsonInString = mapper.writeValueAsString(initialPacket);
             out.writeUTF(jsonInString);
-            if (ack){
+            if (ack) {
                 try {
                     // receiving packet back from STALKER
                     String received = in.readUTF();
@@ -36,7 +39,7 @@ public class CommsHandler {
                 }
             }
 
-        } catch (IOException  e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return response;
@@ -52,18 +55,18 @@ public class CommsHandler {
             String rec = new DataInputStream(socket.getInputStream()).readUTF();
             // reading the packet as object from json string
             receivedPacket = Optional.of(mapper.readValue(rec, TcpPacket.class));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return receivedPacket.get();
     }
 
-    public boolean sendResponse(Socket socket, MessageType messageType){
+    public boolean sendResponse(Socket socket, MessageType messageType) {
         return (sendResponse(socket, messageType, ""));
     }
+
     //send a response packet on a socket stream
-    public boolean sendResponse(Socket socket, MessageType messageType, String message){
+    public boolean sendResponse(Socket socket, MessageType messageType, String message) {
         ObjectMapper mapper = new ObjectMapper();
         TcpPacket sendAvail = new TcpPacket(messageType, message);
         String jsonInString;
@@ -72,29 +75,26 @@ public class CommsHandler {
             System.out.println(jsonInString);
             //write packet to port
             new DataOutputStream(socket.getOutputStream()).writeUTF(jsonInString);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return(true);
+        return (true);
     }
 
-    public boolean sendRequestToLeader(MessageType m){
-        try{
+    public boolean sendRequestToLeader(MessageType m) {
+        try {
             //connect to leader and send request
             //currently hard coded
             Socket leader = NetworkUtils.createConnection("192.168.1.121", 11112);
-            if (!(sendPacket(leader, m, "", true) == MessageType.ACK)){
+            if (!(sendPacket(leader, m, "", true) == MessageType.ACK)) {
                 return false;
-            }
-            else {
+            } else {
                 //everything worked out
                 //close the connection
                 leader.close();
                 return true;
             }
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             //should have another way to deal with failure here...
             return false;
@@ -103,7 +103,7 @@ public class CommsHandler {
         //Wait for leader to grant permission to start
     }
 
-    public Socket getLeaderResponse(int server_port){
+    public Socket getLeaderResponse(int server_port) {
         TcpPacket req;
         ServerSocket listener;
         Socket leader;
@@ -120,20 +120,21 @@ public class CommsHandler {
             return (null);
         }
         if (!(req.getMessageType() == MessageType.START)) {
-            System.out.println( NetworkUtils.timeStamp(1) + "Request denied by leader.");
-            return(null);
+            System.out.println(NetworkUtils.timeStamp(1) + "Request denied by leader.");
+            return (null);
         }
-        return(leader);
+        return (leader);
     }
 
     /**
      * This method only sends a packet does not wait for reply
+     *
      * @param socket
      * @param messageType
      * @param content
      * @return
      */
-    public MessageType sendPacketWithoutAck(Socket socket, MessageType messageType, String content){
+    public MessageType sendPacketWithoutAck(Socket socket, MessageType messageType, String content) {
 
         MessageType response = null;
         try {
@@ -146,7 +147,7 @@ public class CommsHandler {
             //Object to JSON in String
             String jsonInString = mapper.writeValueAsString(initialPacket);
             out.writeUTF(jsonInString);
-        } catch (IOException  e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return response;
