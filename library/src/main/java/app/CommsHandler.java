@@ -31,16 +31,17 @@ public class CommsHandler {
                 try {
                     // receiving packet back from STALKER
                     String received = in.readUTF();
-                    System.out.println(NetworkUtils.timeStamp(1) + "rec " + received);
+                    Debugger.log("Comm Link: received packet " + received, null);
                     receivedPacket = mapper.readValue(received, TcpPacket.class);
                     response = receivedPacket.getMessageType();
                 } catch (EOFException e) {
+                    Debugger.log("", e);
                     // do nothing end of packet
                 }
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
         return response;
     }
@@ -56,7 +57,7 @@ public class CommsHandler {
             // reading the packet as object from json string
             receivedPacket = Optional.of(mapper.readValue(rec, TcpPacket.class));
         } catch (Exception e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
         return receivedPacket.get();
     }
@@ -72,11 +73,11 @@ public class CommsHandler {
         String jsonInString;
         try {
             jsonInString = mapper.writeValueAsString(sendAvail);
-            System.out.println(jsonInString);
+            Debugger.log("Comm Link: response: " + jsonInString, null);
             //write packet to port
             new DataOutputStream(socket.getOutputStream()).writeUTF(jsonInString);
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
         return (true);
     }
@@ -95,7 +96,7 @@ public class CommsHandler {
                 return true;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
             //should have another way to deal with failure here...
             return false;
         }
@@ -110,17 +111,17 @@ public class CommsHandler {
         try {
             listener = new ServerSocket(server_port);
             leader = listener.accept();
+            Debugger.log("Comm Link: Connected to leader: ", null);
             System.out.println(NetworkUtils.timeStamp(1) + "Connected to leader: ");
             req = receivePacket(leader);
-            System.out.println(NetworkUtils.timeStamp(1) + "Permission from leader granted");
+            Debugger.log("Comm Link: Permission from leader granted", null);
             listener.close();
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println(NetworkUtils.timeStamp(1) + "Could not use server port");
+            Debugger.log("Comm Link: Could not use server port", e);
             return (null);
         }
         if (!(req.getMessageType() == MessageType.START)) {
-            System.out.println(NetworkUtils.timeStamp(1) + "Request denied by leader.");
+            Debugger.log("Comm Link: Request denied by leader.", null);
             return (null);
         }
         return (leader);
@@ -142,13 +143,11 @@ public class CommsHandler {
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             DataInputStream in = new DataInputStream((socket.getInputStream()));
             ObjectMapper mapper = new ObjectMapper();
-
-
             //Object to JSON in String
             String jsonInString = mapper.writeValueAsString(initialPacket);
             out.writeUTF(jsonInString);
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
         return response;
     }

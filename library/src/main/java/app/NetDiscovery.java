@@ -40,17 +40,17 @@ public class NetDiscovery implements Runnable{
                 if (listOfAddrs != null){
                     if (target == Module.STALKER.name()){
                         //write to file
-                        System.out.println(NetworkUtils.timeStamp(1) + "STALKER list updated");
+                        Debugger.log("NetDiscovery: STALKER list updated", null);
                         NetworkUtils.toFile("config/stalkers.list", listOfAddrs);
                     }
                     else{
                         //write to file
-                        System.out.println(NetworkUtils.timeStamp(1) + "HARM list updated");
+                        Debugger.log("NetDiscovery: HARM list updated", null);
                         NetworkUtils.toFile("config/harm.list", listOfAddrs);
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Debugger.log("", e);
             }
             try{Thread.sleep(discovery_timeout * 1000);}catch (Exception e){};
         }
@@ -74,8 +74,7 @@ public class NetDiscovery implements Runnable{
             }
         }
         catch (IOException e){
-            e.printStackTrace();
-            System.out.println("Server search failed!");
+            Debugger.log("NetDiscovery: Server search failed!", e);
         }
         return (null);
 
@@ -83,13 +82,6 @@ public class NetDiscovery implements Runnable{
 
     //send out a UDP broadcast
     public boolean sendSignal(MessageType request, ObjectMapper mapper) throws IOException{
-//        try{
-//
-//            return(false);
-//        }
-//        catch(SocketException e){
-//            e.printStackTrace();
-//        }
         // To broadcast change this to 255.255.255.255
         InetAddress address = InetAddress.getByName("192.168.1.255");       // broadcast address
         //we want a map of MAC -> ip
@@ -97,7 +89,7 @@ public class NetDiscovery implements Runnable{
         int[] ports = NetworkUtils.getPortTargets(origin, target);
         // create a discover request packet and broadcast it
         UDPPacket discovery = new UDPPacket(request, String.valueOf(NetworkUtils.getMacID()), target, NetworkUtils.getIP());
-        if (verbose){System.out.println(NetworkUtils.timeStamp(1) + "Sending out broadcast with signature: " + mapper.writeValueAsString(discovery) + "\n");}
+        if (verbose){ Debugger.log("NetDiscovery: Sending out broadcast with signature: " + mapper.writeValueAsString(discovery), null);}
         byte[] req = mapper.writeValueAsString(discovery).getBytes();
         //the port we are sending on
         DatagramPacket packet = new DatagramPacket(req, req.length, address, ports[0]);
@@ -118,7 +110,8 @@ public class NetDiscovery implements Runnable{
                 receiverSocket.setSoTimeout(discovery_timeout);
                 receiverSocket.receive(packet);
                 String received = new String(packet.getData(), 0, packet.getLength());
-                if (verbose) {System.out.println(NetworkUtils.timeStamp(1) + "A target has responded: " + received);}
+                if (verbose) { Debugger.log("NetDiscovery: A target has responded: " + received, null);}
+
                 // parse the packet content
                 JsonNode discoverReply = mapper.readTree(received);
                 String uuid = discoverReply.get("uuid").textValue();
@@ -138,10 +131,9 @@ public class NetDiscovery implements Runnable{
             }
             catch (SocketTimeoutException ex)
             {
-                //socket timed out
             }
             catch (IOException e){
-                e.printStackTrace();
+                Debugger.log("", e);
             }
         }
         //socket.close();

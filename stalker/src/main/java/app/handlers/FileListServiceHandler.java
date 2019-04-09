@@ -1,6 +1,7 @@
 package app.handlers;
 
 import app.CommsHandler;
+import app.Debugger;
 import app.MessageType;
 import app.chunk_utils.IndexFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +41,7 @@ public class FileListServiceHandler implements Runnable {
             //socket.close();
         }
         catch(Exception e){
-            e.printStackTrace();
+            Debugger.log("", e);
         }
     }
 }

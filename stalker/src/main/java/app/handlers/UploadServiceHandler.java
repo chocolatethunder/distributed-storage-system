@@ -32,24 +32,23 @@ public class UploadServiceHandler implements Runnable {
     @Override
     public void run() {
 
-
+        Debugger.log("Upload Service: Started upload process...", null);
         CommsHandler commsLink = new CommsHandler();
-
         try{
 //          1. get permissions from leader
 //------------------------------------------------------------
             //going to need IP of leader
             if(!commsLink.sendRequestToLeader(MessageType.UPLOAD)){
                 commsLink.sendResponse(socket, MessageType.ERROR);
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Could not connect to leader.");
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Upload Service: Could not connect to leader.");
             }
-            System.out.println("Request sent to leader");
+            Debugger.log("Upload Service: Request sent to leader", null);
 //          2. Wait for Leader to grant job permission
 ///------------------------------------------------------------
             TcpPacket req;
             Socket leader = commsLink.getLeaderResponse(server_port);
             if(leader == null){
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error with leader connection");
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Upload Service: Error with leader connection");
             }
 ///------------------------------------------------------------
 
@@ -67,7 +66,7 @@ public class UploadServiceHandler implements Runnable {
 //          4. distribute to harm targets
             IndexEntry update = distributeToHarm();
             if(update == null){
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error when Distributing to Harm Target.");
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Upload Service: Error when Distributing to Harm Target.");
             }
 ///------------------------------------------------------------
 //          5. Send done status to leader
@@ -80,20 +79,20 @@ public class UploadServiceHandler implements Runnable {
                 if(t.getMessageType() == MessageType.ACK){
                     //we are done with the connection to the leader
                     //then update index
-
                     //updateIndex(update);
-                    System.out.println("Indexfile saved!");
+                    Debugger.log("Upload Service: Upload complete!", null);
                     leader.close();
                 }
             }
             catch(IOException e){
+                Debugger.log("", e);
             }
 
         }
         catch(RuntimeException e){
-            try{ socket.close(); }
-            catch(IOException ex){ ex.printStackTrace(); }
-            e.printStackTrace();
+            try{ socket.close();}
+            catch(IOException ex){ Debugger.log("", ex); }
+            Debugger.log("", e);
             return;
         }
 

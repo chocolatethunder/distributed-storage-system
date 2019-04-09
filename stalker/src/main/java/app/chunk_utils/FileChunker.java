@@ -5,6 +5,8 @@
 package app.chunk_utils;
 import java.io.*;
 import java.util.*;
+
+import app.Debugger;
 import org.apache.commons.io.*;
 
 public class FileChunker {
@@ -28,7 +30,8 @@ public class FileChunker {
         IndexEntry iEnt = new IndexEntry(file_prefix, file_type, file.length());
         //set filesize
         //iEnt.setSize(file.length());
-        if (debug) System.out.println("bytes: " + iEnt.size());
+
+        if (debug)  Debugger.log("FileChunker: bytes: " + iEnt.size(), null);
 
         List<Chunk> chunkRecord = new ArrayList();
         //the chunker should maybe check some sort of chunk policy policy
@@ -37,7 +40,7 @@ public class FileChunker {
 
         //split into n chunks
         long chunkSize = iEnt.size()/chunkCount;
-        if(debug) System.out.println("Chunksize: " + chunkSize);
+        if(debug) Debugger.log("FileChunker: Chunksize: " + chunkSize, null);
         long bytesLeft = iEnt.size();
         for (int i = 0; i < chunkCount - 1; i++){
             if(debug) System.out.println(i + " bytes left: " + bytesLeft);
@@ -78,11 +81,11 @@ public class FileChunker {
             FileUtils.writeByteArrayToFile(new File(tChunk.getChunk_path()), bytes);
         }
         catch (FileNotFoundException e){
-            e.printStackTrace();
+            Debugger.log("", e);
             return null;
         }
         catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
             return(null);
         }
         return(tChunk);
@@ -98,7 +101,7 @@ public class FileChunker {
             }
         }
         catch (IOException e){
-            e.printStackTrace();
+            Debugger.log("", e);
         }
     }
 

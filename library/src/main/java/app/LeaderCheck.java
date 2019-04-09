@@ -29,7 +29,7 @@ public class LeaderCheck {
         Map<Integer, Integer> voteCount = new HashMap<>();
 
         // ask for leader
-        System.out.println("Voting has started...");
+        Debugger.log("Election: Voting has started...", null);
         for(Integer entry : stalkerMap.keySet())
         {
             int port = 11114;
@@ -54,7 +54,6 @@ public class LeaderCheck {
 
                     leaderUuid = Integer.valueOf(ep.get().getUuid());
                     leaderIP = ep.get().getIp();
-
                     //System.out.println("Election vote: " + leaderUuid + ", " + leaderIP);
                     if(!voteCount.containsKey(leaderUuid))
                     {
@@ -71,15 +70,15 @@ public class LeaderCheck {
 
             } catch (SocketException e) {
                 // ask another stalker for the leader if fails to establish connection with one of the stalker
-                e.printStackTrace();
+                Debugger.log("", e);
             } catch (IOException e) {
                 // ask another stalker for the leader if fails to establish connection with one of the stalker
-                e.printStackTrace();
+                Debugger.log("", e);
             }finally {
                 try{
                     socket.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Debugger.log("", e);
                 }
             }
         }
@@ -92,8 +91,7 @@ public class LeaderCheck {
                 leaderUuid = i;
             }
         }
-        System.out.println("Leader selected: " + leaderUuid);
-
+        Debugger.log("Election: Leader selected: " + leaderUuid, null);
     }
 
 

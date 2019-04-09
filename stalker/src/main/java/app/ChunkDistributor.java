@@ -55,7 +55,7 @@ public class ChunkDistributor {
                 else {
                     //for now we are just going to fail
                     // (future) what to with other sent chunks if this fails??
-                    System.out.println("Sending chunk failed!");
+                    Debugger.log("Chunk Distributor: Sending chunk failed!", null);
                     return false;
                 }
             }
@@ -71,21 +71,21 @@ public class ChunkDistributor {
         int attempts = 0;
         while(true){
             if (attempts == 3){
-                System.out.println("Failed to send file to HARM target after multiple attempts");
+                Debugger.log("Chunk Distributor: Failed to send file to HARM target after multiple attempts", null);
                 return false;
             }
             try{
                 NodeAttribute targ = n.get(target);
                 //old way
                 //FileUtils.copyFile(new File(c.path()),new File(target));
-                System.out.println("Sending chunk");
+                Debugger.log("Chunk Distributor: Sending chunk", null);
 
                 //make sure the harm meets the requirements of the chunk size
                 if (targ.getSpace() < c.getChunk_size()){
-                    throw new RuntimeException("Harm server at address: " + targ.getAddress() + " does not have sufficient space: required: " + c.getChunk_size() + " available: " + targ.getSpace());
+                    throw new RuntimeException("Chunk Distributor: Harm server at address: " + targ.getAddress() + " does not have sufficient space: required: " + c.getChunk_size() + " available: " + targ.getSpace());
                 }
                 else if (!targ.isAlive()){
-                    throw new RuntimeException("Harm server at address: " + targ.getAddress() + " is not responding");
+                    throw new RuntimeException("Chunk Distributor: Harm server at address: " + targ.getAddress() + " is not responding");
                 }
                 //make a connection to the harm target
                 Socket harmServer = NetworkUtils.createConnection(targ.getAddress(), port);
@@ -102,18 +102,19 @@ public class ChunkDistributor {
                 // filestream.sendFileToSocket()
             }
             catch(IOException e){
-                System.out.println("Attempt: " + attempts + " failed!");
+                Debugger.log("", e);
+                Debugger.log("Chunk Distributor: Attempt: " + attempts + " failed!", null);
                 //e.printStackTrace();
                 try{
                     Thread.sleep((long)(Math.random() * 1000));
                 }
                 catch (InterruptedException ex){
-                    ex.printStackTrace();
+                    Debugger.log("", ex);
                 }
                 attempts++;
             }
             catch (RuntimeException ex){
-                ex.printStackTrace();
+                Debugger.log("", ex);
                 break;
             }
         }

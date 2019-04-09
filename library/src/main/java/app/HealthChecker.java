@@ -60,7 +60,7 @@ public class HealthChecker implements Runnable{
         // for each node in the stalker list, scheduling a task to occur at interval
         if(stalkerList != null) {
             for (Map.Entry<Integer, String> entry : stalkerList.entrySet()) {
-                System.out.println("Starting scheduled health task for stalker node: " + entry.getValue());
+                Debugger.log("Health Checker: Starting scheduled health task for stalker node: " + entry.getValue(), null);
                 addTimerTask(timer,
                         entry.getKey(),
                         entry.getValue(),
@@ -93,7 +93,7 @@ public class HealthChecker implements Runnable{
                     for(Map.Entry<Integer, String> entry : newStalkers.entrySet()){
                         if(!this.stalkerList.containsKey(entry.getKey())){
                             if(debugMode) {
-                                System.out.println("New node detected");
+                                Debugger.log("Health Checker: New node detected" + entry.getValue(), null);
                             }
                             addTimerTask(timer,
                                     entry.getKey(),
@@ -126,7 +126,7 @@ public class HealthChecker implements Runnable{
 
 
             } catch (Exception e) {
-                e.printStackTrace();
+                Debugger.log("", e);
             }
             try{Thread.sleep(interval);}catch (Exception e){};
         }
@@ -146,10 +146,9 @@ public class HealthChecker implements Runnable{
         try {
             attributes = mapper.readValue(entry.getValue(), NodeAttribute.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
-        System.out.println("Starting scheduled health task for harm node: " + attributes.getAddress());
-
+        Debugger.log("Health Checker: Starting scheduled health task for harm node: " + attributes.getAddress(), null);
         addTimerTask(timer, entry.getKey(),
                 attributes.getAddress(),
                 null,
@@ -205,8 +204,8 @@ public class HealthChecker implements Runnable{
         @Override
         public void run() {
             if(debugMode) {
-                System.out.println("Health Checker Task for host: " + host +
-                        " started at: " + NetworkUtils.timeStamp(1));
+                Debugger.log("Health Checker Task for host: " + host +
+                        " started at: " + NetworkUtils.timeStamp(1), null);
             }
             Socket socket = null;
             try {
@@ -240,8 +239,8 @@ public class HealthChecker implements Runnable{
                     if(target == Module.STALKER && this.spaceToUpdate != null) {
                         this.spaceToUpdate.set(availableSpace);
                         if(debugMode) {
-                            System.out.println("Status was success for health check and disk space available "
-                                    + this.spaceToUpdate.get());
+                            Debugger.log("Health Checker: Status was success for health check and disk space available "
+                                    + this.spaceToUpdate.get(), null);
                         }
                     }else if(target == Module.HARM){
                         // need to add the space for all HARMS in config file
@@ -260,25 +259,26 @@ public class HealthChecker implements Runnable{
                 // server has not replied within expected timeoutTime
                 updateConfigAndEndTask();
                 if(debugMode) {
-                    e.printStackTrace();
+                    Debugger.log("", e);
                 }
             } catch (IOException e) {
 
                 // any other IO exception, also stop the task and assume the node is dead
                 updateConfigAndEndTask();
                 if(debugMode) {
-                    e.printStackTrace();
+                    Debugger.log("", e);
                 }
             }finally {
                 try{
                     if(socket != null) {
                         if(debugMode) {
-                            System.out.println("Task completed closing Socket");
+                            Debugger.log("Health Checker: Task completed closing Socket"
+                                    + this.spaceToUpdate.get(), null);
                         }
                         socket.close();
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Debugger.log("", e);
                 }
             }
         }
@@ -294,8 +294,6 @@ public class HealthChecker implements Runnable{
                 String stalkerList = NetworkUtils.fileToString("config/stalkers.list");
                 HashMap<Integer, String> stalkerMap = NetworkUtils.mapFromJson(stalkerList);
                 List<Integer> ids = NetworkUtils.mapToSList(NetworkUtils.mapFromJson(stalkerList));
-
-
                 if(stalkerMap.keySet().contains(LeaderCheck.getLeaderUuid()))
                 {
                     // kill and the threads
@@ -310,7 +308,7 @@ public class HealthChecker implements Runnable{
                             commsHandler.sendPacketWithoutAck(socket, MessageType.KILL, "KILL");
 
                         }catch (IOException e) {
-                            e.printStackTrace();
+                            Debugger.log("", e);
                         }
 
                     }
@@ -321,7 +319,7 @@ public class HealthChecker implements Runnable{
             }
 
             //cancel task
-            System.out.println("Error Occurred Cancelling scheduled task for " + this.host);
+            Debugger.log("Health Checker: Error Occurred Cancelling scheduled task for " + this.host, null);
             cancel();
         }
     }

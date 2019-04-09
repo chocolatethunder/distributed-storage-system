@@ -13,13 +13,13 @@ import java.util.concurrent.TimeUnit;
 
 public class App {
 
+
     public static void main(String[] args) {
+        //debugging modes: 0 - none; 1 - message only; 2 - stack traces only; 3 - stack and message
+        Debugger.setMode(3);
+        Debugger.toggleFileMode();
 
-        List<File> dirs = new ArrayList();
-        dirs.add(new File("storage"));
-        dirs.add(new File("logs"));
-
-        NetworkUtils.initDirs(dirs, false);
+        initHarm();
         //this will always be running
         Thread discManager = new Thread(new DiscoveryManager(Module.HARM, 20, true));
         discManager.start();
@@ -39,15 +39,16 @@ public class App {
             HARM_server = new ServerSocket(22222);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
-        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for requests...");
+        Debugger.log("Waiting for requests...", null);
+
 
         // will keep on listening for requests from STALKERs
         while (true) {
             try {
                 STALKER_Client = HARM_server.accept();
-                System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + STALKER_Client);
+                Debugger.log("Accepted connection : ", null);
                 //get packet from the link and handle it
                 TcpPacket STALKER_Request = commLink.receivePacket(STALKER_Client);
                 Handler h = new Handler(STALKER_Client, STALKER_Request, macID);
@@ -59,21 +60,27 @@ public class App {
                 //executorService.execute();
 
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                Debugger.log("", e);
             } catch (IOException e) {
-                e.printStackTrace();
+                Debugger.log("", e);
             } finally {
                 try {
                     // waiting until all thread tasks are done before closing the resources
 
                     awaitTerminationAfterShutdown(executorService);
                 } catch (Exception i) {
-                    i.printStackTrace();
+                    Debugger.log("", i);
                 }
             }
         }
     }
 
+    public static void initHarm(){
+        List<File> dirs = new ArrayList();
+        dirs.add(new File("storage"));
+        dirs.add(new File("logs"));
+        NetworkUtils.initDirs(dirs, false, 0);
+    }
     /**
      * Method to wait until all threads are done
      * @param threadPool
@@ -85,6 +92,7 @@ public class App {
                 threadPool.shutdownNow();
             }
         } catch (InterruptedException ex) {
+            Debugger.log("", ex);
             threadPool.shutdownNow();
             Thread.currentThread().interrupt();
         }

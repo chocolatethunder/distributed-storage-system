@@ -103,9 +103,10 @@ public class NetworkUtils {
         try {
             fileString = new String(Files.readAllBytes(Paths.get(fileName)), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
             return (null);
         } catch (NullPointerException ex) {
+            Debugger.log("", ex);
             return (null);
         }
         return fileString;
@@ -118,7 +119,7 @@ public class NetworkUtils {
         try {
             list = Optional.of(mapper.readValue(s, List.class));
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
         return list.get();
     }
@@ -135,7 +136,7 @@ public class NetworkUtils {
             };
             list = mapper.readValue(s, typeRef);
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
             return null;
         }
         return list;
@@ -150,7 +151,7 @@ public class NetworkUtils {
             out.print(jsonInString);
             out.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
             return false;
         }
         return true;
@@ -178,9 +179,9 @@ public class NetworkUtils {
                 }
             }
         } catch (NullPointerException ex) {
-            ex.printStackTrace();
+            Debugger.log("", ex);
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
         return (mac_addr);
     }
@@ -209,7 +210,7 @@ public class NetworkUtils {
         try {
             r = Optional.of(mapper.readValue(t.getMessage(), Request.class));
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
         return r.get();
     }
@@ -229,7 +230,7 @@ public class NetworkUtils {
         try {
             serialRequest = mapper.writeValueAsString(r);
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
         return serialRequest;
     }
@@ -262,7 +263,7 @@ public class NetworkUtils {
 
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
         return myIP;
     }
@@ -288,12 +289,10 @@ public class NetworkUtils {
                 status,
                 diskSpace,
                 corruptedChunks);
-
-
         try {
             healthCheckContent = mapper.writeValueAsString(reply);
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
         return healthCheckContent;
 
@@ -324,7 +323,7 @@ public class NetworkUtils {
             out.print(jsonInString);
             out.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
     }
 
@@ -337,7 +336,7 @@ public class NetworkUtils {
             try {
                 nodeMap.put(i, mapper.readValue(raw_map.get(i), NodeAttribute.class));
             } catch (Exception e) {
-                e.printStackTrace();
+                Debugger.log("", e);
                 return null;
             }
 
@@ -390,7 +389,7 @@ public class NetworkUtils {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
 
     }
@@ -403,27 +402,31 @@ public class NetworkUtils {
         try {
             attributes = mapper.readValue(jsonString, NodeAttribute.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
 
         return attributes;
     }
 
-    public static void initDirs(List<File> directories, boolean clean){
+    //creates folders and cleans them if needed
+    //will ignore all dirs up to ignored
+    public static void initDirs(List<File> directories, boolean clean, int ignored){
         //clear chunk folder
         for (File theDir : directories){
             if (!theDir.exists()) {
-                System.out.println("creating directory: " + theDir.getName());
+                Debugger.log("creating directory: " + theDir.getName(), null);
+                System.out.println();
                 boolean result = false;
                 try{
                     theDir.mkdir();
                     result = true;
                 }
                 catch(SecurityException se){
-                    //handle it
+                    Debugger.log("", se);
                 }
                 if(result) {
-                    System.out.println("DIR created");
+                    Debugger.log("DIR created", null);
+                    System.out.println();
                 }
             }
 // if the directory does not exist, create it
@@ -431,7 +434,7 @@ public class NetworkUtils {
         }
         if (clean){
             //delete any files in these folders
-            for (int i = 1; i < directories.size(); i++){
+            for (int i = ignored; i < directories.size(); i++){
                 File[] folder_contents = directories.get(i).listFiles();
                 if(folder_contents != null) {
                     for (File f : folder_contents) {

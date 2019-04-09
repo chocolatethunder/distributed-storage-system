@@ -39,6 +39,7 @@ public class RequestSender {
             //TO:DO modify this to connect to STALKER in a round robin fashion
             this.socket = NetworkUtils.createConnection(host, port);
         } catch (IOException e) {
+            Debugger.log("", e);
             return null;
             //Could not connect , need another STALKER here
         }

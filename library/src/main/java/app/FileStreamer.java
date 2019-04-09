@@ -25,17 +25,15 @@ public class FileStreamer {
                 // send file
                 File file = new File(filepath);
                 byte[] byteArray = new byte[(int) file.length()];
-
                 out = new DataOutputStream(socket.getOutputStream());
                 bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
                 bufferedInputStream.read(byteArray, 0, byteArray.length);
-                System.out.println(NetworkUtils.timeStamp(1) + "Sending " + filepath + "(" + byteArray.length + " bytes)");
+                Debugger.log("FileStreamer: Sending " + filepath + "(" + byteArray.length + " bytes)", null);
                 out.write(byteArray, 0, byteArray.length);
                 out.flush();
-                System.out.println(NetworkUtils.timeStamp(1) + "Done.");
-
+                Debugger.log("FileStreamer: Done.", null);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                Debugger.log("FileStreamer: Could not retrieve file: ", ex);
             } finally {
                 try {
                   bufferedInputStream.close();
@@ -46,7 +44,7 @@ public class FileStreamer {
                     // Close these in the calling method
                   // socket.close();
                 } catch (Exception i) {
-                    i.printStackTrace();
+                    Debugger.log("", i);
                 }
             }
         }
@@ -56,6 +54,7 @@ public class FileStreamer {
     public void receiveFileFromSocket(String fileName) {
         if (socket != null) {
             BufferedOutputStream bufferedOutputStream = null;
+            Debugger.log("FileStreamer: Retrieving file... " + fileName, null);
             try {
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
@@ -69,10 +68,10 @@ public class FileStreamer {
                     bufferedOutputStream.write(chunkArray, 0, bytesRead);
                 }
                 bufferedOutputStream.flush();
-                System.out.println(NetworkUtils.timeStamp(1) + "Done.");
+                Debugger.log("FileStreamer: Done.", null);
 
             } catch (IOException ex) {
-                ex.printStackTrace();
+                Debugger.log("", ex);
             } finally {
                 try {
                     bufferedOutputStream.close();
@@ -81,7 +80,7 @@ public class FileStreamer {
                     //Close this from calling method;
                    // socket.close();
                 } catch (IOException i) {
-                    i.printStackTrace();
+                    Debugger.log("", i);
                 }
             }
         }

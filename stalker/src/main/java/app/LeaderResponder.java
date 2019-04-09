@@ -42,7 +42,7 @@ public class LeaderResponder implements Runnable {
         try{
             socket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
     }
 
@@ -56,10 +56,10 @@ public class LeaderResponder implements Runnable {
         String electionPkt = "";
         ObjectMapper mapper = new ObjectMapper();
         try {
-            if (verbose){System.out.println("Sending out broadcast with signature: " + mapper.writeValueAsString(elecPacket) + "\n");}
+            if (verbose){ Debugger.log("LeaderResponder: Sending out broadcast with signature: " + mapper.writeValueAsString(elecPacket), null);}
             electionPkt = mapper.writeValueAsString(elecPacket);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
         return electionPkt;
 
@@ -75,8 +75,7 @@ public class LeaderResponder implements Runnable {
 
             int port = 11114;
             int timeoutForReply = 5;
-
-            System.out.println("Election In Progress");
+            Debugger.log("LeaderResponder: Election In Progress", null);
             Socket socket = null;
             try {
                 socket = NetworkUtils.createConnection(entry.getValue(), port);
@@ -93,14 +92,14 @@ public class LeaderResponder implements Runnable {
             } catch (SocketException e) {
 
                 // server has not replied within expected timeoutTime
-                e.printStackTrace();
+                Debugger.log("", e);
             } catch (IOException e) {
-                e.printStackTrace();
+                Debugger.log("", e);
             }finally {
                 try{
                     socket.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Debugger.log("", e);
                 }
             }
 

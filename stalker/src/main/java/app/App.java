@@ -25,6 +25,10 @@ public class App {
     private static final String harm_path = "config/stalkers.list";
 
     public static void main(String[] args) {
+        //debugging modes: 0 - none; 1 - message only; 2 - stack traces only; 3 - stack and
+        Debugger.setMode(3);
+        Debugger.toggleFileMode();
+
         initStalker();
         ind = Indexer.loadFromFile();
         int discoveryinterval = 5;
@@ -37,8 +41,8 @@ public class App {
         Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, discoveryinterval, false));
         discManager.start();
         boolean connected = false;
-        System.out.println("This Stalker's macID" + NetworkUtils.getMacID() + "\n\n");
-        System.out.println(NetworkUtils.timeStamp(1) + "Discovering nodes on network...");
+        Debugger.log("Stalker Main: This Stalker's macID" + NetworkUtils.getMacID() + "\n\n", null);
+        Debugger.log("Stalker Main: Discovering nodes on network...", null);
 
         List<Integer> stalkerList = null;
         Map<Integer, NodeAttribute> harmlist = null;
@@ -54,28 +58,27 @@ public class App {
                 if (harmlist != null && !harmlist.isEmpty()){
                 }
                 else{
-                    System.out.println(NetworkUtils.timeStamp(1) + " No HARM targets detected...");
+                    Debugger.log("Stalker Main: No HARM targets detected...", null);
                 }
 
                 if (stalkerList != null && stalkerList.size() >= 2){
                     connected = true;
                 }
                 else{
-                    System.out.println(NetworkUtils.timeStamp(1) + "No STALKERs detected yet...");
-                    System.out.println(NetworkUtils.timeStamp(1) + "Waiting for servers to become available...");
+                    Debugger.log("Stalker Main: No STALKERs detected yet...", null);
+                    Debugger.log("Stalker Main: Waiting for servers to become available...", null);
                 }
             }
             catch(NullPointerException e){
-                e.printStackTrace();
+                Debugger.log("", e);
             }
             attempts++;
         }
-        System.out.println(NetworkUtils.timeStamp(1) + "System discovery complete!");
+        Debugger.log("Stalker Main: System discovery complete!", null);
         int test = 0;
         //starting task for health checks on STALKERS and HARM targets
         Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, false));
         healthChecker.start();
-        // initiaze ids
         //election based on networkDiscovery
         while (true){
             // Leader election by asking for a leader
@@ -89,7 +92,7 @@ public class App {
             }
             switch (role){
                 case 0:
-                    System.out.println(NetworkUtils.timeStamp(1) + "<<<<<<<-----Leader Online----->>>>>>>");
+                    Debugger.log("<<<<<<<-----Leader Online----->>>>>>> \n\n", null);
                     //This means that this STK is the leader
                     //create a priority comparator for the Priority queue
                     CRUDQueue syncQueue = new CRUDQueue();
@@ -103,11 +106,11 @@ public class App {
                         t2.join();
                     }
                     catch(InterruptedException e){
-                        e.printStackTrace();
+                        Debugger.log("", e);
                     }
                     break;
                 case 1:
-                    System.out.println(NetworkUtils.timeStamp(1) + "<<<<<<<-----Worker Online----->>>>>>>");
+                    Debugger.log("<<<<<<<-----Worker Online----->>>>>>>\n\n", null);
                     Thread jcpReq = new Thread(new JcpRequestHandler(ind));
 //                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
 //                jcpRequestHandler.run();
@@ -116,11 +119,11 @@ public class App {
                         jcpReq.join();
                     }
                     catch(InterruptedException e){
-                        e.printStackTrace();
+                        Debugger.log("", e);
                     }
                     break;
                 case 2:
-                    System.out.println(NetworkUtils.timeStamp(1) + "<<<<<<<-----Vice Leader Online----->>>>>>>");
+                    Debugger.log("<<<<<<<-----Vice Leader Online----->>>>>>>\n\n", null);
                     Thread vice = new Thread(new JcpRequestHandler(ind));
 //                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
 //                jcpRequestHandler.run();
@@ -129,7 +132,7 @@ public class App {
                         vice.join();
                     }
                     catch(InterruptedException e){
-                        e.printStackTrace();
+                        Debugger.log("", e);
                     }
                     break;
             }
@@ -140,12 +143,13 @@ public class App {
     public static void initStalker(){
         List<File> directories = new ArrayList<>();
         directories.add(new File("temp"));
-        directories.add(new File("config"));
+        directories.add(new File("logs"));
         directories.add(new File("index"));
+        directories.add(new File("config"));
         directories.add(new File("temp/chunks"));
         directories.add(new File("temp/toChunk"));
         directories.add(new File("temp/reassembled"));
-        NetworkUtils.initDirs(directories, true);
+        NetworkUtils.initDirs(directories, true, 3);
     }
     //will block worker from doing anythin until the leader is confirmed
     public static void getConfirmation(int uuid) {
@@ -157,14 +161,14 @@ public class App {
                 if (leader != null) {
                     if (commLink.sendPacket(leader, MessageType.CONFIRM, "", true) == MessageType.CONFIRM) {
                         success = true;
-                        System.out.println("Leader has granted permission to start!");
+                        Debugger.log("Leader has granted permission to start!", null);
                     }
                 } else {
                     wait(5000);
                 }
             } catch (IOException e) {
                 wait(5000);
-                e.printStackTrace();
+                Debugger.log("", e);
             }
 
         }
@@ -176,40 +180,7 @@ public class App {
             Thread.sleep((long)((millis)));
         }
         catch (InterruptedException ex){
-            ex.printStackTrace();
-        }
-    }
-    //cleans chunk folders on startup
-    public static void initDirs(List<File> directories, boolean clean){
-        for (File theDir : directories){
-            if (!theDir.exists()) {
-                System.out.println("creating directory: " + theDir.getName());
-                boolean result = false;
-                try{
-                    theDir.mkdir();
-                    result = true;
-                }
-                catch(SecurityException se){
-                    //handle it
-                }
-                if(result) {
-                    System.out.println("DIR created");
-                }
-            }
-// if the directory does not exist, create it
-
-        }
-
-        if (clean){
-            //delete any files in these folders
-            for (int i = 1; i < directories.size(); i++){
-                File[] folder_contents = directories.get(i).listFiles();
-                if(folder_contents != null) {
-                    for (File f : folder_contents) {
-                        f.delete();
-                    }
-                }
-            }
+            Debugger.log("", ex);
         }
     }
 

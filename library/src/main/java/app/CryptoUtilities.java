@@ -26,6 +26,7 @@ class CryptoUtilities {
 
         // For specifying wrong message digest algorithms
         catch (NoSuchAlgorithmException e) {
+            Debugger.log("", e);
             System.out.println("Exception thrown"
                                + " for incorrect algorithm: " + e);
 

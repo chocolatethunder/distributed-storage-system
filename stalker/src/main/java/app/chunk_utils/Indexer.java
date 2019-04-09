@@ -1,5 +1,6 @@
 package app.chunk_utils;
 
+import app.Debugger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,15 +20,15 @@ public class Indexer {
         try {
             File f = new File(indexPath);
             if (!f.exists()){
-                throw new FileNotFoundException("Index file not found...");
+                throw new FileNotFoundException("Indexer: Index file not found...");
             }
             ind = Optional.of(mapper.readValue(NetworkUtils.fileToString(indexPath), IndexFile.class));
-            System.out.println("Indexfile loaded from file.");
+            System.out.println("Indexer: Indexfile loaded from file.");
         }
         catch (IOException e){
             //if the file is corrupt or empty we create a new IndexFile
-            e.printStackTrace();
-            System.out.println("Creating new indexfile");
+            Debugger.log("", e);
+            System.out.println("Indexer: Creating new indexfile");
             IndexFile temp = new IndexFile();
             saveToFile(temp);
             return(temp);
@@ -62,12 +63,11 @@ public class Indexer {
             out.close();
             temp.delete();
             //////////////////////////////////////////////////////
-            System.out.println("Index saved to file");
+            Debugger.log("Indexer: Index saved to file", null);
 
         }
         catch(IOException e){
-            e.printStackTrace();
-            System.out.println("Could not write to indexfile!");
+            Debugger.log("Indexer: Could not write to indexfile!", e);
             return false;
         }
         return(true);
@@ -97,7 +97,7 @@ public class Indexer {
             serialized =  mapper.writeValueAsString(update);
         }
         catch (IOException e){
-            e.printStackTrace();
+            Debugger.log("", e);
         }
         return serialized;
     }
@@ -109,7 +109,7 @@ public class Indexer {
             temp = mapper.readValue(update, IndexUpdate.class);
         }
         catch (Exception e){
-
+            Debugger.log("", e);
         }
         return(temp);
     }

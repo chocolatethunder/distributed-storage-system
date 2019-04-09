@@ -4,6 +4,8 @@
  *
  */
 package app.chunk_utils;
+import app.Debugger;
+
 import java.io.*;
 import java.nio.file.Paths;
 import java.nio.file.Files;
@@ -24,7 +26,7 @@ public class ChunkAssembler {
         for (Chunk c : iEnt.getChunkList()){
             if (c.getChunk_path() == ""){return false;}
             if(!writeChunkTofile(c, iEnt.fileName())){
-                System.out.println("assembly failed!");
+                Debugger.log("ChunkAssembler: assembly failed!", null);
                 return false;
             }
         }
@@ -42,12 +44,11 @@ public class ChunkAssembler {
             return true;
         }
         catch (IOException e){
-            e.printStackTrace();
+            Debugger.log("", e);
             return false;
         }
         catch (NullPointerException e){
-            e.printStackTrace();
-            System.out.println("Cannot find assembled dir!");
+            Debugger.log("ChunkAssembler: Cannot find assembled dir!", e);
             return false;
         }
 

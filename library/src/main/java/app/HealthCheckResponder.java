@@ -64,7 +64,7 @@ public class HealthCheckResponder implements Runnable {
             try{
                 socket.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                Debugger.log("", e);
             }
 
     }

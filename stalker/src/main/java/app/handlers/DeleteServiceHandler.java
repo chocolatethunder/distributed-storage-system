@@ -23,32 +23,34 @@ public class DeleteServiceHandler implements Runnable {
     public void run() {
         Socket leader = null;
         try {
+            Debugger.log("DeleteService: Starting delete process...", null);
             //0. make sure the file exists
             IndexEntry toRemove = index.search(fileName);
             if (toRemove == null) {
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Could not find entry");
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "DeleteService: Could not find entry");
             }
 //          1. get permissions from leader
 //------------------------------------------------------------
             //going to need IP of leader
             if (!commsLink.sendRequestToLeader(MessageType.DELETE)) {
                 commsLink.sendResponse(socket, MessageType.ERROR);
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Could not connect to leader.");
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "DeleteService: Could not connect to leader.");
             }
-            System.out.println("Request sent to leader");
+            Debugger.log("DeleteService: Request sent to leader", null);
+
 
 //          2. Wait for Leader to grant job permission
 ///------------------------------------------------------------
             leader = commsLink.getLeaderResponse(server_port);
             if (leader == null) {
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error with leader connection");
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "DeleteService: Error with leader connection");
             }
 ///------------------------------------------------------------
 
 //         3. remove chunks
 ///------------------------------------------------------------
             if (!removeChunks(toRemove)) {
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Could not remove chunks!");
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "DeleteService: Could not remove chunks!");
             }
 //          4. Send done status to leader
             commsLink.sendResponse(leader, MessageType.DONE);
@@ -61,21 +63,21 @@ public class DeleteServiceHandler implements Runnable {
 
                     //Indexer.removeEntry(index, toRemove);
                     //Indexer.saveToFile(index);
-                    System.out.println("File removed from system!");
+                    Debugger.log("DeleteService: File removed from system!", null);
                     commsLink.sendResponse(socket, MessageType.ACK);
                     leader.close();
                 }
             } catch (IOException e) {
-                System.out.println("Debug3");
+                Debugger.log("", e);
             }
         } catch (RuntimeException e) {
+            Debugger.log("", e);
             try {
                 socket.close();
                 leader.close();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                Debugger.log("", ex);
             }
-            e.printStackTrace();
             return;
         }
     }
@@ -100,7 +102,7 @@ public class DeleteServiceHandler implements Runnable {
                         harmServer.close();
                     }
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Debugger.log("", ex);
                     return (false);
                 }
             }

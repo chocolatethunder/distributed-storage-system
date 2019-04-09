@@ -29,6 +29,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
         //Used for common File IO operations including reading and writing bytes from file
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
+    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
 }
 
 // Define the main class for the application

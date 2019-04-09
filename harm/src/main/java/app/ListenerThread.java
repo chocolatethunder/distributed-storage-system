@@ -37,16 +37,17 @@ public class ListenerThread implements Runnable {
             server = new ServerSocket(serverPort);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
-        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for health check requests from stalkers..");
+        Debugger.log("DiscManager: Harm server: Waiting for health check requests from stalkers..", null);
         // will keep on listening for requests
         while (running) {
             try {
                 //accept connection from a STALKER
                 Socket client = server.accept();
                 if(debugMode) {
-                    System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection from stalker : " + client);
+                    Debugger.log("DiscManager: Harm server: Accepted connection from stalker : " + client, null);
+
                 }
 
                 // receive packet on the socket link
@@ -55,7 +56,7 @@ public class ListenerThread implements Runnable {
                 //checking for request type if health check
                 if (req.getMessageType() == MessageType.HEALTH_CHECK) {
                     if(debugMode) {
-                        System.out.println("Received health Check request");
+                        Debugger.log("DiscManager: Harm server: Received health Check request", null);
                     }
 
                     //_______TO:DO check for corrupted chunks here
@@ -71,7 +72,7 @@ public class ListenerThread implements Runnable {
                     client.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Debugger.log("", e);
             }
         }
 
@@ -85,18 +86,17 @@ public class ListenerThread implements Runnable {
         NumberFormat nf = NumberFormat.getNumberInstance();
         long total = 0;
         for (Path root : FileSystems.getDefault().getRootDirectories()) {
-
-            System.out.print(root + ": ");
+            Debugger.log(root + ": ", null);
             try {
                 FileStore store = Files.getFileStore(root);
                 total += store.getUsableSpace();
                 if(debugMode) {
-                    System.out.println("available=" + nf.format(store.getUsableSpace())
-                            + ", total=" + nf.format(store.getTotalSpace()));
+                    Debugger.log("DiscManager: available=" + nf.format(store.getUsableSpace())
+                            + ", total=" + nf.format(store.getTotalSpace()), null);
                 }
             } catch (IOException e) {
                 if(debugMode) {
-                    System.out.println("error querying space: " + e.toString());
+                    Debugger.log("DiscManager: Harm server: error querying space:  + e.toString()", e);
                 }
             }
         }

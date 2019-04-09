@@ -39,19 +39,21 @@ public class ListenerThread implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Debugger.log("Health Listener: Waiting for health check, Leader Election requests, or updates...", null);
         System.out.println(NetworkUtils.timeStamp(1) + "Waiting for health check, Leader Election requests, or updates");
         // will keep on listening for requests
         while (running) {
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();
-                if (verbose){System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + client);}
+                if (verbose){Debugger.log("Health Listener: Accepted connection : "  + client, null);}
                 // receive packet on the socket link
                 TcpPacket req = commLink.receivePacket(client);
 
                 //checking for request type if health check
                 if (req.getMessageType() == MessageType.HEALTH_CHECK){
-                    if (verbose){System.out.println("Received health Check request");}
+                    if (verbose){
+                        Debugger.log("Health Listener: Received health Check request : ", null);}
                     executorService.submit(new HealthCheckResponder(client,
                             "SUCCESS",
                             getTotalSpaceFromHarms(),
@@ -70,7 +72,7 @@ public class ListenerThread implements Runnable{
                     executorService.submit(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Debugger.log("", e);
             }
         }
 
@@ -92,7 +94,7 @@ public class ListenerThread implements Runnable{
                 attributes = mapper.readValue(entry.getValue(), NodeAttribute.class);
                 total += attributes.getSpace();
             } catch (IOException e) {
-                e.printStackTrace();
+                Debugger.log("", e);
             }
 
         }

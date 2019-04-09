@@ -38,13 +38,13 @@ public class JcpRequestHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(NetworkUtils.timeStamp(1) + "Waiting...");
+        Debugger.log("JCP request handler: Waiting...", null);
         // will keep on listening for requests
         while (running) {
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();
-                System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection from JCP client: " + client);
+                Debugger.log("JCP request handler: Accepted connection from JCP client:" + client, null);
                 // receive packet on the socket link
                 TcpPacket req = commLink.receivePacket(client);
 

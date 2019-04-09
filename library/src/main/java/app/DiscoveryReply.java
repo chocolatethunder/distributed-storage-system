@@ -46,7 +46,7 @@ public class DiscoveryReply implements Runnable {
                 receiverSocket.setSoTimeout(listening_timeout * 1000);
                 bound = true;
             } catch (Exception e) {
-                //e.printStackTrace();
+                Debugger.log("", e);
             }
         }
         while(!Thread.interrupted()){
@@ -70,16 +70,17 @@ public class DiscoveryReply implements Runnable {
             receiverSocket.receive(packet);
             // parse the packet
             String received = new String(packet.getData(), 0, packet.getLength());
-            if(verbose){System.out.println(NetworkUtils.timeStamp(1) + "A discovery probe was received: " + received);}
+            if(verbose){Debugger.log("DiscReply: A discovery probe was received: " + received, null);}
             JsonNode request = null;
             request = mapper.readTree(received);
             req_target = request.get("target").textValue();
 
         }catch (SocketTimeoutException e)
         {
+            Debugger.log("", e);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
             return null;
         }
         return req_target;
@@ -111,14 +112,14 @@ public class DiscoveryReply implements Runnable {
             try {
                 req = mapper.writeValueAsString(reply).getBytes();
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                Debugger.log("", e);
                 return false;
             }
             DatagramPacket replyPkt = new DatagramPacket(req, req.length, address, ports[1]);
             try {
                 socket.send(replyPkt);
             } catch (IOException e) {
-                e.printStackTrace();
+                Debugger.log("", e);
                 return false;
             }
         }

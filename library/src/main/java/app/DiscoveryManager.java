@@ -38,7 +38,7 @@ public class DiscoveryManager implements Runnable{
                 return;
         }
     }
-    System.out.println("interrupted");
+    Debugger.log("interrupted", null);
 
     }
 
@@ -62,11 +62,11 @@ public class DiscoveryManager implements Runnable{
             threads.get(1).start();
             //time out for a bit before sending out your own requests
             try {
-                if (verbose){System.out.println(NetworkUtils.timeStamp(1) + "Waiting before sending out broadcast...");}
+                if (verbose){Debugger.log("Waiting before sending out broadcast...", null);}
                 Thread.sleep(5000);
             }
             catch(InterruptedException e){
-                e.printStackTrace();
+                Debugger.log("", e);
             }
             //broadcast to harms and stalkers
             threads.add(new Thread(new NetDiscovery(Module.STALKER, Module.STALKER,timeout, verbose)));
@@ -76,7 +76,7 @@ public class DiscoveryManager implements Runnable{
 
             //The threads will never stop so we must stop them when this thread is interrupted
             while (!Thread.interrupted()){
-                try{Thread.sleep(10000);}catch (Exception e){};
+                try{Thread.sleep(10000);}catch (Exception e){Debugger.log("", e);};
             }
             threads.forEach(t -> t.interrupt());
             for (Thread t : threads){
@@ -88,7 +88,7 @@ public class DiscoveryManager implements Runnable{
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
     }
     //will listen for udp packets from stalkers
@@ -104,7 +104,7 @@ public class DiscoveryManager implements Runnable{
             listener.join();
         }
         catch (Exception e){
-            e.printStackTrace();
+            Debugger.log("", e);
         }
     }
 
@@ -118,7 +118,7 @@ public class DiscoveryManager implements Runnable{
             broadcaster.interrupt();
             broadcaster.join();
         } catch (Exception e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
     }
 

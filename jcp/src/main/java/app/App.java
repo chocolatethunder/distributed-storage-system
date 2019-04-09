@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,10 @@ public class App {
 
     //jcp main
     public static void main(String[] args) {
-        int test  = 0;
+
+        //debugging modes: 0 - none; 1 - message only; 2 - stack traces only; 3 - stack and
+        Debugger.setMode(3);
+        Debugger.toggleFileMode();
         initJCP();
         int discoveryTimeout = 5;
 
@@ -36,7 +40,8 @@ public class App {
         // value in bytes
         AtomicLong totalDiskSpace = new AtomicLong(0);
 
-        System.out.println(NetworkUtils.timeStamp(1) + "JCP online");
+        Debugger.log("JCP Main: JCP online", null);
+
         //make a discovery manager and start it, prints results to file
         //this beast will be running at all times
         Thread discManager = new Thread(new DiscoveryManager(Module.JCP, discoveryTimeout, false));
@@ -55,17 +60,17 @@ public class App {
                     connected = true;
                 }
                 else{
-                    System.out.println(NetworkUtils.timeStamp(1) + "No STALKERs detected yet...");
-                    System.out.println(NetworkUtils.timeStamp(1) + "Waiting for servers to become available...");
+                    Debugger.log("JCP Main: No STALKERs detected yet...", null);
+                    Debugger.log( "JCP Main: Waiting for servers to become available...", null);
                 }
 
             }
             catch(NullPointerException e){
-                e.printStackTrace();
+                Debugger.log("JCP Main: Problem during network discovery...", e);
             }
             attempts++;
         }
-        System.out.println(NetworkUtils.timeStamp(1) + "System ready to take requests!");
+        Debugger.log("JCP Main: System ready to take requests!", null);
         initJFrame();
         requestSender = RequestSender.getInstance();
         //starting health checker tasks for each stalker in the stalker list
@@ -84,6 +89,14 @@ public class App {
             }
         }
     }
+
+    public static void initJCP(){
+        List<File> dirs = new ArrayList();
+        dirs.add(new File("logs"));
+        dirs.add(new File("config"));
+        NetworkUtils.initDirs(dirs, true, 1);
+    }
+
     //round robin through the stalkers and try to get a connection
     public static Socket connectToStalker(){
         int port = 11111;
@@ -114,12 +127,12 @@ public class App {
             //remove this:
             listOfFiles.setModel(listModel);
             consoleOutput.append("Listed files.\n");
-            System.out.println("Listed files.");
+            Debugger.log("JCP Main: File list operation complete", null);
             try{ connection.close();}
-            catch(IOException e){ e.printStackTrace();}
+            catch(IOException e){ Debugger.log("", e);;}
         }
         else{
-            consoleOutput.append("Connecting to server, please wait.\n");
+            consoleOutput.append("JCP Main: Connecting to server, please wait.\n");
         }
 
     }
@@ -139,10 +152,10 @@ public class App {
                 //uncomment this:
                 requestSender.sendFile(name);
                 consoleOutput.append("Uploaded " + selectedFile + "\n");
-                System.out.println("Uploaded " + selectedFile);
+                Debugger.log("JCP Main: Uploaded " + selectedFile, null);
             }
             try{ connection.close();}
-            catch(IOException e){ e.printStackTrace();}
+            catch(IOException e){ Debugger.log("", e);}
             retrieveFiles();
         }
         else{
@@ -165,9 +178,10 @@ public class App {
             //uncomment this:
             requestSender.deleteFile(selectedFilename.toString());
             consoleOutput.append("Deleted " + selectedFilename.toString() + "\n");
-            System.out.println("Deleted " + selectedFilename.toString());
+
+            Debugger.log("JCP Main: Deleted " + selectedFilename.toString(), null);
             try{ connection.close();}
-            catch(IOException e){ e.printStackTrace();}
+            catch(IOException e){ Debugger.log("", e);}
             retrieveFiles();
         }
         else{
@@ -191,10 +205,10 @@ public class App {
                 //uncomment this:
                 requestSender.getFile(selectedFile + "/" + selectedFilename);
                 consoleOutput.append("Downloaded " + selectedFilename + " to " + selectedFile + "\n");
-                System.out.println("Downloaded " + selectedFilename + " to " + selectedFile);
+                Debugger.log("JCP Main: Downloaded " + selectedFilename + " to " + selectedFile, null);
             }
             try{ connection.close();}
-            catch(IOException e){ e.printStackTrace();}
+            catch(IOException e){Debugger.log("", e);}
         }
         else{
             consoleOutput.append("Connecting to server, please wait.\n");
@@ -291,38 +305,6 @@ public class App {
         //bring window to front
         mainFrame.setAlwaysOnTop(true);
         mainFrame.setAlwaysOnTop(false);
-    }
-
-    //cleans chunk folders on startup
-    public static void initJCP(){
-        //clear chunk folder
-        File theDir = new File("config");
-        // if the directory does not exist, create it
-        if (!theDir.exists()) {
-            System.out.println("creating directory: " + theDir.getName());
-            boolean result = false;
-            try{
-                theDir.mkdir();
-                result = true;
-            }
-            catch(SecurityException se){
-                se.printStackTrace();
-            }
-            if(result) {
-                System.out.println("DIR created");
-            }
-        }
-
-        //delete any files in these folders
-        File[] folder_contents = theDir.listFiles();
-        if(folder_contents != null) {
-            for (File f : folder_contents) {
-                if (!FilenameUtils.getExtension(f.getName()).equals("empty")) {
-                    f.delete();
-                }
-            }
-        }
-
     }
 
 }

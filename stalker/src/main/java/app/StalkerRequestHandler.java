@@ -34,16 +34,17 @@ public class StalkerRequestHandler implements Runnable {
         }
         catch (IOException e){
 
-            e.printStackTrace();
+            Debugger.log("", e);
             return;
         }
-        System.out.println(NetworkUtils.timeStamp(1) + "Leader is now taking requests...");
+        Debugger.log("Stalker Request Handler: Leader is now taking requests...", null);
         while(running){
             try{
                 client = server.accept();
                 // receive packet on the socket link
                 TcpPacket req = commLink.receivePacket(client);
-                System.out.println(NetworkUtils.timeStamp(1) + "Accepted connection : " + client + ", Request type: " + req.getMessageType().name() + ".");
+                Debugger.log("Stalker Request Handler: Accepted connection : " + client + ", Request type: " + req.getMessageType().name() + ".", null);
+
                 //Acknowlegde that the request has been recieved and that
 
                 if (req.getMessageType() == MessageType.CONFIRM){
@@ -57,12 +58,9 @@ public class StalkerRequestHandler implements Runnable {
                     QueueEntry toPut = new QueueEntry(req, client.getInetAddress());
                     executorService.submit(new QueueHandler(0, toPut, pQueue));
                 }
-
-
-
             }
             catch (IOException e){
-                e.printStackTrace();
+                Debugger.log("", e);
             }
         }
 

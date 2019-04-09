@@ -51,7 +51,7 @@ public class ChunkRetriever {
                     break;
                 }
                 if (attempts == 3){
-                    System.out.println("Failed to receive file from HARM target after multiple attempts");
+                    Debugger.log("Chunk Retriever: Failed to receive file from HARM target after multiple attempts", null);
                     break;
                 }
                 try{
@@ -66,8 +66,7 @@ public class ChunkRetriever {
 
                 }
                 catch(IOException e){
-                    e.printStackTrace();
-                    System.out.println("Attempt: " + attempts + " failed!");
+                    Debugger.log("Chunk Retriever: Attempt: " + attempts + " failed!", e);
                     attempts++;
                 }
             }

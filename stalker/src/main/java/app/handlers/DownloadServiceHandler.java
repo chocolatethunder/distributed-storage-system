@@ -33,41 +33,41 @@ public class DownloadServiceHandler implements Runnable {
         CommsHandler commsLink = new CommsHandler();
         try {
             // 0. we are going to check to see if the file exists first...
-
+            Debugger.log("DownloadService: Starting download process...", null);
             IndexEntry e = index.search(fileName);
             if (e == null){
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "File does not exist.");
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "DownloadService: File does not exist.");
             }
 //          1. get permissions from leader
 //------------------------------------------------------------
             //going to need IP of leader
             if (!commsLink.sendRequestToLeader(MessageType.DOWNLOAD)) {
                 commsLink.sendResponse(socket, MessageType.ERROR);
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Could not connect to leader.");
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "DownloadService: Could not connect to leader.");
             }
-            System.out.println("Request sent to leader");
+            Debugger.log("DownloadService: Request sent to leader", null);
 //          2. Wait for Leader to grant job permission
 ///------------------------------------------------------------
             Socket leader = commsLink.getLeaderResponse(server_port);
             if(leader == null){
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error with leader connection");
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "DownloadService: Error with leader connection");
             }
 ///-----------------
 //          3. Now we must get the files from the harm targets
 ///------------------------------------------------------------
             ChunkRetriever cr = new ChunkRetriever(c_dir);
             if(cr.retrieveChunks(e)){
-                System.out.println("Chunks retrieved OK!");
+                Debugger.log("DownloadService: Chunks retrieved OK!", null);
             }
             e.summary();
 //          4. Now we must reassemble the file
 ///------------------------------------------------------------
             ChunkAssembler ca = new ChunkAssembler(c_dir, ass_dir);
             if(ca.assembleChunks(e)){
-                System.out.println("Chunks assembled");
+                Debugger.log("DownloadService: Chunks assembled", null);
             }
             else{
-                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Error reassembling chunks");
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "DownloadService: Error reassembling chunks");
             }
 //          5. send it to the client
 ///------------------------------------------------------------
@@ -88,35 +88,12 @@ public class DownloadServiceHandler implements Runnable {
             }
         }
         catch (RuntimeException ex){
-            ex.printStackTrace();
+            Debugger.log("", ex);
         }
         catch (IOException err){
-            err.printStackTrace();
+            Debugger.log("", err);
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-        ///used for download
-//        //retrieve chunks
-
-//        //assemble the chunks
-//        if(ca.assembleChunks(entry)){
-//            System.out.println("Test passed without fail");
-//        }
-
-
-        //entry.summary();
     }
 
 }
