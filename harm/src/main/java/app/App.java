@@ -53,7 +53,6 @@ public class App {
                 TcpPacket STALKER_Request = commLink.receivePacket(STALKER_Client);
                 Handler h = new Handler(STALKER_Client, STALKER_Request, macID);
                 h.run();
-
                 // creating a runnable task for each request from the same socket connection
                 //probably not even necessary
                 //not working right now

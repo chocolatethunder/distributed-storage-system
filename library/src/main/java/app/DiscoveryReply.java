@@ -77,7 +77,7 @@ public class DiscoveryReply implements Runnable {
 
         }catch (SocketTimeoutException e)
         {
-            Debugger.log("", e);
+            //Debugger.log("", e);
         }
         catch (IOException e) {
             Debugger.log("", e);
