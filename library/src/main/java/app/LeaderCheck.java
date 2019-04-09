@@ -15,11 +15,12 @@ public class LeaderCheck {
 
     private static int leaderUuid = -1;
     private static String leaderIP = "x.x.x.x";
-
+    private static ConfigFile cfg;
     public LeaderCheck()
     {
         this.stalkerMap = NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
         this.ids = NetworkUtils.mapToSList(stalkerMap);
+
     }
 
 
@@ -27,12 +28,12 @@ public class LeaderCheck {
     public static void election()
     {
         Map<Integer, Integer> voteCount = new HashMap<>();
-
+        cfg = ConfigManager.getCurrent();
         // ask for leader
         Debugger.log("Election: Voting has started...", null);
         for(Integer entry : stalkerMap.keySet())
         {
-            int port = 11114;
+            int port = cfg.getElection_port();
             int timeoutForReply = 20;
 
 

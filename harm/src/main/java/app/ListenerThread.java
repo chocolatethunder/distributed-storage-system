@@ -16,6 +16,8 @@ import java.util.concurrent.Executors;
  */
 public class ListenerThread implements Runnable {
 
+
+    private ConfigFile cfg;
     private final int serverPort = 11114;
     private boolean running = true;
     private boolean debugMode = false;

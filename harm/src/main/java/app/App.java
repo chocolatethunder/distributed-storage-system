@@ -13,15 +13,18 @@ import java.util.concurrent.TimeUnit;
 
 public class App {
 
-
+    private static ConfigFile cfg;
     public static void main(String[] args) {
         //debugging modes: 0 - none; 1 - message only; 2 - stack traces only; 3 - stack and message
         Debugger.setMode(3);
         Debugger.toggleFileMode();
-
+        ConfigManager.loadFromFile("config/config.cfg", "default", true);
+        cfg = ConfigManager.getCurrent();
+        NetworkUtils.loadConfig(cfg);
+        Debugger.setMode(cfg.getDebug_mode());
         initHarm();
         //this will always be running
-        Thread discManager = new Thread(new DiscoveryManager(Module.HARM, 20, true));
+        Thread discManager = new Thread(new DiscoveryManager(Module.HARM, cfg.getHarm_update_freq(), true));
         discManager.start();
         //Starting the listenerthread for health check requests
         Thread listenerThread = new Thread(new ListenerThread(false));
@@ -36,7 +39,7 @@ public class App {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
             //initializing harm server
-            HARM_server = new ServerSocket(22222);
+            HARM_server = new ServerSocket(cfg.getHarm_listen());
         } catch (IOException e) {
             Debugger.log("", e);
         }
@@ -56,7 +59,6 @@ public class App {
                 //probably not even necessary
                 //not working right now
                 //executorService.execute();
-
             } catch (FileNotFoundException e) {
                 Debugger.log("", e);
             } catch (IOException e) {

@@ -25,6 +25,7 @@ public class App {
     static DefaultListModel listModel = new DefaultListModel();
     static RequestSender requestSender;
     static boolean connected;
+    static ConfigFile cfg;
 
     //jcp main
     public static void main(String[] args) {
@@ -33,8 +34,12 @@ public class App {
         Debugger.setMode(3);
         Debugger.toggleFileMode();
         initJCP();
+        ConfigManager.loadFromFile("config/config.cfg", "default", true);
+        cfg = ConfigManager.getCurrent();
+        NetworkUtils.loadConfig(cfg);
+        Debugger.setMode(cfg.getDebug_mode());
         initJFrame();
-        int discoveryTimeout = 5;
+        int discoveryTimeout = cfg.getJcp_update_freq();
 
         // to capture total disk space in the system and will be updated with each health check
         // AtomicLong is already synchronized
@@ -78,8 +83,6 @@ public class App {
         Thread healthChecker= new Thread(new HealthChecker(Module.JCP, totalDiskSpace, true));
         healthChecker.start();
         retrieveFiles();
-
-
         //ip of stalker we'll just use the one at index 1 for now
         while(true){
             try{
@@ -100,7 +103,7 @@ public class App {
 
     //round robin through the stalkers and try to get a connection
     public static Socket connectToStalker(){
-        int port = 11111;
+        int port = cfg.getJcp_req_port();
         HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/stalkers.list"));
         List<Integer> s_list = NetworkUtils.mapToSList(m);
         Socket stalker = null;

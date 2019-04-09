@@ -26,19 +26,16 @@ public class App {
     private static String harm_path;
     private static int disc_timeout;
     private static int debug_mode = 3;
-
+    private static ConfigFile cfg;
 
     public static void main(String[] args) {
         //debugging modes: 0 - none; 1 - message only; 2 - stack traces only; 3 - stack and
         Debugger.setMode(3);
         Debugger.toggleFileMode();
-
         initStalker();
         ConfigManager.loadFromFile("config/config.cfg", "default", true);
-        loadConfig(ConfigManager.getCurrent());
-        System.out.println(ConfigManager.getCurrent().getHarm_list_path());
-
-
+        cfg = ConfigManager.getCurrent();
+        loadConfig(cfg);
         ind = Indexer.loadFromFile();
 
         //starting listener thread for health check and leader election
@@ -178,7 +175,7 @@ public class App {
         boolean success = false;
         while (!success) {
             try {
-                Socket leader = NetworkUtils.createConnection(NetworkUtils.getStalkerMap(stalker_path).get(uuid), 11112);
+                Socket leader = NetworkUtils.createConnection(NetworkUtils.getStalkerMap(stalker_path).get(uuid), cfg.getLeader_report());
                 if (leader != null) {
                     //get confirmation from leader
                     if (commLink.sendPacket(leader, MessageType.CONFIRM, "", true) == MessageType.CONFIRM) {
