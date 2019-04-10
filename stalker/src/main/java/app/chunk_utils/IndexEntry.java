@@ -61,7 +61,6 @@ public class IndexEntry {
         return("Filename: " + file_prefix + "; File Type: " + file_type + "; File Size: " + file_size);
     }
 
-
     public String getFile_prefix() { return file_prefix; }
     public void setFile_prefix(String file_prefix) { this.file_prefix = file_prefix; }
     public String getFile_type() { return file_type; }

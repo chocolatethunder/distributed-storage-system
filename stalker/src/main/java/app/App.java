@@ -61,19 +61,30 @@ public class App {
         while (!connected){
             //we will wait for network discovery to do its thing
             wait((disc_timeout * 1000) + 5000);
-            stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
-            harmlist = NetworkUtils.getNodeMap(cfg.getHarm_list_path());
+            try{
+                stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
+                harmlist = NetworkUtils.getNodeMap(cfg.getHarm_list_path());
+            }
+            catch (Exception e){
+                //Debugger.log("", null);
+            }
+
+            Debugger.log("Debug 1", null);
             try{
                 if (harmlist != null && !harmlist.isEmpty()){
+                    Debugger.log("Populating harm list...", null);
                 }
                 else{
                     Debugger.log("Stalker Main: No HARM targets detected...", null);
                 }
 
                 if (stalkerList != null && stalkerList.size() >= 3){
+                    Debugger.log("Threshold for initiation met...", null);
+                    Debugger.log("Debug 2", null);
                     connected = true;
                 }
                 else{
+
                     Debugger.log("Stalker Main: No STALKERs detected yet...", null);
                     Debugger.log("Stalker Main: Waiting for servers to become available...", null);
                 }
@@ -81,8 +92,10 @@ public class App {
             catch(NullPointerException e){
                 Debugger.log("", e);
             }
+            Debugger.log("Debug 3", null);
             attempts++;
         }
+        Debugger.log("Debug 4", null);
         Debugger.log("Stalker Main: System discovery complete!", null);
         int test = 0;
         //starting task for health checks on STALKERS and HARM targets
