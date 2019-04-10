@@ -93,24 +93,27 @@ public class QueueHandler implements  Runnable {
         List<Integer> s_list = NetworkUtils.mapToSList(m);
         Socket stalker = null;
         for (Integer id : s_list){
-            String stalkerip =  m.get(id);
-            Debugger.log("Sending update to " + stalkerip, null);
-            try{
-                stalker = NetworkUtils.createConnection(stalkerip, port);
-                Debugger.log("Sending update to " + stalkerip, null);
-                if (commLink.sendPacket(stalker,MessageType.UPDATE, t.getMessage(), true) == MessageType.ACK){
-                   // stalker.close();
-                }
 
-            }
-            catch (IOException e){
-                e.printStackTrace();
-                return(false);
-            }
+            if (id != ConfigManager.getCurrent().getLeader_id()){
+                String stalkerip =  m.get(id);
+                Debugger.log("Sending update to " + stalkerip, null);
+                try{
+                    stalker = NetworkUtils.createConnection(stalkerip, port);
+                    if (commLink.sendPacket(stalker,MessageType.UPDATE, t.getMessage(), true) == MessageType.ACK){
+                        // stalker.close();
+                    }
+
+                }
+                catch (IOException e){
+                    e.printStackTrace();
+                    return(false);
+                }
 
 //            if (stalker != null){
 //                break;
 //            }
+            }
+
         }
         return(true);
     }
