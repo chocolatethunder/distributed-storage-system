@@ -95,7 +95,7 @@ public class App {
             LeaderCheck leaderchecker = new LeaderCheck();
             leaderchecker.election();
             leaderUuid = LeaderCheck.getLeaderUuid();
-
+            cfg.setLeader_id(leaderUuid);
             int role = ElectionUtils.identifyRole(stalkerList,leaderUuid);
             if (role != 0){
                 //we kind of assume we'll get an indexfile from the leader
@@ -105,8 +105,6 @@ public class App {
                         break;
                     }
                 }
-                cfg.setLeader_id(leaderUuid);
-
             }
             switch (role){
                 case 0:

@@ -4,12 +4,10 @@ import app.*;
 import app.chunk_utils.IndexFile;
 import app.chunk_utils.IndexUpdate;
 import app.chunk_utils.Indexer;
-
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
-import java.util.PriorityQueue;
 
 public class QueueHandler implements  Runnable {
 
@@ -56,6 +54,9 @@ public class QueueHandler implements  Runnable {
                     TcpPacket t = null;
                     t = commLink.receivePacket(worker);
                     sendUpdates(t);
+                    Thread th = new Thread(new IndexManager(Indexer.loadFromFile(), Indexer.deserializeUpdate(t.getMessage())));
+                    th.start();
+                    th.join();
                     Debugger.log("Stalkers have been updated", null);
 
                 }
@@ -63,6 +64,8 @@ public class QueueHandler implements  Runnable {
                 Debugger.log( "job complete", null);
                 worker.close();
             }
+        }
+        catch (InterruptedException e){
         }
         catch (IOException e){
             e.printStackTrace();
@@ -90,11 +93,13 @@ public class QueueHandler implements  Runnable {
         int port = 11114;
         Debugger.log("Sending out updates...", null);
         HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString(ConfigManager.getCurrent().getStalker_list_path()));
+        m.remove(ConfigManager.getCurrent().getLeader_id());
         List<Integer> s_list = NetworkUtils.mapToSList(m);
         Socket stalker = null;
         for (Integer id : s_list){
 
             int attempts = 0;
+
             String stalkerip =  m.get(id);
             Debugger.log("Sending update to " + stalkerip, null);
             while(attempts < 3){
@@ -108,13 +113,13 @@ public class QueueHandler implements  Runnable {
                     return(false);
                 }
                 attempts++;
-
+            }
 
 
 //            if (stalker != null){
 //                break;
 //            }
-            }
+
 
         }
         return(true);
