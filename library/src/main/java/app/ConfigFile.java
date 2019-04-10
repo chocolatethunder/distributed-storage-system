@@ -6,8 +6,8 @@ public class ConfigFile {
 
     private boolean random = false;
 
-    private int chunk_count = 5;
-    private int replica_count = 10;
+    private int chunk_count = 15;
+    private int replica_count = 3;
 
     private String broadcast_ip = "192.168.1.255";
 
