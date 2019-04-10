@@ -63,6 +63,8 @@ public class App {
             stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
             try{
                 if (stalkerList != null && stalkerList.size() >= 1){
+                    Debugger.log("JCP connected to servers!", null);
+                    consoleOutput.append("JCP Main: Connected to server!.\n");
                     connected = true;
                 }
                 else{
@@ -165,7 +167,7 @@ public class App {
             retrieveFiles();
         }
         else{
-            consoleOutput.append("Connecting to server, please wait.\n");
+            consoleOutput.append("JCP Main: Connecting to server, please wait.\n");
         }
 
 

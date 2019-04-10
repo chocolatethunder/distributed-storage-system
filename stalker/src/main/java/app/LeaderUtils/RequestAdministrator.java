@@ -27,7 +27,7 @@ public class RequestAdministrator implements Runnable {
             }
             try{
                 //lets not make this too busy if nothing is going on
-                Thread.sleep((long)(Math.random() * 1000));
+                Thread.sleep((long)(4000));
             }
             catch(InterruptedException e){
                 e.printStackTrace();
