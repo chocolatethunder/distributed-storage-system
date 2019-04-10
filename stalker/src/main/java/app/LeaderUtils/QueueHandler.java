@@ -97,7 +97,7 @@ public class QueueHandler implements  Runnable {
             try{
                 stalker = NetworkUtils.createConnection(stalkerip, port);
                 if (commLink.sendPacket(stalker,MessageType.UPDATE, t.getMessage(), true) == MessageType.ACK){
-                    //stalker.close();
+                    stalker.close();
                 }
 
             }
