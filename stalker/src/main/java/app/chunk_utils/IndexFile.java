@@ -37,7 +37,13 @@ public class IndexFile {
     public synchronized void add(IndexEntry e){
         entries.put(UUID.nameUUIDFromBytes(e.fileName().getBytes()).toString(), e);
     }
-    public synchronized void remove(IndexEntry e){entries.remove(UUID.nameUUIDFromBytes(e.fileName().getBytes()).toString()); chunkIndex.remove(e.fileName().getBytes().toString());}
+    public synchronized void remove(IndexEntry e){
+        IndexEntry temp = entries.get(UUID.nameUUIDFromBytes(e.fileName().getBytes()).toString());
+        for (Chunk c : temp.getChunkList()){
+            chunkIndex.remove(c.getUuid());
+        }
+        entries.remove(UUID.nameUUIDFromBytes(e.fileName().getBytes()).toString());
+    }
     public synchronized void indexChunks(IndexEntry e){
         for (Chunk c : e.getChunkList()){
             chunkIndex.put(c.getUuid(), c.getReplicas());
