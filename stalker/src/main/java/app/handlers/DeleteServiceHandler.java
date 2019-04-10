@@ -6,6 +6,7 @@ import app.chunk_utils.*;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This runnable class is responsible for handling delete file request
@@ -89,12 +90,12 @@ public class DeleteServiceHandler implements Runnable {
     }
     public boolean removeChunks(IndexEntry e) {
         int port = cfg.getHarm_listen();
-        HashMap<Integer, String> m = NetworkUtils.mapFromJson(NetworkUtils.fileToString(cfg.getHarm_list_path()));
+        Map<Integer, NodeAttribute> m = NetworkUtils.getNodeMap(ConfigManager.getCurrent().getHarm_list_path());
         for (Chunk c : e.getChunkList()) {
             for (Integer i : c.getReplicas()) {
                 try {
                     System.out.println(i);
-                    Socket harmServer = NetworkUtils.createConnection(m.get(i), port);
+                    Socket harmServer = NetworkUtils.createConnection(m.get(i).getAddress(), port);
                     //if everything went well then we can send the damn file
                     //send the packet to the harm target
                     if (commsLink.sendPacket(harmServer, MessageType.DELETE, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.DELETE), true) == MessageType.ACK) {
