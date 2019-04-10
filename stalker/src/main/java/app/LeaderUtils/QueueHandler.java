@@ -88,6 +88,7 @@ public class QueueHandler implements  Runnable {
     public boolean sendUpdates(TcpPacket t){
         CommsHandler commLink = new CommsHandler();
         int port = 11114;
+        Debugger.log("Sending out updates...", null);
         HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString(ConfigManager.getCurrent().getStalker_list_path()));
         List<Integer> s_list = NetworkUtils.mapToSList(m);
         Socket stalker = null;
@@ -96,7 +97,7 @@ public class QueueHandler implements  Runnable {
             try{
                 stalker = NetworkUtils.createConnection(stalkerip, port);
                 if (commLink.sendPacket(stalker,MessageType.UPDATE, t.getMessage(), true) == MessageType.ACK){
-                    stalker.close();
+                    //stalker.close();
                 }
 
             }
@@ -105,9 +106,9 @@ public class QueueHandler implements  Runnable {
                 return(false);
             }
 
-            if (stalker != null){
-                break;
-            }
+//            if (stalker != null){
+//                break;
+//            }
         }
         return(true);
     }

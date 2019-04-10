@@ -70,6 +70,7 @@ public class ListenerThread implements Runnable{
                 else if(req.getMessageType() == MessageType.UPDATE){
                     // Update the indexfile
                     commLink.sendResponse(client, MessageType.ACK);
+                    Debugger.log
                     executorService.submit(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
                 }
             } catch (IOException e) {
