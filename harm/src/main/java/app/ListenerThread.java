@@ -42,7 +42,7 @@ public class ListenerThread implements Runnable {
         } catch (IOException e) {
             Debugger.log("", e);
         }
-        Debugger.log("DiscManager: Harm server: Waiting for health check requests from stalkers..", null);
+        Debugger.log("Listener: Harm server: Waiting for health check requests from stalkers..", null);
         // will keep on listening for requests
         while (running) {
             try {

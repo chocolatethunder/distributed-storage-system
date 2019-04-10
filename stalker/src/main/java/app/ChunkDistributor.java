@@ -81,12 +81,12 @@ public class ChunkDistributor {
                 Debugger.log("Chunk Distributor: Sending chunk", null);
 
                 //make sure the harm meets the requirements of the chunk size
-                if (targ.getSpace() < c.getChunk_size()){
-                    throw new RuntimeException("Chunk Distributor: Harm server at address: " + targ.getAddress() + " does not have sufficient space: required: " + c.getChunk_size() + " available: " + targ.getSpace());
-                }
-                else if (!targ.isAlive()){
-                    throw new RuntimeException("Chunk Distributor: Harm server at address: " + targ.getAddress() + " is not responding");
-                }
+//                if (targ.getSpace() < c.getChunk_size()){
+//                    throw new RuntimeException("Chunk Distributor: Harm server at address: " + targ.getAddress() + " does not have sufficient space: required: " + c.getChunk_size() + " available: " + targ.getSpace());
+//                }
+//                else if (!targ.isAlive()){
+//                    throw new RuntimeException("Chunk Distributor: Harm server at address: " + targ.getAddress() + " is not responding");
+//                }
                 //make a connection to the harm target
                 Socket harmServer = NetworkUtils.createConnection(targ.getAddress(), port);
                 //if everything went well then we can send the damn file

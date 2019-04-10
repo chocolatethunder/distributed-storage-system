@@ -28,7 +28,7 @@ public class App {
         Thread discManager = new Thread(new DiscoveryManager(Module.HARM, cfg.getHarm_update_freq(), true));
         discManager.start();
         //Starting the listenerthread for health check requests
-        Thread listenerThread = new Thread(new ListenerThread(false));
+        Thread listenerThread = new Thread(new ListenerThread(true));
         listenerThread.start();
 
         int macID = NetworkUtils.getMacID();
