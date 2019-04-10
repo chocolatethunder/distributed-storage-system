@@ -56,11 +56,11 @@ public class QueueHandler implements  Runnable {
                     TcpPacket t = null;
                     t = commLink.receivePacket(worker);
                     sendUpdates(t);
-                    System.out.println("Stalkers have been updated");
+                    Debugger.log("Stalkers have been updated", null);
 
                 }
                 commLink.sendResponse(worker, MessageType.ACK);
-                System.out.println(NetworkUtils.timeStamp(1) + " job complete");
+                Debugger.log( "job complete", null);
                 worker.close();
             }
         }
