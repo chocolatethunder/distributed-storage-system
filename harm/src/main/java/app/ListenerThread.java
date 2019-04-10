@@ -21,7 +21,7 @@ public class ListenerThread implements Runnable {
     private ConfigFile cfg;
     private final int serverPort = ConfigManager.getCurrent().getElection_port();
     private boolean running = true;
-    private boolean debugMode = false;
+    private boolean debugMode = true;
 
 
     public ListenerThread(boolean debugMode){
@@ -87,7 +87,7 @@ public class ListenerThread implements Runnable {
      */
     public long getAvailableDiskSpace() {
         NumberFormat nf = NumberFormat.getNumberInstance();
-        long total = 0;
+        long total = 1000000;
         for (Path root : FileSystems.getDefault().getRootDirectories()) {
             Debugger.log(root + ": ", null);
             try {
