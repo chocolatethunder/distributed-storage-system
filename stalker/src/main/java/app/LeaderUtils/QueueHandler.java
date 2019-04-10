@@ -94,6 +94,7 @@ public class QueueHandler implements  Runnable {
         Socket stalker = null;
         for (Integer id : s_list){
             String stalkerip =  m.get(id);
+            Debugger.log("Sending update to " + stalkerip, null);
             try{
                 stalker = NetworkUtils.createConnection(stalkerip, port);
                 Debugger.log("Sending update to " + stalkerip, null);

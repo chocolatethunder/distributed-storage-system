@@ -99,8 +99,14 @@ public class App {
             int role = ElectionUtils.identifyRole(stalkerList,leaderUuid);
             if (role != 0){
                 //we kind of assume we'll get an indexfile from the leader
-                getConfirmation(leaderUuid);
+                while (true){
+                    wait(3000);
+                    if(getConfirmation(leaderUuid)){
+                        break;
+                    }
+                }
                 cfg.setLeader_id(leaderUuid);
+
             }
             switch (role){
                 case 0:
