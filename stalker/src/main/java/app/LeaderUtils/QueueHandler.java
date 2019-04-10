@@ -96,8 +96,9 @@ public class QueueHandler implements  Runnable {
             String stalkerip =  m.get(id);
             try{
                 stalker = NetworkUtils.createConnection(stalkerip, port);
+                Debugger.log("Sending update to " + stalkerip, null);
                 if (commLink.sendPacket(stalker,MessageType.UPDATE, t.getMessage(), true) == MessageType.ACK){
-                    stalker.close();
+                   // stalker.close();
                 }
 
             }
