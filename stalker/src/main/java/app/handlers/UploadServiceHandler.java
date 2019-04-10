@@ -26,12 +26,11 @@ public class UploadServiceHandler implements Runnable {
     public UploadServiceHandler(Socket socket, Request req, IndexFile ind){
          this.socket = socket;
          this.filePath = temp_dir + req.getFileName();
-         this.index = ind;
+         this.index = Indexer.loadFromFile();;
     }
 
     @Override
     public void run() {
-
         Debugger.log("Upload Service: Started upload process...", null);
         CommsHandler commsLink = new CommsHandler();
         try{

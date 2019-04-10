@@ -10,7 +10,7 @@ public class IndexManager implements Runnable {
     IndexUpdate update;
 
     public IndexManager(IndexFile ind, IndexUpdate u){
-        index = ind;
+        index = Indexer.loadFromFile();
         update = u;
     }
     @Override

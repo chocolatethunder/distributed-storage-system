@@ -4,6 +4,7 @@ import app.*;
 import app.chunk_utils.ChunkAssembler;
 import app.chunk_utils.IndexEntry;
 import app.chunk_utils.IndexFile;
+import app.chunk_utils.Indexer;
 
 import java.io.IOException;
 import java.io.File;
@@ -26,7 +27,7 @@ public class DownloadServiceHandler implements Runnable {
     public DownloadServiceHandler(Socket socket, Request req, IndexFile ind){
         this.socket = socket;
         this.fileName = req.getFileName();
-        this.index = ind;
+        this.index = Indexer.loadFromFile();
     }
 
     @Override

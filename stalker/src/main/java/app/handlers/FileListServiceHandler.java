@@ -1,9 +1,11 @@
 package app.handlers;
 
 import app.CommsHandler;
+import app.ConfigManager;
 import app.Debugger;
 import app.MessageType;
 import app.chunk_utils.IndexFile;
+import app.chunk_utils.Indexer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.Socket;
@@ -31,7 +33,7 @@ public class FileListServiceHandler implements Runnable {
 
     @Override
     public void run(){
-        List<String> l = index.fileList();
+        List<String> l = Indexer.loadFromFile().fileList();
         Debugger.log("index List" + l.toString(), null);
         ObjectMapper mapper = new ObjectMapper();
         String message = "";

@@ -23,6 +23,7 @@ public class DeleteServiceHandler implements Runnable {
         try {
             Debugger.log("DeleteService: Starting delete process...", null);
             //0. make sure the file exists
+            index = Indexer.loadFromFile();
             IndexEntry toRemove = index.search(fileName);
             if (toRemove == null) {
                 throw new RuntimeException(NetworkUtils.timeStamp(1) + "DeleteService: Could not find entry");
