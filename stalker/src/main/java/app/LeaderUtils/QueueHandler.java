@@ -94,18 +94,23 @@ public class QueueHandler implements  Runnable {
         Socket stalker = null;
         for (Integer id : s_list){
 
+            int attempts = 0;
             if (id != ConfigManager.getCurrent().getLeader_id()){
                 String stalkerip =  m.get(id);
                 Debugger.log("Sending update to " + stalkerip, null);
-                try{
-                    stalker = NetworkUtils.createConnection(stalkerip, port);
-                    commLink.sendPacket(stalker,MessageType.UPDATE, t.getMessage(), false);
-                    stalker.close();
+                while(attempts < 3){
+                    try{
+                        stalker = NetworkUtils.createConnection(stalkerip, port);
+                        commLink.sendPacket(stalker,MessageType.UPDATE, t.getMessage(), false);
+                        stalker.close();
+                    }
+                    catch (IOException e){
+                        e.printStackTrace();
+                        return(false);
+                    }
+                    attempts++;
                 }
-                catch (IOException e){
-                    e.printStackTrace();
-                    return(false);
-                }
+
 
 //            if (stalker != null){
 //                break;

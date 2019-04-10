@@ -52,6 +52,7 @@ public class StalkerRequestHandler implements Runnable {
 
                 if (req.getMessageType() == MessageType.CONFIRM){
                     //allow a Stalker to start working
+                    indexFile = Indexer.loadFromFile();
                     commLink.sendPacket(client, MessageType.CONFIRM, "", false);
                     commLink.sendPacket(client, MessageType.UPDATE, NetworkUtils.serializeObject(indexFile), false);
                 }
