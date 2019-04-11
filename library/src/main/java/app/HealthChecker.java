@@ -288,13 +288,16 @@ public class HealthChecker implements Runnable{
         private void updateConfigAndEndTask(){
             if(this.target == Module.STALKER) {
                 // remove node from STALKER LIST in config file stalkers.list
-                NetworkUtils.deleteNodeFromConfig(cfg.getStalker_list_path(), String.valueOf(this.uuid));
-                int leaderuuid = cfg.getLeader_id();
-                // Identify which STALKER went down
                 HashMap<Integer, String> stalkerMap = NetworkUtils.getStalkerMap(cfg.getStalker_list_path());
-                stalkerMap.keySet().contains(LeaderCheck.getLeaderUuid());
+                NetworkUtils.deleteNodeFromConfig(cfg.getStalker_list_path(), String.valueOf(this.uuid));
+                // Identify which STALKER went down
+
+//                stalkerMap.keySet().contains(LeaderCheck.getLeaderUuid());
                 if(uuid == cfg.getLeader_id())
                 {
+                    if(stalkerMap.containsKey(uuid)){
+                        stalkerMap.remove(uuid);
+                    }
                     Debugger.log("Leader has died", null);
                     //send update signal
                     // kill and the threads
@@ -304,14 +307,19 @@ public class HealthChecker implements Runnable{
                         Socket socket;
                         try {
                             socket = NetworkUtils.createConnection(entry.getValue(), port);
-                            // create a leader packet and send it to this host
-                            CommsHandler commsHandler = new CommsHandler();
-                            commsHandler.sendPacketWithoutAck(socket, MessageType.REELECT, "");
-
+                            if (socket != null){
+                                // create a leader packet and send it to this host
+                                CommsHandler commsHandler = new CommsHandler();
+                                commsHandler.sendPacketWithoutAck(socket, MessageType.REELECT, "");
+                                socket.close();
+                            }
                         }catch (IOException e) {
                             Debugger.log("", e);
                         }
                     }
+                }
+                else{
+                    Debugger.log("A worker has died", null);
                 }
             }else {
                 // don't remove but mark as dead in HARM list
