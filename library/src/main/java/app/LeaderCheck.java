@@ -85,6 +85,12 @@ public class LeaderCheck {
                     cfg.setLeader_id(entry.getKey());
                     ConfigManager.saveToFile(cfg);
                     Debugger.log("Leader found", null);
+                    try {
+                        socket.close();
+                    }
+                    catch (Exception e){
+
+                    }
                     return true;
                 }
             }catch (Exception e) {

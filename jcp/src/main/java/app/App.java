@@ -60,8 +60,8 @@ public class App {
         while (!connected){
             //we will wait for network discovery to do its thing
             wait((discoveryTimeout * 1000) + 1000);
-            stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
             try{
+                stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
                 if (stalkerList != null && stalkerList.size() >= 1){
                     Debugger.log("JCP connected to servers!", null);
                     consoleOutput.append("JCP Main: Connected to server!.\n");
