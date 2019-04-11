@@ -6,6 +6,7 @@ import app.handlers.ServiceHandlerFactory;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,6 +35,7 @@ public class JcpRequestHandler implements Runnable {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
             server = new ServerSocket(serverPort);
+            server.setSoTimeout(1000);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -56,8 +58,11 @@ public class JcpRequestHandler implements Runnable {
                     running = false;
                     client.close();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+
+            }
+            catch (SocketTimeoutException ex){
+            }
+            catch (Exception e) {
             }
         }
 
