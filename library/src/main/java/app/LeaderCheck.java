@@ -14,7 +14,7 @@ public class LeaderCheck {
     private static HashMap<Integer, String> stalkerMap;   // stalker list
     private static List<Integer> ids = new ArrayList<>();                   // stalker uuids
 
-    private static int leaderUuid = -1;
+    private static int leaderUuid = Integer.MAX_VALUE;
     private static String leaderIP = "x.x.x.x";
     private static ConfigFile cfg;
     public LeaderCheck()
@@ -96,32 +96,34 @@ public class LeaderCheck {
     }
 
     public int askForLeader(int entry){
-
         int port = cfg.getElection_port();
         int timeoutForReply = 20;
         Socket socket = null;
         try {
             socket = NetworkUtils.createConnection(stalkerMap.get(entry), port);
-            socket.setSoTimeout(1000 * timeoutForReply);
-            // create a leader packet and send it to this host
-            CommsHandler commsHandler = new CommsHandler();
-            MessageType m = null;
+            if (socket != null){
+                socket.setSoTimeout(1000 * timeoutForReply);
 
-            //if messagetype is ack then this is a new
-            m = commsHandler.sendPacket(socket, MessageType.LEADER, "Asking for a Leader", true);
-            if (m == MessageType.ACK){
-                // listen for other people leader
-                TcpPacket tcpPacket = commsHandler.receivePacket(socket);
-                String  content = tcpPacket.getMessage();
-                //get the result of the vote
-                ObjectMapper mapper = new ObjectMapper();
-                Optional<ElectionPacket> ep = null;
-                ep = Optional.of(mapper.readValue(content, ElectionPacket.class));
+                // create a leader packet and send it to this host
+                CommsHandler commsHandler = new CommsHandler();
+                MessageType m = null;
+                //if messagetype is ack then this is a new
+                m = commsHandler.sendPacket(socket, MessageType.LEADER, "Asking for a Leader", true);
+                if (m == MessageType.ACK){
+                    // listen for other people leader
+                    TcpPacket tcpPacket = commsHandler.receivePacket(socket);
+                    String  content = tcpPacket.getMessage();
+                    //get the result of the vote
+                    ObjectMapper mapper = new ObjectMapper();
+                    Optional<ElectionPacket> ep = null;
+                    ep = Optional.of(mapper.readValue(content, ElectionPacket.class));
 
-                leaderUuid = Integer.valueOf(ep.get().getUuid());
-                leaderIP = ep.get().getIp();
-                //System.out.println("Election vote: " + leaderUuid + ", " + leaderIP);
+                    leaderUuid = Integer.valueOf(ep.get().getUuid());
+                    leaderIP = ep.get().getIp();
+                    //System.out.println("Election vote: " + leaderUuid + ", " + leaderIP);
+                }
             }
+
 
         } catch (SocketException e) {
             // ask another stalker for the leader if fails to establish connection with one of the stalker
@@ -130,11 +132,11 @@ public class LeaderCheck {
             // ask another stalker for the leader if fails to establish connection with one of the stalker
             Debugger.log("", e);
         }finally {
-            try{
-                socket.close();
-            } catch (IOException e) {
-                Debugger.log("", e);
-            }
+//            try{
+//                socket.close();
+//            } catch (IOException e) {
+//                Debugger.log("", e);
+//            }
         }
         return(leaderUuid);
 
