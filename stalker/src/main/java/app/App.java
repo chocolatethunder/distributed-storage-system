@@ -108,15 +108,6 @@ public class App {
         }
 
         Debugger.log("Stalker Main: System discovery complete!", null);
-        int test = 0;
-        //starting task for health checks on STALKERS and HARM targets
-        Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, true));
-        healthChecker.start();
-        //election based on networkDiscovery results
-        //main loop
-
-        // store the
-        List<Thread> live_threads = new ArrayList<>();
         LeaderCheck leaderchecker = new LeaderCheck();
 
 
@@ -131,6 +122,9 @@ public class App {
 
         while (true){
             //reelect
+            //starting task for health checks on STALKERS and HARM targets
+            Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, true));
+            healthChecker.start();
             HashMap<Integer, String> stalkermap = NetworkUtils.getStalkerMap(cfg.getStalker_list_path());
             stalkermap.remove(leaderUuid);
             int role = ElectionUtils.identifyRole(NetworkUtils.mapToSList(stalkermap),leaderUuid);
@@ -181,8 +175,10 @@ public class App {
                     }
                     //interrupt any workers
                     jcpReq.interrupt();
-                    Debugger.log("Interrupted", null);
+                    Debugger.log("Worker Interrupted", null);
                     try {
+                        healthChecker.interrupt();
+                        healthChecker.join();
                         jcpReq.join();
                     }
                     catch(InterruptedException e){
@@ -201,7 +197,9 @@ public class App {
                     try {
                         //interrupt vice leader
                         vice.interrupt();
-                        Debugger.log("Interrupted", null);
+                        Debugger.log("Worker Interrupted", null);
+                        healthChecker.interrupt();
+                        healthChecker.join();
                         vice.join();
                     }
                     catch(InterruptedException e){

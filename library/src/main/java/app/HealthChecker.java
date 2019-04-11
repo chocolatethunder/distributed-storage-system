@@ -77,8 +77,6 @@ public class HealthChecker implements Runnable{
                 addTimerTaskForHarm(timer, mapper, entry);
             }
         }
-
-
         /***
          * This block is going to check changes in the list every interval and if there is any new entry
          * it will start a timer Task for it
@@ -247,10 +245,7 @@ public class HealthChecker implements Runnable{
 
                         }
                     }
-
                 }
-
-
             }
             catch(NullPointerException e){
             }
