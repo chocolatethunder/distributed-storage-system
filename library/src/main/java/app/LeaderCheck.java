@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.rmi.server.ExportException;
 import java.util.*;
 
 public class LeaderCheck {
@@ -68,6 +69,7 @@ public class LeaderCheck {
 
     public boolean tryLeader(){
 
+        Debugger.log("Trying to find a running leader", null);
         //try and connect to a leader
         for(Map.Entry<Integer, String> entry : stalkerMap.entrySet())
         {
@@ -83,10 +85,11 @@ public class LeaderCheck {
                     ConfigManager.saveToFile(cfg);
                     return true;
                 }
-            }catch (IOException e) {
+            }catch (Exception e) {
                 Debugger.log("", e);
             }
         }
+        Debugger.log("No leader found", null);
         return false;
     }
 
