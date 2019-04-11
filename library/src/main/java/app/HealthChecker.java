@@ -256,6 +256,7 @@ public class HealthChecker implements Runnable{
             }
             catch (SocketException e) {
                 // server has not replied within expected timeoutTime
+                Debugger.log("STALKER at : " + host  + "has died!", null);
                 updateConfigAndEndTask();
                 if(debugMode) {
                     Debugger.log("", e);
@@ -303,17 +304,20 @@ public class HealthChecker implements Runnable{
                     // kill and the threads
                     for(Map.Entry<Integer, String> entry : stalkerMap.entrySet())
                     {
-                        int port = cfg.getElection_port();;
+                        Debugger.log("Debug1", null);
+                        int port = cfg.getElection_port();
                         Socket socket;
                         try {
                             socket = NetworkUtils.createConnection(entry.getValue(), port);
                             if (socket != null){
+                                Debugger.log("Debug3", null);
                                 // create a leader packet and send it to this host
                                 CommsHandler commsHandler = new CommsHandler();
                                 commsHandler.sendPacketWithoutAck(socket, MessageType.REELECT, "");
                                 socket.close();
                             }
                         }catch (IOException e) {
+                            Debugger.log("Debug2", null);
                             Debugger.log("", e);
                         }
                     }

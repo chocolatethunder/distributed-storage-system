@@ -176,14 +176,13 @@ public class App {
                     jcpReq.start();
                     //while no reelection is called
                     while(!ConfigManager.getCurrent().isReelection()){
-                        //wait 10 seconds
-                        wait(3000);
+                        //wait 1 seconds
+                        wait(1000);
                     }
                     Debugger.log("Interrupted", null);
                     //interrupt any workers
                     jcpReq.interrupt();
                     try {
-                        jcpReq.interrupt();
                         jcpReq.join();
                     }
                     catch(InterruptedException e){
@@ -197,7 +196,7 @@ public class App {
                     //while no reelection called
                     while(!ConfigManager.getCurrent().isReelection()){
                         //wait 10 seconds
-                        wait(10000);
+                        wait(1000);
                     }
                     try {
                         //interrupt vice leader
