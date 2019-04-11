@@ -19,13 +19,13 @@ public class LeaderCheck {
     private static ConfigFile cfg;
     public LeaderCheck()
     {
-        this.ids = NetworkUtils.mapToSList(stalkerMap);
+        cfg = ConfigManager.getCurrent();
+        this.ids = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
     }
 
 
     public void election(int mode)
     {
-        cfg = ConfigManager.getCurrent();
         stalkerMap = updateStalkerMap();
         if (mode == 0){
             //remove the leader from the list if still there
