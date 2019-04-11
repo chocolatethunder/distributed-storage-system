@@ -17,10 +17,10 @@ public class HealthChecker implements Runnable{
 
 
     // every 30 seconds for now
-    private long interval = 1000 * 3;
+    private long interval = 1000 * 15;
 
     //delay between each timerTask, considering net discovery already occured
-    private long intialDelay = 1000 *3;
+    private long intialDelay = 1000 *10;
 
     private Map<Integer, String> stalkerList;
     private Map<Integer, String> harmList;
@@ -48,7 +48,7 @@ public class HealthChecker implements Runnable{
         }
         this.spaceAvailableSoFar = spaceAvailableSoFar;
         this.debugMode = debugMode;
-        interval = cfg.getStalker_update_freq() * 1100;
+        //interval = cfg.getStalker_update_freq() * 1100;
 
     }
 

@@ -104,6 +104,7 @@ public class LeaderCheck {
     }
 
     public int askForLeader(int entry){
+        stalkerMap = updateStalkerMap();
         int port = cfg.getElection_port();
         int timeoutForReply = 4;
         Socket socket = null;
