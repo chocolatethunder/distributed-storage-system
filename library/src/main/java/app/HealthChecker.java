@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -259,6 +260,7 @@ public class HealthChecker implements Runnable{
                 if(debugMode) {
                     Debugger.log("", e);
                 }
+
             } catch (IOException e) {
                 // any other IO exception, also stop the task and assume the node is dead
                 Debugger.log("STALKER at : " + host  + "has died!", null);
@@ -266,7 +268,8 @@ public class HealthChecker implements Runnable{
                 if(debugMode) {
                     Debugger.log("", e);
                 }
-            }finally {
+            }
+            finally {
                 try{
                     if(socket != null) {
                         if(debugMode) {
@@ -284,42 +287,36 @@ public class HealthChecker implements Runnable{
 
         private void updateConfigAndEndTask(){
             if(this.target == Module.STALKER) {
-                Debugger.log("Debug: updataeconfigandeexit 1", null);
                 // remove node from STALKER LIST in config file stalkers.list
                 NetworkUtils.deleteNodeFromConfig(cfg.getStalker_list_path(), String.valueOf(this.uuid));
                 int leaderuuid = cfg.getLeader_id();
                 // Identify which STALKER went down
                 HashMap<Integer, String> stalkerMap = NetworkUtils.getStalkerMap(cfg.getStalker_list_path());
-                List<Integer> ids  = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
-
                 stalkerMap.keySet().contains(LeaderCheck.getLeaderUuid());
                 if(uuid == cfg.getLeader_id())
                 {
                     Debugger.log("Leader has died", null);
                     //send update signal
+                    // kill and the threads
+                    for(Map.Entry<Integer, String> entry : stalkerMap.entrySet())
+                    {
+                        int port = cfg.getElection_port();;
+                        Socket socket;
+                        try {
+                            socket = NetworkUtils.createConnection(entry.getValue(), port);
+                            // create a leader packet and send it to this host
+                            CommsHandler commsHandler = new CommsHandler();
+                            commsHandler.sendPacketWithoutAck(socket, MessageType.REELECT, "");
 
-
-//                    // kill and the threads
-//                    for(Map.Entry<Integer, String> entry : stalkerMap.entrySet())
-//                    {
-//                        int port = cfg.getLeader_report();
-//                        Socket socket;
-//                        try {
-//                            socket = NetworkUtils.createConnection(entry.getValue(), port);
-//                            // create a leader packet and send it to this host
-//                            CommsHandler commsHandler = new CommsHandler();
-//                            commsHandler.sendPacketWithoutAck(socket, MessageType.KILL, "KILL");
-//
-//                        }catch (IOException e) {
-//                            Debugger.log("", e);
-//                        }
-//                    }
+                        }catch (IOException e) {
+                            Debugger.log("", e);
+                        }
+                    }
                 }
             }else {
                 // don't remove but mark as dead in HARM list
                 NetworkUtils.updateHarmList(String.valueOf(this.uuid), -1, false );
             }
-
             //cancel task
             Debugger.log("Health Checker: Error Occurred Cancelling scheduled task for " + this.host, null);
             cancel();

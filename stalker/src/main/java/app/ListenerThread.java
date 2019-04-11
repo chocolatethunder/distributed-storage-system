@@ -70,6 +70,7 @@ public class ListenerThread implements Runnable{
 
                 }
                 else if (req.getMessageType() == MessageType.REELECT){
+                    Debugger.log("Re-election requested...", null);
                     ConfigManager.getCurrent().setReelection(true);
                     //executorService.submit(new LeaderResponder(client));
                 }
