@@ -1,5 +1,6 @@
 package app;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -8,6 +9,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import app.*;
+import com.fasterxml.jackson.databind.ObjectReader;
 
 /**
  *This class is responsible for scheduling task for doing health checks on all units in the config files( HARM or STALKERS)
@@ -224,7 +227,13 @@ public class HealthChecker implements Runnable{
                         Module sender = Module.valueOf(healthCheckReply.get("sender").asText());
                         String status = healthCheckReply.get("status").textValue();
                         long availableSpace =  healthCheckReply.get("diskSpace").asLong();
-                       // Map<String, String> corruptedList = healthCheckReply.get("corruptedChunks").
+
+                        JsonNode corruptedChunksListNode = healthCheckReply.get("corruptedChunks");
+                        ObjectReader reader = mapper.readerFor(new TypeReference<Set<String>>() {
+                        });
+// use it
+                        Set<String> corruptedList = reader.readValue(corruptedChunksListNode);
+
 
 
                         if(status.equals("SUCCESS")){
@@ -243,6 +252,7 @@ public class HealthChecker implements Runnable{
                         }else if(status.equals("CORRUPT") && sender == Module.HARM){
 
                             // do something with the corrupted chunks
+                            deleteChunks(corruptedList);
 
                         }
                     }
@@ -280,6 +290,36 @@ public class HealthChecker implements Runnable{
                 }
             }
         }
+
+
+        private void deleteChunks(Set<String> corruptedChunks){
+
+            int requestPort = cfg.getHarm_listen();
+            CommsHandler commsLink = new CommsHandler();
+            Socket harmServer = null;
+            try {
+
+
+                harmServer = NetworkUtils.createConnection(host, requestPort);
+
+                //if everything went well then we can send the damn file
+
+                for(String chunkId : corruptedChunks) {
+                    //send the packet to the harm target
+                    if (commsLink.sendPacket(harmServer,
+                            MessageType.DELETE,
+                            NetworkUtils.createSerializedRequest(chunkId,
+                                    MessageType.DELETE), true) == MessageType.ACK) {
+                        harmServer.close();
+                    }
+                }
+            } catch (IOException ex) {
+                Debugger.log("", ex);
+
+            }
+        }
+
+
 
 
         private void updateConfigAndEndTask(){
