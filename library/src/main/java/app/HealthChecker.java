@@ -261,7 +261,7 @@ public class HealthChecker implements Runnable{
             catch(NullPointerException e){
             }
             catch (SocketException e) {
-                closeSocket(socket);
+                //(socket);
                 // server has not replied within expected timeoutTime
                 Debugger.log("STALKER at : " + host  + "has died!", null);
                 updateConfigAndEndTask();
@@ -278,7 +278,7 @@ public class HealthChecker implements Runnable{
                 }
             }
             finally {
-                closeSocket(socket);
+                //closeSocket(socket);
             }
         }
 
@@ -318,7 +318,7 @@ public class HealthChecker implements Runnable{
                                 // create a leader packet and send it to this host
                                 CommsHandler commsHandler = new CommsHandler();
                                 commsHandler.sendPacketWithoutAck(socket, MessageType.REELECT, "");
-                                socket.close();
+                                //socket.close();
                             }
                         }catch (IOException e) {
                             Debugger.log("", e);
