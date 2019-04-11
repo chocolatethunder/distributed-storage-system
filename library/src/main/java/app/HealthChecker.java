@@ -28,6 +28,7 @@ public class HealthChecker implements Runnable{
     private AtomicLong spaceAvailableSoFar;
     private boolean debugMode;
     private  ConfigFile cfg;
+    private boolean interrupted = false;
 
 
     /**
@@ -81,7 +82,7 @@ public class HealthChecker implements Runnable{
          * This block is going to check changes in the list every interval and if there is any new entry
          * it will start a timer Task for it
          */
-        while (!Thread.interrupted()){
+        while (!interrupted){
             try {
                 Map<Integer, String> newStalkers =  NetworkUtils.mapFromJson(NetworkUtils
                         .fileToString(cfg.getStalker_list_path()));
@@ -127,6 +128,7 @@ public class HealthChecker implements Runnable{
             }
             try{Thread.sleep(interval);}catch (Exception e){};
         }
+        Debugger.log("Health checker suspended...", null);
 
     }
 
@@ -316,6 +318,7 @@ public class HealthChecker implements Runnable{
                             Debugger.log("", e);
                         }
                     }
+                    interrupted = true;
                 }
                 else{
                     Debugger.log("A worker has died", null);
