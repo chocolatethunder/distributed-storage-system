@@ -3,6 +3,10 @@
  */
 package app;
 
+import app.health_utils.HealthStat;
+import app.health_utils.IndexFile;
+import app.health_utils.Indexer;
+
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -47,6 +51,18 @@ public class App {
         Debugger.log("Harm Main: Waiting for requests...", null);
 
 
+        System.out.println(NetworkUtils.timeStamp(1) + "Waiting...");
+        // TODO -  Add Periodic Health Checks (call HealthStat.healthCheck(IndexFile) for a check up and HealthStat.status() for a report)
+        // Test codes used for debugging:
+//        IndexFile ind = new IndexFile();
+//        System.out.println("Spot 1");
+//        HealthStat health = new HealthStat();
+//        System.out.println("Spot 2");
+//        ind.add("ABC","1337");
+//        System.out.println("Spot 3");
+//        health.healthCheck(ind);
+//        System.out.println("Spot 4");
+//        health.status();
         // will keep on listening for requests from STALKERs
         while (true) {
             try {
