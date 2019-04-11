@@ -249,7 +249,13 @@ public class HealthChecker implements Runnable{
 
                     }
                 }
-            } catch (SocketException e) {
+
+
+            }
+            catch(NullPointerException e){
+
+            }
+            catch (SocketException e) {
                 // server has not replied within expected timeoutTime
                 updateConfigAndEndTask();
                 if(debugMode) {
@@ -266,8 +272,8 @@ public class HealthChecker implements Runnable{
                 try{
                     if(socket != null) {
                         if(debugMode) {
-                            Debugger.log("Health Checker: Task completed closing Socket"
-                                    + this.spaceToUpdate.get(), null);
+//                            Debugger.log("Health Checker: Task completed closing Socket"
+//                                    + this.spaceToUpdate.get(), null);
                         }
                         socket.close();
                     }
