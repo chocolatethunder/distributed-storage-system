@@ -109,7 +109,8 @@ public class App {
 
         Debugger.log("Stalker Main: System discovery complete!", null);
         LeaderCheck leaderchecker = new LeaderCheck();
-
+        Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, false));
+        healthChecker.start();
 
         //check if leader already found
         if(!running){
@@ -123,8 +124,7 @@ public class App {
         while (true){
             //reelect
             //starting task for health checks on STALKERS and HARM targets
-            Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, false));
-            healthChecker.start();
+
             HashMap<Integer, String> stalkermap = NetworkUtils.getStalkerMap(cfg.getStalker_list_path());
             stalkermap.remove(leaderUuid);
             int role = ElectionUtils.identifyRole(NetworkUtils.mapToSList(stalkermap),leaderUuid);

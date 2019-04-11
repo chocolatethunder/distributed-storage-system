@@ -45,7 +45,7 @@ public class LeaderCheck {
         // ask for leader
         Map<Integer, Integer> voteCount = new HashMap<>();
         for(Integer entry : stalkerMap.keySet()) {
-            askForLeader(entry);
+            voteCount.put(entry, askForLeader(entry));
         }
         int max = Integer.MIN_VALUE;
         for(Integer i: voteCount.keySet())
