@@ -108,7 +108,8 @@ public class App {
 
             attempts++;
         }
-
+        Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, true));
+        healthChecker.start();
         Debugger.log("Stalker Main: System discovery complete!", null);
         LeaderCheck leaderchecker = new LeaderCheck();
 
@@ -139,8 +140,7 @@ public class App {
                     }
                 }
             }
-            Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, true));
-            healthChecker.start();
+
             switch (role){
                 case 0:
                     Debugger.log("<<<<<<<-----Leader Online----->>>>>>> \n\n", null);
