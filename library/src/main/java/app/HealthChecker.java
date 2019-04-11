@@ -224,6 +224,7 @@ public class HealthChecker implements Runnable{
                         Module sender = Module.valueOf(healthCheckReply.get("sender").asText());
                         String status = healthCheckReply.get("status").textValue();
                         long availableSpace =  healthCheckReply.get("diskSpace").asLong();
+                       // Map<String, String> corruptedList = healthCheckReply.get("corruptedChunks").
 
 
                         if(status.equals("SUCCESS")){
@@ -239,10 +240,9 @@ public class HealthChecker implements Runnable{
                                         availableSpace,
                                         true);
                             }
-                        }
+                        }else if(status.equals("CORRUPT") && sender == Module.HARM){
 
-                        if(status.equals("CORRUPT") && sender == Module.HARM){
-                            // deal with corrupt chunks here
+                            // do something with the corrupted chunks
 
                         }
                     }

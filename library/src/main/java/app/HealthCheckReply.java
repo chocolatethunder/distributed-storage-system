@@ -1,6 +1,7 @@
 package app;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  *This class is used for creating the Json String for health check reply content
@@ -9,7 +10,7 @@ public class HealthCheckReply {
 
     private String status;
     private long diskSpace;
-    private Map<Integer, Integer> corruptedChunks;
+    private Set<String> corruptedChunks;
     private Module sender;
 
 
@@ -18,7 +19,7 @@ public class HealthCheckReply {
     public HealthCheckReply(Module sender,
                             String status,
                             long diskSpace,
-                            Map<Integer, Integer> corruptedChunks){
+                            Set<String> corruptedChunks){
 
         this.setSender(sender);
         this.setStatus(status);
@@ -43,11 +44,11 @@ public class HealthCheckReply {
         this.diskSpace = diskSpace;
     }
 
-    public Map<Integer, Integer> getCorruptedChunks() {
+    public Set<String> getCorruptedChunks() {
         return corruptedChunks;
     }
 
-    public void setCorruptedChunks(Map<Integer, Integer> corruptedChunks) {
+    public void setCorruptedChunks(Set<String> corruptedChunks) {
         this.corruptedChunks = corruptedChunks;
     }
 

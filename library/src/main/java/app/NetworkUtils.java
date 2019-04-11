@@ -342,7 +342,7 @@ public class NetworkUtils {
     public static String createHealthCheckReply(Module senderType,
                                                 String status,
                                                 long diskSpace,
-                                                Map<Integer, Integer> corruptedChunks) {
+                                                Set<String> corruptedChunks) {
         String healthCheckContent = null;
         ObjectMapper mapper = new ObjectMapper();
 

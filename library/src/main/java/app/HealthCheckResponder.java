@@ -3,6 +3,7 @@ package app;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *This class is the Health Check worker thread that will send the Health Check Packet to the requester
@@ -12,7 +13,7 @@ public class HealthCheckResponder implements Runnable {
     private final Socket socket;
     private final String status;
     private final long diskSpace;
-    private  Map<Integer, Integer> corruptedChunks;
+    private Set<String> corruptedChunks;
     private final Module sender;
 
     /**
@@ -25,7 +26,7 @@ public class HealthCheckResponder implements Runnable {
     public HealthCheckResponder(Socket socket,
                                 String status,
                                 long diskSpace,
-                                Map<Integer, Integer> corruptedChunks,
+                                Set<String> corruptedChunks,
                                 Module sender){
         this.socket = socket;
         this.status = status;

@@ -8,9 +8,12 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.NumberFormat;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import app.ConfigManager;
+import app.health_utils.HealthStat;
+import app.health_utils.Indexer;
 
 /**
  *This listener thread is dedicated to listening for HEALTH check requests
@@ -62,13 +65,25 @@ public class ListenerThread implements Runnable {
                         Debugger.log("DiscManager: Harm server: Received health Check request", null);
                     }
 
-                    //_______TO:DO check for corrupted chunks here
+                    //check for corrupted chunks here
+                    HealthStat stat = new HealthStat();
+                    stat.healthCheck(Indexer.loadFromFile());
+                    Map<String, String> corruptList = stat.getCorruptList();
 
-                    executorService.submit(new HealthCheckResponder(client,
-                            "SUCCESS",
-                            getAvailableDiskSpace(),
-                            null,
-                            Module.HARM));
+                    if(corruptList.isEmpty()) {
+
+                        executorService.submit(new HealthCheckResponder(client,
+                                "SUCCESS",
+                                getAvailableDiskSpace(),
+                                null,
+                                Module.HARM));
+                    }else{
+                        executorService.submit(new HealthCheckResponder(client,
+                                "CORRUPT",
+                                getAvailableDiskSpace(),
+                                corruptList.keySet(),
+                                Module.HARM));
+                    }
                 }
                 else {
                     running = false;

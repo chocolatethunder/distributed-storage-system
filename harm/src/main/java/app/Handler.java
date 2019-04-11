@@ -1,5 +1,8 @@
 package app;
 
+import app.health_utils.IndexFile;
+import app.health_utils.Indexer;
+
 import java.net.Socket;
 import java.io.File;
 
@@ -31,6 +34,14 @@ public class Handler implements Runnable {
         if (requestType == MessageType.UPLOAD) {
             commLink.sendResponse(socket, MessageType.ACK);
             streamer.receiveFileFromSocket(storage_path + request.getFileName());
+
+
+            // creating the index file to store the chunk information
+            IndexFile indexFile = new IndexFile();
+            indexFile.add(request.getFileName(), Indexer.createDigest(storage_path + request.getFileName()));
+            Indexer.saveToFile(indexFile);
+
+
         } else if (requestType == MessageType.DOWNLOAD) {
             commLink.sendResponse(socket, MessageType.ACK);
             streamer.sendFileToSocket(storage_path + request.getFileName());
