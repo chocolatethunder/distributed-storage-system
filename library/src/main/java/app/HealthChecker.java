@@ -253,7 +253,6 @@ public class HealthChecker implements Runnable{
 
             }
             catch(NullPointerException e){
-
             }
             catch (SocketException e) {
                 // server has not replied within expected timeoutTime
@@ -262,8 +261,8 @@ public class HealthChecker implements Runnable{
                     Debugger.log("", e);
                 }
             } catch (IOException e) {
-
                 // any other IO exception, also stop the task and assume the node is dead
+                Debugger.log("STALKER at : " + host  + "has died!", null);
                 updateConfigAndEndTask();
                 if(debugMode) {
                     Debugger.log("", e);
@@ -286,6 +285,7 @@ public class HealthChecker implements Runnable{
 
         private void updateConfigAndEndTask(){
             if(this.target == Module.STALKER) {
+                Debugger.log("Debug: updataeconfigandeexit 1", null);
                 // remove node from STALKER LIST in config file stalkers.list
                 NetworkUtils.deleteNodeFromConfig(cfg.getStalker_list_path(), String.valueOf(this.uuid));
                 int leaderuuid = cfg.getLeader_id();
@@ -296,7 +296,7 @@ public class HealthChecker implements Runnable{
                 stalkerMap.keySet().contains(LeaderCheck.getLeaderUuid());
                 if(uuid == cfg.getLeader_id())
                 {
-
+                    Debugger.log("Leader has died", null);
                     //send update signal
 
 
