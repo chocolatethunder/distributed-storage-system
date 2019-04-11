@@ -63,12 +63,6 @@ public class App {
 
         LeaderCheck leaderchecker = new LeaderCheck();
         //wait for at least 2 connections
-        if(leaderchecker.tryLeader()){
-            connected = true;
-            running = true;
-            cfg = ConfigManager.getCurrent();
-            Debugger.log("Leader uuid = " + cfg.getLeader_id(), null);
-        }
         while (!connected){
             //we will wait for network discovery to do its thing
             wait((disc_timeout * 1000) + 1000);
@@ -89,8 +83,13 @@ public class App {
                     Debugger.log("Stalker Main: No HARM targets detected...", null);
                 }
 
-                if (stalkerList != null && stalkerList.size() >= 0){
-
+                if (stalkerList != null && stalkerList.size() > 0){
+                    if(leaderchecker.tryLeader()){
+                        connected = true;
+                        running = true;
+                        cfg = ConfigManager.getCurrent();
+                        Debugger.log("Leader uuid = " + cfg.getLeader_id(), null);
+                    }
                     if(stalkerList.size() >= cfg.getElection_threshold_s()){
                         connected = true;
                     }
