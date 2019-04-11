@@ -179,9 +179,9 @@ public class App {
                         //wait 1 seconds
                         wait(1000);
                     }
-                    Debugger.log("Interrupted", null);
                     //interrupt any workers
                     jcpReq.interrupt();
+                    Debugger.log("Interrupted", null);
                     try {
                         jcpReq.join();
                     }
@@ -201,6 +201,7 @@ public class App {
                     try {
                         //interrupt vice leader
                         vice.interrupt();
+                        Debugger.log("Interrupted", null);
                         vice.join();
                     }
                     catch(InterruptedException e){

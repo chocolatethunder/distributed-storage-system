@@ -60,8 +60,9 @@ public class JcpRequestHandler implements Runnable {
                 e.printStackTrace();
             }
         }
-        executorService.shutdownNow();
+
         Debugger.log("JCP Req: Service interrupted", null);
+        executorService.shutdownNow();
     }
 
 

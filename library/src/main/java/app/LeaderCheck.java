@@ -104,7 +104,7 @@ public class LeaderCheck {
 
     public int askForLeader(int entry){
         int port = cfg.getElection_port();
-        int timeoutForReply = 20;
+        int timeoutForReply = 4;
         Socket socket = null;
         try {
             socket = NetworkUtils.createConnection(stalkerMap.get(entry), port);
