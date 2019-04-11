@@ -19,7 +19,7 @@ public class ListenerThread implements Runnable {
 
 
     private ConfigFile cfg;
-    private final int serverPort = ConfigManager.getCurrent().getElection_port();
+    private int serverPort = ConfigManager.getCurrent().getHarm_listen_port();
     private boolean running = true;
     private boolean debugMode = true;
 
@@ -72,7 +72,7 @@ public class ListenerThread implements Runnable {
                 }
                 else {
                     running = false;
-                    client.close();
+                    //client.close();
                 }
             } catch (IOException e) {
                 Debugger.log("", e);

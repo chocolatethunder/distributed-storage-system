@@ -80,8 +80,8 @@ public class App {
 
         requestSender = RequestSender.getInstance();
         //starting health checker tasks for each stalker in the stalker list
-        Thread healthChecker= new Thread(new HealthChecker(Module.JCP, totalDiskSpace, true));
-        healthChecker.start();
+//        Thread healthChecker= new Thread(new HealthChecker(Module.JCP, totalDiskSpace, true));
+//        healthChecker.start();
         retrieveFiles();
         //ip of stalker we'll just use the one at index 1 for now
         while(true){

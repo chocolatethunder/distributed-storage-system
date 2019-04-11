@@ -59,6 +59,7 @@ public class ElectionListener implements Runnable{
                     executorService.execute(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
                 }
             } catch (IOException e) {
+
                 //Debugger.log("Listener: Socket timeout", null);
             }
         }

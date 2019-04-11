@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 public class ListenerThread implements Runnable{
 
 
-    private final int serverPort = 11114;
+    private int serverPort = 11114;
     private boolean running = false;
     private boolean verbose = true;
     private volatile IndexFile index;
@@ -29,6 +29,7 @@ public class ListenerThread implements Runnable{
     @Override
     public void run() {
 
+        serverPort = ConfigManager.getCurrent().getHealth_check_port();
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
 
