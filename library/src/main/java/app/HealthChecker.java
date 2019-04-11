@@ -213,41 +213,40 @@ public class HealthChecker implements Runnable{
                     CommsHandler commsHandler = new CommsHandler();
                     //sending the health check request
                     commsHandler.sendPacketWithoutAck(socket, MessageType.HEALTH_CHECK, "REQUEST");
-
-
                     //receive packet from node
                     TcpPacket tcpPacket = commsHandler.receivePacket(socket);
+                    if (tcpPacket != null){
+                        String  content = tcpPacket.getMessage();
+                        ObjectMapper mapper = new ObjectMapper();
 
-                    String  content = tcpPacket.getMessage();
-
-                    ObjectMapper mapper = new ObjectMapper();
-
-                    // parse the packet content
-                    JsonNode healthCheckReply = mapper.readTree(content);
-                    Module sender = Module.valueOf(healthCheckReply.get("sender").asText());
-                    String status = healthCheckReply.get("status").textValue();
-                    long availableSpace =  healthCheckReply.get("diskSpace").asLong();
+                        // parse the packet content
+                        JsonNode healthCheckReply = mapper.readTree(content);
+                        Module sender = Module.valueOf(healthCheckReply.get("sender").asText());
+                        String status = healthCheckReply.get("status").textValue();
+                        long availableSpace =  healthCheckReply.get("diskSpace").asLong();
 
 
-                    if(status.equals("SUCCESS")){
-                        if(target == Module.STALKER && this.spaceToUpdate != null) {
-                            this.spaceToUpdate.set(availableSpace);
-                            if(debugMode) {
-                                Debugger.log("Health Checker: Status was success for health check and disk space available "
-                                        + this.spaceToUpdate.get(), null);
+                        if(status.equals("SUCCESS")){
+                            if(target == Module.STALKER && this.spaceToUpdate != null) {
+                                this.spaceToUpdate.set(availableSpace);
+                                if(debugMode) {
+                                    Debugger.log("Health Checker: Status was success for health check and disk space available "
+                                            + this.spaceToUpdate.get(), null);
+                                }
+                            }else if(target == Module.HARM){
+                                // need to add the space for all HARMS in config file
+                                NetworkUtils.updateHarmList(String.valueOf(this.uuid),
+                                        availableSpace,
+                                        true);
                             }
-                        }else if(target == Module.HARM){
-                            // need to add the space for all HARMS in config file
-                            NetworkUtils.updateHarmList(String.valueOf(this.uuid),
-                                    availableSpace,
-                                    true);
+                        }
+
+                        if(status.equals("CORRUPT") && sender == Module.HARM){
+                            // deal with corrupt chunks here
+
                         }
                     }
 
-                    if(status.equals("CORRUPT") && sender == Module.HARM){
-                        // deal with corrupt chunks here
-
-                    }
                 }
 
 

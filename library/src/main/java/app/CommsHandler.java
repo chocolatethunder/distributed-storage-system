@@ -49,6 +49,7 @@ public class CommsHandler {
 
     //function for recieving a TCP packet once a connection has been established
     public TcpPacket receivePacket(Socket socket) {
+        TcpPacket recieved = null;
         ObjectMapper mapper = new ObjectMapper();
         Optional<TcpPacket> receivedPacket = Optional.empty();
 
@@ -56,11 +57,13 @@ public class CommsHandler {
             //read string from port
             String rec = new DataInputStream(socket.getInputStream()).readUTF();
             // reading the packet as object from json string
-            receivedPacket = Optional.of(mapper.readValue(rec, TcpPacket.class));
+            recieved =  Optional.of(mapper.readValue(rec, TcpPacket.class)).get();
+
+
         } catch (Exception e) {
             Debugger.log("", e);
         }
-        return receivedPacket.get();
+        return recieved;
     }
 
     public boolean sendResponse(Socket socket, MessageType messageType) {
