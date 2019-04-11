@@ -139,7 +139,7 @@ public class App {
                     }
                 }
             }
-            Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, false));
+            Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, true));
             healthChecker.start();
             switch (role){
                 case 0:
