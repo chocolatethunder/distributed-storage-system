@@ -59,7 +59,7 @@ public class App {
         //wait for at least 1 connection
         while (!connected){
             //we will wait for network discovery to do its thing
-            wait((discoveryTimeout * 1000) + 5000);
+            wait((discoveryTimeout * 1000) + 1000);
             stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
             try{
                 if (stalkerList != null && stalkerList.size() >= 1){

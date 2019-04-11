@@ -36,6 +36,7 @@ public class ListenerThread implements Runnable{
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
             server = new ServerSocket(serverPort);
+            server.setSoTimeout(5000);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -47,6 +48,7 @@ public class ListenerThread implements Runnable{
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();
+
                 if (verbose){Debugger.log("Health Listener: Accepted connection : "  + client, null);}
                 // receive packet on the socket link
                 TcpPacket req = commLink.receivePacket(client);
@@ -67,6 +69,10 @@ public class ListenerThread implements Runnable{
                     executorService.submit(new LeaderResponder(client));
 
                 }
+                else if (req.getMessageType() == MessageType.REELECT){
+                    ConfigManager.getCurrent().setReelection(true);
+                    //executorService.submit(new LeaderResponder(client));
+                }
                 else if(req.getMessageType() == MessageType.UPDATE){
                     // Update the indexfile
                     Debugger.log("Update received from leader", null);
@@ -74,7 +80,7 @@ public class ListenerThread implements Runnable{
                     executorService.execute(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
                 }
             } catch (IOException e) {
-                Debugger.log("", e);
+                Debugger.log("Listener Socket timeout", null);
             }
         }
 

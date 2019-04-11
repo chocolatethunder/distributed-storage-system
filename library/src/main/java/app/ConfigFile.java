@@ -4,6 +4,12 @@ public class ConfigFile {
     private String conf_path;
     private int leader_id;
 
+
+
+    private boolean reelection = false;
+
+    private int role = 0;
+
     private boolean random = false;
 
     private int chunk_count = 15;
@@ -55,6 +61,22 @@ public class ConfigFile {
 
 
     public ConfigFile() {
+    }
+
+    public boolean isReelection() {
+        return reelection;
+    }
+
+    public void setReelection(boolean reelection) {
+        this.reelection = reelection;
+    }
+
+    public int getRole() {
+        return role;
+    }
+
+    public void setRole(int role) {
+        this.role = role;
     }
 
     public String getBroadcast_ip() {

@@ -40,14 +40,13 @@ public class JcpRequestHandler implements Runnable {
         }
         Debugger.log("JCP request handler: Waiting...", null);
         // will keep on listening for requests
-        while (running) {
+        while (!Thread.interrupted()) {
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();
                 Debugger.log("JCP request handler: Accepted connection from JCP client:" + client, null);
                 // receive packet on the socket link
                 TcpPacket req = commLink.receivePacket(client);
-
                 //creating a specific type of service handler using factory method
                 //Submit a task to the handler queue and move on
                 if (req.getMessageType() != MessageType.KILL){
@@ -61,6 +60,8 @@ public class JcpRequestHandler implements Runnable {
                 e.printStackTrace();
             }
         }
+        executorService.shutdownNow();
+        Debugger.log("JCP Req: Service interrupted", null);
     }
 
 

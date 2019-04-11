@@ -24,6 +24,7 @@ public enum MessageType {
         ELECTION,
         LEADER,
         UPDATE,
-        CONFIRM
+        CONFIRM,
+        REELECT
 
 }

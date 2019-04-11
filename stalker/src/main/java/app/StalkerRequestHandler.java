@@ -56,6 +56,9 @@ public class StalkerRequestHandler implements Runnable {
                     commLink.sendPacket(client, MessageType.CONFIRM, "", false);
                     commLink.sendPacket(client, MessageType.UPDATE, NetworkUtils.serializeObject(indexFile), false);
                 }
+                else if (req.getMessageType() == MessageType.DISCOVER){
+                    commLink.sendPacket(client, MessageType.ACK, String.valueOf(NetworkUtils.getMacID()), false);
+                }
                 else{
                     //the socket can be closed client side
                     commLink.sendPacket(client, MessageType.ACK, "", true);

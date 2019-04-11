@@ -87,7 +87,6 @@ public class HealthChecker implements Runnable{
                 Map<Integer, String> newStalkers =  NetworkUtils.mapFromJson(NetworkUtils
                         .fileToString(cfg.getStalker_list_path()));
 
-
                 //checking if new stalker list contains any new node
                 if(!this.stalkerList.equals(newStalkers)){
                     for(Map.Entry<Integer, String> entry : newStalkers.entrySet()){
@@ -106,7 +105,6 @@ public class HealthChecker implements Runnable{
                     this.stalkerList = new HashMap<>();
                     this.stalkerList.putAll(newStalkers);
                 }
-
                 //checking if harm list contains any new harm node
                 if(this.requestSender == Module.STALKER){
                     Map<Integer, String> newHarms =  NetworkUtils.mapFromJson(NetworkUtils
@@ -130,8 +128,6 @@ public class HealthChecker implements Runnable{
             }
             try{Thread.sleep(interval);}catch (Exception e){};
         }
-
-
 
     }
 
@@ -288,28 +284,33 @@ public class HealthChecker implements Runnable{
             if(this.target == Module.STALKER) {
                 // remove node from STALKER LIST in config file stalkers.list
                 NetworkUtils.deleteNodeFromConfig(cfg.getStalker_list_path(), String.valueOf(this.uuid));
-
+                int leaderuuid = cfg.getLeader_id();
                 // Identify which STALKER went down
-                String stalkerList = NetworkUtils.fileToString(cfg.getStalker_list_path());
-                HashMap<Integer, String> stalkerMap = NetworkUtils.mapFromJson(stalkerList);
-                List<Integer> ids = NetworkUtils.mapToSList(NetworkUtils.mapFromJson(stalkerList));
-                if(stalkerMap.keySet().contains(LeaderCheck.getLeaderUuid()))
-                {
-                    // kill and the threads
-                    for(Map.Entry<Integer, String> entry : stalkerMap.entrySet())
-                    {
-                        int port = cfg.getLeader_report();
-                        Socket socket;
-                        try {
-                            socket = NetworkUtils.createConnection(entry.getValue(), port);
-                            // create a leader packet and send it to this host
-                            CommsHandler commsHandler = new CommsHandler();
-                            commsHandler.sendPacketWithoutAck(socket, MessageType.KILL, "KILL");
+                HashMap<Integer, String> stalkerMap = NetworkUtils.getStalkerMap(cfg.getStalker_list_path());
+                List<Integer> ids  = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
 
-                        }catch (IOException e) {
-                            Debugger.log("", e);
-                        }
-                    }
+                stalkerMap.keySet().contains(LeaderCheck.getLeaderUuid());
+                if(uuid == cfg.getLeader_id())
+                {
+
+                    //send update signal
+
+
+//                    // kill and the threads
+//                    for(Map.Entry<Integer, String> entry : stalkerMap.entrySet())
+//                    {
+//                        int port = cfg.getLeader_report();
+//                        Socket socket;
+//                        try {
+//                            socket = NetworkUtils.createConnection(entry.getValue(), port);
+//                            // create a leader packet and send it to this host
+//                            CommsHandler commsHandler = new CommsHandler();
+//                            commsHandler.sendPacketWithoutAck(socket, MessageType.KILL, "KILL");
+//
+//                        }catch (IOException e) {
+//                            Debugger.log("", e);
+//                        }
+//                    }
                 }
             }else {
                 // don't remove but mark as dead in HARM list

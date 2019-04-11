@@ -12,6 +12,7 @@ import sun.nio.ch.Net;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +61,7 @@ public class App {
         //wait for at least 2 connections
         while (!connected){
             //we will wait for network discovery to do its thing
-            wait((disc_timeout * 1000) + 5000);
+            wait((disc_timeout * 1000) + 1000);
             try{
                 stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
                 harmlist = NetworkUtils.getNodeMap(cfg.getHarm_list_path());
@@ -78,7 +79,7 @@ public class App {
                     Debugger.log("Stalker Main: No HARM targets detected...", null);
                 }
 
-                if (stalkerList != null && stalkerList.size() >= 3){
+                if (stalkerList != null && stalkerList.size() >= cfg.getElection_threshold_s()){
                     Debugger.log("Threshold for initiation met...", null);
                     Debugger.log("Debug 2", null);
                     connected = true;
@@ -103,13 +104,28 @@ public class App {
         healthChecker.start();
         //election based on networkDiscovery results
         //main loop
-        while (true){
-            // Leader election by asking for a leader
-            LeaderCheck leaderchecker = new LeaderCheck();
-            leaderchecker.election();
+
+        // store the
+        List<Thread> live_threads = new ArrayList<>();
+        LeaderCheck leaderchecker = new LeaderCheck();
+
+
+        //check if leader already exists
+        if(!leaderchecker.tryLeader()){
+            //if not then start election
+            leaderchecker.election(0);
             leaderUuid = LeaderCheck.getLeaderUuid();
             cfg.setLeader_id(leaderUuid);
-            int role = ElectionUtils.identifyRole(stalkerList,leaderUuid);
+            ConfigManager.saveToFile(cfg);
+        }
+
+        while (true){
+            //reelect
+            HashMap<Integer, String> stalkermap = NetworkUtils.getStalkerMap(cfg.getStalker_list_path());
+            stalkermap.remove(leaderUuid);
+            int role = ElectionUtils.identifyRole(NetworkUtils.mapToSList(stalkermap),leaderUuid);
+            cfg.setRole(role);
+            ConfigManager.saveToFile(cfg);
             if (role != 0){
                 //we kind of assume we'll get an indexfile from the leader
                 while (true){
@@ -129,7 +145,14 @@ public class App {
                     Thread t2 =  new Thread(new RequestAdministrator(syncQueue));
                     t1.start();
                     t2.start();
+                    //while no reelection is called
+                    while(!ConfigManager.getCurrent().isReelection()){
+                        //wait 10 seconds
+                        wait(10000);
+                    }
                     try{
+                        t1.interrupt();
+                        t2.interrupt();
                         t1.join();
                         t2.join();
                     }
@@ -140,10 +163,17 @@ public class App {
                 case 1:
                     Debugger.log("<<<<<<<-----Worker Online----->>>>>>>\n\n", null);
                     Thread jcpReq = new Thread(new JcpRequestHandler(ind));
-//                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
-//                jcpRequestHandler.run();
                     jcpReq.start();
+                    //while no reelection is called
+                    while(!ConfigManager.getCurrent().isReelection()){
+                        //wait 10 seconds
+                        wait(3000);
+                    }
+                    Debugger.log("Interrupted", null);
+                    //interrupt any workers
+                    jcpReq.interrupt();
                     try {
+                        jcpReq.interrupt();
                         jcpReq.join();
                     }
                     catch(InterruptedException e){
@@ -153,10 +183,15 @@ public class App {
                 case 2:
                     Debugger.log("<<<<<<<-----Vice Leader Online----->>>>>>>\n\n", null);
                     Thread vice = new Thread(new JcpRequestHandler(ind));
-//                JcpRequestHandler jcpRequestHandler = new JcpRequestHandler(ind);
-//                jcpRequestHandler.run();
                     vice.start();
+                    //while no reelection called
+                    while(!ConfigManager.getCurrent().isReelection()){
+                        //wait 10 seconds
+                        wait(10000);
+                    }
                     try {
+                        //interrupt vice leader
+                        vice.interrupt();
                         vice.join();
                     }
                     catch(InterruptedException e){
@@ -164,7 +199,11 @@ public class App {
                     }
                     break;
             }
+            leaderchecker.election(1);
+            leaderUuid = cfg.getLeader_id();
+            // Leader election by asking for a leader
         }
+
 
     }
 

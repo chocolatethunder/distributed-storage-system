@@ -8,12 +8,13 @@ public class ElectionUtils {
     public static int identifyRole(List<Integer> ids,int leader)
     {
         // if your id is the same as the leader ids
-        if(leader == NetworkUtils.getMacID())
+        int mymac = NetworkUtils.getMacID();
+        if(mymac == ConfigManager.getCurrent().getLeader_id())
         {
             return 0;
         }
         // if you are the vice-leader
-        else if (NetworkUtils.getMacID() == ids.get(1))
+        else if (NetworkUtils.getMacID() == ids.get(0))
         {
             return 2;
         }
