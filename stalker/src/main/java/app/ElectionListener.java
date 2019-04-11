@@ -30,7 +30,7 @@ public class ElectionListener implements Runnable{
         try {
             server = new ServerSocket(serverPort);
         } catch (IOException e) {
-            e.printStackTrace();
+            Debugger.log("", e);
         }
         Debugger.log("Health Listener: Waiting for health check, Leader Election requests, or updates...", null);
         // will keep on listening for requests
@@ -55,12 +55,12 @@ public class ElectionListener implements Runnable{
                 else if(req.getMessageType() == MessageType.UPDATE){
                     // Update the indexfile
                     Debugger.log("Update received from leader", null);
-                    //commLink.sendResponse(client, MessageType.ACK);
+                    commLink.sendResponse(client, MessageType.ACK);
                     executorService.execute(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
                 }
             } catch (IOException e) {
 
-                //Debugger.log("Listener: Socket timeout", null);
+                Debugger.log("Listener: Socket timeout", e);
             }
         }
 
