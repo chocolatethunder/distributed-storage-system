@@ -154,7 +154,7 @@ public class HealthChecker implements Runnable{
         } catch (IOException e) {
             Debugger.log("", e);
         }
-        Debugger.log("Health Checker: Starting scheduled health task for harm node: " + attributes.getAddress(), null);
+        //Debugger.log("Health Checker: Starting scheduled health task for harm node: " + attributes.getAddress(), null);
         addTimerTask(timer, entry.getKey(),
                 attributes.getAddress(),
                 null,

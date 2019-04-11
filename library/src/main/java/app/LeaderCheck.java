@@ -140,17 +140,22 @@ public class LeaderCheck {
             // ask another stalker for the leader if fails to establish connection with one of the stalker
             Debugger.log("", e);
         }finally {
-//            try{
-//                socket.close();
-//            } catch (IOException e) {
-//                Debugger.log("", e);
-//            }
+
         }
+        closeSocket(socket);
         return(leaderUuid);
 
     }
 
-
+    public void closeSocket(Socket s){
+        try{
+            if(s != null) {
+                s.close();
+            }
+        } catch (Exception e) {
+            Debugger.log("", e);
+        }
+    }
 
     public static HashMap<Integer, String> updateStalkerMap() {
         return NetworkUtils.getStalkerMap(cfg.getStalker_list_path());
