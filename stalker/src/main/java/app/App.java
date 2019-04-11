@@ -61,7 +61,14 @@ public class App {
         Map<Integer, NodeAttribute> harmlist = null;
         int attempts = 0;
 
+        LeaderCheck leaderchecker = new LeaderCheck();
         //wait for at least 2 connections
+        if(leaderchecker.tryLeader()){
+            connected = true;
+            running = true;
+            cfg = ConfigManager.getCurrent();
+            Debugger.log("Leader uuid = " + cfg.getLeader_id(), null);
+        }
         while (!connected){
             //we will wait for network discovery to do its thing
             wait((disc_timeout * 1000) + 1000);
@@ -83,13 +90,6 @@ public class App {
                 }
 
                 if (stalkerList != null && stalkerList.size() >= 0){
-                    LeaderCheck leaderchecker = new LeaderCheck();
-                    if(leaderchecker.tryLeader()){
-                        connected = true;
-                        running = true;
-                        cfg = ConfigManager.getCurrent();
-                        Debugger.log("Leader uuid = " + cfg.getLeader_id(), null);
-                    }
 
                     if(stalkerList.size() >= cfg.getElection_threshold_s()){
                         connected = true;
@@ -111,7 +111,7 @@ public class App {
         Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, true));
         healthChecker.start();
         Debugger.log("Stalker Main: System discovery complete!", null);
-        LeaderCheck leaderchecker = new LeaderCheck();
+        leaderchecker = new LeaderCheck();
 
         //check if leader already found
         if(!running){

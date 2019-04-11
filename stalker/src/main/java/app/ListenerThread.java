@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 public class ListenerThread implements Runnable{
 
 
-    private final int serverPort = ConfigManager.getCurrent().getElection_port();
+    private final int serverPort = 11114;
     private boolean running = false;
     private boolean verbose = true;
     private volatile IndexFile index;
@@ -79,6 +79,7 @@ public class ListenerThread implements Runnable{
 //                    executorService.execute(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
 //                }
             } catch (IOException e) {
+                Debugger.log("dddddddddddddddddddddddddddd",e);
                 //Debugger.log("Listener: Socket timeout", null);
             }
         }
