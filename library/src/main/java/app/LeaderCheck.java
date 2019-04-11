@@ -64,6 +64,7 @@ public class LeaderCheck {
                 }
             }
         }
+        ConfigManager.getCurrent().setLeader_id(leaderUuid);
         Debugger.log("Election: Leader selected: " + leaderUuid, null);
     }
 

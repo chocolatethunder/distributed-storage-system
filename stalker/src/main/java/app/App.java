@@ -210,6 +210,7 @@ public class App {
             leaderchecker.election(1);
             leaderUuid = cfg.getLeader_id();
             cfg.setReelection(false);
+            running = false;
             // Leader election by asking for a leader
         }
 
