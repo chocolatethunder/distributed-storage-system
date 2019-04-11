@@ -36,7 +36,6 @@ public class ListenerThread implements Runnable{
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
             server = new ServerSocket(serverPort);
-            server.setSoTimeout(10000);
 
         } catch (IOException e) {
             e.printStackTrace();
