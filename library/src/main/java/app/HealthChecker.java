@@ -195,7 +195,7 @@ public class HealthChecker implements Runnable{
         private final int port = ConfigManager.getCurrent().getElection_port();
 
         //will wait 30 seconds for reply, if not then it will be considered dead
-        private final int timeoutForReply = 2000;
+        private final int timeoutForReply = 10000;
 
         private AtomicLong spaceToUpdate;
         private Module target;
