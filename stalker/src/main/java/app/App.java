@@ -36,6 +36,7 @@ public class App {
         Debugger.setMode(3);
         Debugger.toggleFileMode();
         initStalker();
+        boolean running = false;
 
         ConfigManager.loadFromFile("config/config.cfg", "default", true);
         cfg = ConfigManager.getCurrent();
@@ -79,9 +80,17 @@ public class App {
                     Debugger.log("Stalker Main: No HARM targets detected...", null);
                 }
 
-                if (stalkerList != null && stalkerList.size() >= cfg.getElection_threshold_s()){
+                if (stalkerList != null && stalkerList.size() >= 0){
+                    LeaderCheck leaderchecker = new LeaderCheck();
+                    if(leaderchecker.tryLeader()){
+                        connected = true;
+                        running = true;
+                    }
+
+                    if(stalkerList.size() >= cfg.getElection_threshold_s()){
+                        connected = true;
+                    }
                     Debugger.log("Threshold for initiation met...", null);
-                    connected = true;
                 }
                 else{
 
@@ -109,8 +118,8 @@ public class App {
         LeaderCheck leaderchecker = new LeaderCheck();
 
 
-        //check if leader already exists
-        if(!leaderchecker.tryLeader()){
+        //check if leader already found
+        if(!running){
             //if not then start election
             leaderchecker.election(0);
             leaderUuid = LeaderCheck.getLeaderUuid();

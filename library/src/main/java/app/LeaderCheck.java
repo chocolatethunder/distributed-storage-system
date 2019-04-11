@@ -81,7 +81,7 @@ public class LeaderCheck {
                 socket.setSoTimeout(200);
                 // create a leader packet and send it to this host
                 CommsHandler commsHandler = new CommsHandler();
-                if (commsHandler.sendPacket(socket, MessageType.LEADER, "", true) == MessageType.ACK){
+                if (commsHandler.sendPacket(socket, MessageType.DISCOVER, "", true) == MessageType.ACK){
                     cfg.setLeader_id(entry.getKey());
                     ConfigManager.saveToFile(cfg);
                     Debugger.log("Leader found", null);
