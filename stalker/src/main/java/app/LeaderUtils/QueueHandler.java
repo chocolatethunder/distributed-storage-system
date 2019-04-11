@@ -33,7 +33,7 @@ public class QueueHandler implements  Runnable {
                 getJob();
                 if (!processJob()){
                     //if it fails we'll put it back in the queue
-                    queueJob();
+                    //queueJob();
                 }
                 break;
         }
@@ -125,13 +125,13 @@ public class QueueHandler implements  Runnable {
                 catch (IOException e){
                     Debugger.log("",e);
                     e.printStackTrace();
-                    return(false);
                 }
                 catch (Exception e){
                     Debugger.log("",e);
                 }
                 attempts++;
             }
+            
         }
         return(true);
     }
