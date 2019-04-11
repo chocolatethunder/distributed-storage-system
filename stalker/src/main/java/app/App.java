@@ -85,6 +85,8 @@ public class App {
                     if(leaderchecker.tryLeader()){
                         connected = true;
                         running = true;
+                        cfg = ConfigManager.getCurrent();
+                        Debugger.log("Leader uuid = " + cfg.getLeader_id(), null);
                     }
 
                     if(stalkerList.size() >= cfg.getElection_threshold_s()){
@@ -108,7 +110,7 @@ public class App {
         Debugger.log("Stalker Main: System discovery complete!", null);
         int test = 0;
         //starting task for health checks on STALKERS and HARM targets
-        Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, false));
+        Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, true));
         healthChecker.start();
         //election based on networkDiscovery results
         //main loop
@@ -134,7 +136,7 @@ public class App {
             int role = ElectionUtils.identifyRole(NetworkUtils.mapToSList(stalkermap),leaderUuid);
             cfg.setRole(role);
             ConfigManager.saveToFile(cfg);
-            if (role != 0){
+            if (role != 0 && !running){
                 //we kind of assume we'll get an indexfile from the leader
                 while (true){
                     wait(3000);

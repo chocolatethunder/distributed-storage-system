@@ -185,7 +185,7 @@ public class HealthChecker implements Runnable{
         private final int port = ConfigManager.getCurrent().getElection_port();
 
         //will wait 30 seconds for reply, if not then it will be considered dead
-        private final int timeoutForReply = 1000 * 30;
+        private final int timeoutForReply = 3000;
 
         private AtomicLong spaceToUpdate;
         private Module target;
@@ -209,9 +209,7 @@ public class HealthChecker implements Runnable{
                 socket = NetworkUtils.createConnection(host, port);
 
                 //if server does not reply within specified timeout, then SocketException will be thrown
-                socket.setSoTimeout(1000 * timeoutForReply);
-
-
+                socket.setSoTimeout(timeoutForReply);
                 CommsHandler commsHandler = new CommsHandler();
                 //sending the health check request
                 commsHandler.sendPacketWithoutAck(socket, MessageType.HEALTH_CHECK, "REQUEST");
