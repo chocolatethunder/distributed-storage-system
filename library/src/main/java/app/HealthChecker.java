@@ -207,48 +207,48 @@ public class HealthChecker implements Runnable{
             try {
 
                 socket = NetworkUtils.createConnection(host, port);
-
-                //if server does not reply within specified timeout, then SocketException will be thrown
-                socket.setSoTimeout(timeoutForReply);
-                CommsHandler commsHandler = new CommsHandler();
-                //sending the health check request
-                commsHandler.sendPacketWithoutAck(socket, MessageType.HEALTH_CHECK, "REQUEST");
-
-
-                //receive packet from node
-                TcpPacket tcpPacket = commsHandler.receivePacket(socket);
-
-                String  content = tcpPacket.getMessage();
-
-                ObjectMapper mapper = new ObjectMapper();
-
-                // parse the packet content
-                JsonNode healthCheckReply = mapper.readTree(content);
-                Module sender = Module.valueOf(healthCheckReply.get("sender").asText());
-                String status = healthCheckReply.get("status").textValue();
-                long availableSpace =  healthCheckReply.get("diskSpace").asLong();
+                if (socket != null){
+                    //if server does not reply within specified timeout, then SocketException will be thrown
+                    socket.setSoTimeout(timeoutForReply);
+                    CommsHandler commsHandler = new CommsHandler();
+                    //sending the health check request
+                    commsHandler.sendPacketWithoutAck(socket, MessageType.HEALTH_CHECK, "REQUEST");
 
 
-                if(status.equals("SUCCESS")){
-                    if(target == Module.STALKER && this.spaceToUpdate != null) {
-                        this.spaceToUpdate.set(availableSpace);
-                        if(debugMode) {
-                            Debugger.log("Health Checker: Status was success for health check and disk space available "
-                                    + this.spaceToUpdate.get(), null);
+                    //receive packet from node
+                    TcpPacket tcpPacket = commsHandler.receivePacket(socket);
+
+                    String  content = tcpPacket.getMessage();
+
+                    ObjectMapper mapper = new ObjectMapper();
+
+                    // parse the packet content
+                    JsonNode healthCheckReply = mapper.readTree(content);
+                    Module sender = Module.valueOf(healthCheckReply.get("sender").asText());
+                    String status = healthCheckReply.get("status").textValue();
+                    long availableSpace =  healthCheckReply.get("diskSpace").asLong();
+
+
+                    if(status.equals("SUCCESS")){
+                        if(target == Module.STALKER && this.spaceToUpdate != null) {
+                            this.spaceToUpdate.set(availableSpace);
+                            if(debugMode) {
+                                Debugger.log("Health Checker: Status was success for health check and disk space available "
+                                        + this.spaceToUpdate.get(), null);
+                            }
+                        }else if(target == Module.HARM){
+                            // need to add the space for all HARMS in config file
+                            NetworkUtils.updateHarmList(String.valueOf(this.uuid),
+                                    availableSpace,
+                                    true);
                         }
-                    }else if(target == Module.HARM){
-                        // need to add the space for all HARMS in config file
-                        NetworkUtils.updateHarmList(String.valueOf(this.uuid),
-                                availableSpace,
-                                true);
+                    }
+
+                    if(status.equals("CORRUPT") && sender == Module.HARM){
+                        // deal with corrupt chunks here
+
                     }
                 }
-
-                if(status.equals("CORRUPT") && sender == Module.HARM){
-                    // deal with corrupt chunks here
-
-                }
-
             } catch (SocketException e) {
                 // server has not replied within expected timeoutTime
                 updateConfigAndEndTask();
@@ -271,7 +271,7 @@ public class HealthChecker implements Runnable{
                         }
                         socket.close();
                     }
-                } catch (IOException e) {
+                } catch (Exception e) {
                     Debugger.log("", e);
                 }
             }

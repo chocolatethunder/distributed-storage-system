@@ -20,7 +20,7 @@ public class ListenerThread implements Runnable{
 
     private final int serverPort = ConfigManager.getCurrent().getElection_port();
     private boolean running = true;
-    private boolean verbose = false;
+    private boolean verbose = true;
     private volatile IndexFile index;
 
     public ListenerThread(){}
