@@ -77,7 +77,7 @@ public class LeaderCheck {
         for(Map.Entry<Integer, String> entry : stalkerMap.entrySet())
         {
             int port = cfg.getLeader_report();
-            Socket socket;
+            Socket socket = null;
             try {
                 socket = NetworkUtils.createConnection(entry.getValue(), cfg.getLeader_report());
                 socket.setSoTimeout(200);
@@ -87,16 +87,16 @@ public class LeaderCheck {
                     cfg.setLeader_id(entry.getKey());
                     ConfigManager.saveToFile(cfg);
                     Debugger.log("Leader found", null);
-                    try {
-                        socket.close();
-                    }
-                    catch (Exception e){
 
-                    }
                     return true;
                 }
             }catch (Exception e) {
                 //Debugger.log("", e);
+            }
+            try {
+                socket.close();
+            }
+            catch (Exception e){
             }
         }
         Debugger.log("No leader found", null);
@@ -131,9 +131,8 @@ public class LeaderCheck {
                     leaderIP = ep.get().getIp();
                     //System.out.println("Election vote: " + leaderUuid + ", " + leaderIP);
                 }
+
             }
-
-
         } catch (SocketException e) {
             // ask another stalker for the leader if fails to establish connection with one of the stalker
             Debugger.log("", e);

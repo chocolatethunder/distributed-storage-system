@@ -63,7 +63,7 @@ public class StalkerRequestHandler implements Runnable {
                 }
                 else if (m == MessageType.UPLOAD || m == MessageType.DOWNLOAD || m == MessageType.DELETE){
                     //the socket can be closed client side
-                    commLink.sendPacket(client, MessageType.ACK, "", true);
+                    commLink.sendPacket(client, MessageType.ACK, "stalker request to queue", true);
                     //make a queueEntry with the request and Inet addr for later connection
                     QueueEntry toPut = new QueueEntry(req, client.getInetAddress());
                     executorService.submit(new QueueHandler(0, toPut, pQueue));
