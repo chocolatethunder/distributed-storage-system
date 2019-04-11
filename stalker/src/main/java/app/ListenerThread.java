@@ -62,23 +62,23 @@ public class ListenerThread implements Runnable{
                             Module.STALKER));
                 }
 
-                //When a leader request is recieved
-                else if(req.getMessageType() == MessageType.LEADER){
-                    // reply to with leader
-                    executorService.submit(new LeaderResponder(client));
-
-                }
-                else if (req.getMessageType() == MessageType.REELECT){
-                    Debugger.log("Re-election requested...", null);
-                    ConfigManager.getCurrent().setReelection(true);
-                    //executorService.submit(new LeaderResponder(client));
-                }
-                else if(req.getMessageType() == MessageType.UPDATE){
-                    // Update the indexfile
-                    Debugger.log("Update received from leader", null);
-                    //commLink.sendResponse(client, MessageType.ACK);
-                    executorService.execute(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
-                }
+//                //When a leader request is recieved
+//                else if(req.getMessageType() == MessageType.LEADER){
+//                    // reply to with leader
+//                    executorService.submit(new LeaderResponder(client));
+//
+//                }
+//                else if (req.getMessageType() == MessageType.REELECT){
+//                    Debugger.log("Re-election requested...", null);
+//                    ConfigManager.getCurrent().setReelection(true);
+//                    //executorService.submit(new LeaderResponder(client));
+//                }
+//                else if(req.getMessageType() == MessageType.UPDATE){
+//                    // Update the indexfile
+//                    Debugger.log("Update received from leader", null);
+//                    //commLink.sendResponse(client, MessageType.ACK);
+//                    executorService.execute(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
+//                }
             } catch (IOException e) {
                 //Debugger.log("Listener: Socket timeout", null);
             }

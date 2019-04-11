@@ -39,11 +39,11 @@ public class LeaderResponder implements Runnable {
         commsHandler.sendResponse(this.socket, MessageType.ACK);
         commsHandler.sendPacketWithoutAck(this.socket, MessageType.ELECTION, electionPacket());
 
-        try{
-            socket.close();
-        } catch (IOException e) {
-            Debugger.log("", e);
-        }
+//        try{
+//            socket.close();
+//        } catch (IOException e) {
+//            Debugger.log("", e);
+//        }
     }
 
     // Response Packet not using rn because assuming everyone knows everyone

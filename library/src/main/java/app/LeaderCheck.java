@@ -105,13 +105,13 @@ public class LeaderCheck {
 
     public int askForLeader(int entry){
         stalkerMap = updateStalkerMap();
-        int port = cfg.getElection_port();
+        int port = 11115;
         int timeoutForReply = 4;
         Socket socket = null;
         try {
             socket = NetworkUtils.createConnection(stalkerMap.get(entry), port);
             if (socket != null){
-                socket.setSoTimeout(1000 * timeoutForReply);
+                //socket.setSoTimeout(1000 * timeoutForReply);
 
                 // create a leader packet and send it to this host
                 CommsHandler commsHandler = new CommsHandler();

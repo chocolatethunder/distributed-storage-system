@@ -46,6 +46,8 @@ public class App {
         //starting listener thread for health check and leader election
         Thread listenerForHealth = new Thread( new ListenerThread(ind));
         listenerForHealth.start();
+        Thread elecListen = new Thread(new ElectionListener());
+        elecListen.start();
 
         //First thing to do is locate all other stalkers and print the stalkers to file
         //check the netDiscovery class to see where the file is being created
@@ -108,9 +110,9 @@ public class App {
         }
 
         Debugger.log("Stalker Main: System discovery complete!", null);
-        LeaderCheck leaderchecker = new LeaderCheck();
         Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, false));
         healthChecker.start();
+        LeaderCheck leaderchecker = new LeaderCheck();
 
         //check if leader already found
         if(!running){
