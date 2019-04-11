@@ -255,6 +255,7 @@ public class HealthChecker implements Runnable{
             catch(NullPointerException e){
             }
             catch (SocketException e) {
+                closeSocket(socket);
                 // server has not replied within expected timeoutTime
                 Debugger.log("STALKER at : " + host  + "has died!", null);
                 updateConfigAndEndTask();
@@ -271,21 +272,20 @@ public class HealthChecker implements Runnable{
                 }
             }
             finally {
-                try{
-                    if(socket != null) {
-                        if(debugMode) {
-//                            Debugger.log("Health Checker: Task completed closing Socket"
-//                                    + this.spaceToUpdate.get(), null);
-                        }
-                        socket.close();
-                    }
-                } catch (Exception e) {
-                    Debugger.log("", e);
-                }
+                closeSocket(socket);
             }
         }
 
 
+        public void closeSocket(Socket s){
+            try{
+                if(s != null) {
+                    s.close();
+                }
+            } catch (Exception e) {
+                Debugger.log("", e);
+            }
+        }
         private void updateConfigAndEndTask(){
             if(this.target == Module.STALKER) {
                 // remove node from STALKER LIST in config file stalkers.list
