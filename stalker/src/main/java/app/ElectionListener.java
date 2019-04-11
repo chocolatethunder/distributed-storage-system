@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ElectionListener implements Runnable{
-    private final int serverPort = 11115;
+    private final int serverPort = 33333;
     private boolean running = false;
     private boolean verbose = true;
     private volatile IndexFile index;
@@ -26,7 +26,7 @@ public class ElectionListener implements Runnable{
         CommsHandler commLink = new CommsHandler();
 
         // we can change this later to increase or decrease
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        ExecutorService executorService = Executors.newFixedThreadPool(20);
         try {
             server = new ServerSocket(serverPort);
         } catch (IOException e) {

@@ -105,7 +105,7 @@ public class LeaderCheck {
 
     public int askForLeader(int entry){
         stalkerMap = updateStalkerMap();
-        int port = 11115;
+        int port = 33333;
         int timeoutForReply = 4;
         Socket socket = null;
         try {

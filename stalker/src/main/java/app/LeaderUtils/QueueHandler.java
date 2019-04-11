@@ -90,7 +90,7 @@ public class QueueHandler implements  Runnable {
     //send index update to all stalkers
     public boolean sendUpdates(TcpPacket t){
         CommsHandler commLink = new CommsHandler();
-        int port = 11115;
+        int port = 33333;
         Debugger.log("Sending out updates...", null);
         HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString(ConfigManager.getCurrent().getStalker_list_path()));
         m.remove(ConfigManager.getCurrent().getLeader_id());

@@ -33,7 +33,7 @@ public class ListenerThread implements Runnable{
         CommsHandler commLink = new CommsHandler();
 
         // we can change this later to increase or decrease
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        ExecutorService executorService = Executors.newFixedThreadPool(20);
         try {
             server = new ServerSocket(serverPort);
 
