@@ -61,7 +61,6 @@ public class App {
         Map<Integer, NodeAttribute> harmlist = null;
         int attempts = 0;
 
-        LeaderCheck leaderchecker = new LeaderCheck();
         //wait for at least 2 connections
         while (!connected){
             //we will wait for network discovery to do its thing
@@ -83,13 +82,15 @@ public class App {
                     Debugger.log("Stalker Main: No HARM targets detected...", null);
                 }
 
-                if (stalkerList != null && stalkerList.size() > 0){
+                if (stalkerList != null && stalkerList.size() >= 0){
+                    LeaderCheck leaderchecker = new LeaderCheck();
                     if(leaderchecker.tryLeader()){
                         connected = true;
                         running = true;
                         cfg = ConfigManager.getCurrent();
                         Debugger.log("Leader uuid = " + cfg.getLeader_id(), null);
                     }
+
                     if(stalkerList.size() >= cfg.getElection_threshold_s()){
                         connected = true;
                     }
@@ -107,10 +108,10 @@ public class App {
 
             attempts++;
         }
-        Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, true));
-        healthChecker.start();
+//        Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, true));
+//        healthChecker.start();
         Debugger.log("Stalker Main: System discovery complete!", null);
-        leaderchecker = new LeaderCheck();
+        LeaderCheck leaderchecker = new LeaderCheck();
 
         //check if leader already found
         if(!running){
@@ -178,8 +179,8 @@ public class App {
                     jcpReq.interrupt();
                     Debugger.log("Worker Interrupted", null);
                     try {
-                        healthChecker.interrupt();
-                        healthChecker.join();
+//                        healthChecker.interrupt();
+//                        healthChecker.join();
                         jcpReq.join();
                     }
                     catch(InterruptedException e){
@@ -199,8 +200,8 @@ public class App {
                         //interrupt vice leader
                         vice.interrupt();
                         Debugger.log("Worker Interrupted", null);
-                        healthChecker.interrupt();
-                        healthChecker.join();
+//                        healthChecker.interrupt();
+//                        healthChecker.join();
                         vice.join();
                     }
                     catch(InterruptedException e){
