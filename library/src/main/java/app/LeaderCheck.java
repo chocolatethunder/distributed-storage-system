@@ -71,8 +71,10 @@ public class LeaderCheck {
 
         Debugger.log("Trying to find a running leader", null);
         //try and connect to a leader
+        Debugger.log("Debug 2", null);
         for(Map.Entry<Integer, String> entry : stalkerMap.entrySet())
         {
+            Debugger.log("Debug 3", null);
             int port = cfg.getLeader_report();
             Socket socket;
             try {
@@ -141,7 +143,7 @@ public class LeaderCheck {
 
 
     public static HashMap<Integer, String> updateStalkerMap() {
-        return NetworkUtils.mapFromJson(NetworkUtils.fileToString(ConfigManager.getCurrent().getStalker_list_path()));
+        return NetworkUtils.getStalkerMap(cfg.getStalker_list_path());
     }
 
     /** Getters and Setters*/

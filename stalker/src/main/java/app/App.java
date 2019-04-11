@@ -81,7 +81,6 @@ public class App {
 
                 if (stalkerList != null && stalkerList.size() >= cfg.getElection_threshold_s()){
                     Debugger.log("Threshold for initiation met...", null);
-                    Debugger.log("Debug 2", null);
                     connected = true;
                 }
                 else{
@@ -93,10 +92,10 @@ public class App {
             catch(NullPointerException e){
                 Debugger.log("", e);
             }
-            Debugger.log("Debug 3", null);
+
             attempts++;
         }
-        Debugger.log("Debug 4", null);
+
         Debugger.log("Stalker Main: System discovery complete!", null);
         int test = 0;
         //starting task for health checks on STALKERS and HARM targets
