@@ -72,24 +72,23 @@ public class LeaderCheck {
         stalkerMap = updateStalkerMap();
         Debugger.log("Trying to find a running leader", null);
         //try and connect to a leader
-        Debugger.log("Debug 2", null);
         for(Map.Entry<Integer, String> entry : stalkerMap.entrySet())
         {
-            Debugger.log("Debug 3", null);
             int port = cfg.getLeader_report();
             Socket socket;
             try {
                 socket = NetworkUtils.createConnection(entry.getValue(), cfg.getLeader_report());
-                socket.setSoTimeout(500);
+                socket.setSoTimeout(200);
                 // create a leader packet and send it to this host
                 CommsHandler commsHandler = new CommsHandler();
                 if (commsHandler.sendPacket(socket, MessageType.LEADER, "", true) == MessageType.ACK){
                     cfg.setLeader_id(entry.getKey());
                     ConfigManager.saveToFile(cfg);
+                    Debugger.log("Leader found", null);
                     return true;
                 }
             }catch (Exception e) {
-                Debugger.log("", e);
+                //Debugger.log("", e);
             }
         }
         Debugger.log("No leader found", null);

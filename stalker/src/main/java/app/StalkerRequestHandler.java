@@ -49,17 +49,17 @@ public class StalkerRequestHandler implements Runnable {
                 Debugger.log("Stalker Request Handler: Accepted connection : " + client + ", Request type: " + req.getMessageType().name() + ".", null);
 
                 //Acknowlegde that the request has been recieved and that
-
-                if (req.getMessageType() == MessageType.CONFIRM){
+                MessageType m = req.getMessageType();
+                if (m == MessageType.CONFIRM){
                     //allow a Stalker to start working
                     indexFile = Indexer.loadFromFile();
                     commLink.sendPacket(client, MessageType.CONFIRM, "", false);
                     commLink.sendPacket(client, MessageType.UPDATE, NetworkUtils.serializeObject(indexFile), false);
                 }
-                else if (req.getMessageType() == MessageType.DISCOVER){
+                else if (m == MessageType.DISCOVER){
                     commLink.sendPacket(client, MessageType.ACK, String.valueOf(NetworkUtils.getMacID()), false);
                 }
-                else{
+                else if (m == MessageType.UPLOAD || m == MessageType.DOWNLOAD || m == MessageType.DELETE){
                     //the socket can be closed client side
                     commLink.sendPacket(client, MessageType.ACK, "", true);
                     //make a queueEntry with the request and Inet addr for later connection
