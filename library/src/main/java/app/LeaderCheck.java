@@ -27,7 +27,7 @@ public class LeaderCheck {
     public void election(int mode)
     {
         stalkerMap = updateStalkerMap();
-        if (mode == 0){
+        if (mode == 1){
             //remove the leader from the list if still there
             if (stalkerMap.containsKey(cfg.getLeader_id())){
                 stalkerMap.remove(cfg.getLeader_id());
@@ -36,7 +36,7 @@ public class LeaderCheck {
             Debugger.log("Election: Re-election has started...", null);
             //reelect without the old leader
         }
-        else if  (mode == 1){
+        else if  (mode == 0){
             //regular election initial conditions
             Debugger.log("Election: Voting has started...", null);
         }
