@@ -35,20 +35,30 @@ public class NetDiscovery implements Runnable{
         }
         catch (SocketException e){
         }
+        int counter = 1;
         while (!Thread.interrupted()){
             try {
                 listOfAddrs = serverSearch(MessageType.DISCOVER, ports);
                 if (listOfAddrs != null){
                     if (target == Module.STALKER.name()){
                         //write to file
-                        Debugger.log("NetDiscovery: STALKER list updated", null);
+                        if (counter > 5){
+                            Debugger.log("NetDiscovery: STALKER list updated", null);
+                            counter = 1;
+                        }
+
                         NetworkUtils.toFile(ConfigManager.getCurrent().getStalker_list_path() , listOfAddrs);
                     }
                     else{
+                        if (counter > 5){
+                            Debugger.log("NetDiscovery: HARM list updated", null);
+                            counter = 1;
+                        }
                         //write to file
-                        Debugger.log("NetDiscovery: HARM list updated", null);
+
                         NetworkUtils.toFile(ConfigManager.getCurrent().getHarm_list_path(), listOfAddrs);
                     }
+
                 }
             } catch (Exception e) {
                 Debugger.log("", e);

@@ -17,10 +17,10 @@ public class HealthChecker implements Runnable{
 
 
     // every 30 seconds for now
-    private final long interval = 1000 * 30;
+    private long interval = 1000 * 3;
 
     //delay between each timerTask, considering net discovery already occured
-    private final long intialDelay = 1000 * 20;
+    private long intialDelay = 1000 *3;
 
     private Map<Integer, String> stalkerList;
     private Map<Integer, String> harmList;
@@ -37,6 +37,7 @@ public class HealthChecker implements Runnable{
      * @param spaceAvailableSoFar stalker will have this null
      */
     public HealthChecker(Module checker, AtomicLong spaceAvailableSoFar, boolean debugMode){
+        cfg = ConfigManager.getCurrent();
         requestSender = checker;
         HashMap<Integer, String> stalkers =  NetworkUtils.mapFromJson(NetworkUtils.fileToString(ConfigManager.getCurrent().getStalker_list_path()));
         stalkerList = stalkers;
@@ -47,6 +48,8 @@ public class HealthChecker implements Runnable{
         }
         this.spaceAvailableSoFar = spaceAvailableSoFar;
         this.debugMode = debugMode;
+        interval = cfg.getStalker_update_freq() * 1100;
+
     }
 
 
@@ -100,6 +103,9 @@ public class HealthChecker implements Runnable{
                                     spaceAvailableSoFar,
                                     Module.STALKER);
                         }
+                        if (interrupted){
+                            break;
+                        }
                     }
 
                     this.stalkerList = new HashMap<>();
@@ -115,6 +121,9 @@ public class HealthChecker implements Runnable{
                         for (Map.Entry<Integer, String> entry : newHarms.entrySet()) {
                             if(!this.harmList.containsKey(entry.getKey())) {
                                 addTimerTaskForHarm(timer, mapper, entry);
+                            }
+                            if (interrupted){
+                                break;
                             }
                         }
                         this.harmList = new HashMap<>();
@@ -186,7 +195,7 @@ public class HealthChecker implements Runnable{
         private final int port = ConfigManager.getCurrent().getElection_port();
 
         //will wait 30 seconds for reply, if not then it will be considered dead
-        private final int timeoutForReply = 3000;
+        private final int timeoutForReply = 2000;
 
         private AtomicLong spaceToUpdate;
         private Module target;

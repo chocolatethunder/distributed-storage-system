@@ -19,7 +19,7 @@ public class ListenerThread implements Runnable{
 
 
     private final int serverPort = ConfigManager.getCurrent().getElection_port();
-    private boolean running = true;
+    private boolean running = false;
     private boolean verbose = true;
     private volatile IndexFile index;
 
@@ -42,7 +42,6 @@ public class ListenerThread implements Runnable{
             e.printStackTrace();
         }
         Debugger.log("Health Listener: Waiting for health check, Leader Election requests, or updates...", null);
-        System.out.println(NetworkUtils.timeStamp(1) + "Waiting for health check, Leader Election requests, or updates");
         // will keep on listening for requests
         while (running) {
             try {
@@ -81,7 +80,7 @@ public class ListenerThread implements Runnable{
                     executorService.execute(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
                 }
             } catch (IOException e) {
-                Debugger.log("Listener: Socket timeout", null);
+                //Debugger.log("Listener: Socket timeout", null);
             }
         }
 
