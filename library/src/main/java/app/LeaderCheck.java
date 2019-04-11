@@ -69,6 +69,7 @@ public class LeaderCheck {
 
     public boolean tryLeader(){
 
+        stalkerMap = updateStalkerMap();
         Debugger.log("Trying to find a running leader", null);
         //try and connect to a leader
         Debugger.log("Debug 2", null);
