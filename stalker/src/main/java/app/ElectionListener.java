@@ -22,6 +22,7 @@ public class ElectionListener implements Runnable{
     @Override
     public void run() {
         serverPort = ConfigManager.getCurrent().getElection_port();
+
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
 
@@ -32,7 +33,8 @@ public class ElectionListener implements Runnable{
         } catch (IOException e) {
             Debugger.log("", e);
         }
-        Debugger.log("Health Listener: Waiting for health check, Leader Election requests, or updates...", null);
+        Debugger.log("Election responder listening on port " + serverPort, null);
+        Debugger.log("Election responder:Leader Election requests, or updates...", null);
         // will keep on listening for requests
         while (running) {
             try {

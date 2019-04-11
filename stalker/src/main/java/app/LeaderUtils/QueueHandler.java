@@ -66,6 +66,7 @@ public class QueueHandler implements  Runnable {
             }
         }
         catch (InterruptedException e){
+            Debugger.log("", e);
         }
         catch (IOException e){
 
@@ -73,7 +74,7 @@ public class QueueHandler implements  Runnable {
             return(false);
         }
         catch (Exception e){
-
+            Debugger.log("", e);
         }
         try{
             worker.close();

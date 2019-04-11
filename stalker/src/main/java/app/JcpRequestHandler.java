@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
  */
 public class JcpRequestHandler implements Runnable {
 
-     private final int serverPort = ConfigManager.getCurrent().getJcp_req_port();
+     private int serverPort;
      private boolean running = true;
      private IndexFile index;
      public JcpRequestHandler(IndexFile ind){
@@ -28,7 +28,7 @@ public class JcpRequestHandler implements Runnable {
      */
     @Override
     public void run() {
-
+        serverPort =  ConfigManager.getCurrent().getJcp_req_port();
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
         // we can change this later to increase or decrease
@@ -40,7 +40,7 @@ public class JcpRequestHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Debugger.log("JCP request handler: Waiting...", null);
+        Debugger.log("JCP request handler: Listening on port " + serverPort, null);
         // will keep on listening for requests
         while (!Thread.interrupted()) {
             try {
@@ -58,7 +58,6 @@ public class JcpRequestHandler implements Runnable {
                     running = false;
                     client.close();
                 }
-
             }
             catch (SocketTimeoutException ex){
             }

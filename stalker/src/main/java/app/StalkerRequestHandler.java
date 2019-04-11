@@ -41,7 +41,7 @@ public class StalkerRequestHandler implements Runnable {
             Debugger.log("", e);
             return;
         }
-        Debugger.log("Stalker Request Handler: Leader is now taking requests...", null);
+        Debugger.log("Stalker Request Handler: Leader is now taking requests on port ..." + serverPort, null);
         while(running){
             try{
                 client = server.accept();

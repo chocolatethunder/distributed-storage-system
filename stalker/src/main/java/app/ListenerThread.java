@@ -30,6 +30,7 @@ public class ListenerThread implements Runnable{
     public void run() {
 
         serverPort = ConfigManager.getCurrent().getHealth_check_port();
+        Debugger.log("Health check thread port " + serverPort, null);
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
 
