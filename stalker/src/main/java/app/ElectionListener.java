@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ElectionListener implements Runnable{
-    private final int serverPort = 33333;
+    private int serverPort;
     private boolean running = false;
     private boolean verbose = true;
     private volatile IndexFile index;
@@ -21,7 +21,7 @@ public class ElectionListener implements Runnable{
 
     @Override
     public void run() {
-
+        serverPort = ConfigManager.getCurrent().getElection_port();
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
 

@@ -192,7 +192,7 @@ public class HealthChecker implements Runnable{
 
         private final String host ;
         private final int uuid;
-        private final int port = ConfigManager.getCurrent().getElection_port();
+        private int port;
 
         //will wait 30 seconds for reply, if not then it will be considered dead
         private final int timeoutForReply = 10000;
@@ -209,6 +209,7 @@ public class HealthChecker implements Runnable{
 
         @Override
         public void run() {
+            port = ConfigManager.getCurrent().getElection_port();
             if(debugMode) {
                 Debugger.log("Health Checker Task for host: " + host +
                         " started at: " + NetworkUtils.timeStamp(1), null);
@@ -216,10 +217,8 @@ public class HealthChecker implements Runnable{
             Socket socket = null;
             try {
 
-                Debugger.log("DEBUG 1", null);
                 socket = NetworkUtils.createConnection(host, port);
                 if (socket != null){
-                    Debugger.log("DEBUG 1", null);
                     //if server does not reply within specified timeout, then SocketException will be thrown
                     //socket.setSoTimeout(timeoutForReply);
                     CommsHandler commsHandler = new CommsHandler();
@@ -227,7 +226,7 @@ public class HealthChecker implements Runnable{
                     commsHandler.sendPacketWithoutAck(socket, MessageType.HEALTH_CHECK, "REQUEST");
                     //receive packet from node
                     TcpPacket tcpPacket = commsHandler.receivePacket(socket);
-                    Debugger.log("DEBUG 1", null);
+
                     if (tcpPacket != null){
                         String  content = tcpPacket.getMessage();
                         ObjectMapper mapper = new ObjectMapper();
@@ -281,8 +280,9 @@ public class HealthChecker implements Runnable{
                 }
             }
             finally {
-                //closeSocket(socket);
+
             }
+            closeSocket(socket);
         }
 
 

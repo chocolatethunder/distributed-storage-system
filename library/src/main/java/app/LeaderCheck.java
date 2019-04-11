@@ -105,7 +105,7 @@ public class LeaderCheck {
 
     public int askForLeader(int entry){
         stalkerMap = updateStalkerMap();
-        int port = 33333;
+        int port = cfg.getLeader_report();
         int timeoutForReply = 4;
         Socket socket = null;
         try {
@@ -140,8 +140,7 @@ public class LeaderCheck {
         } catch (IOException e) {
             // ask another stalker for the leader if fails to establish connection with one of the stalker
             Debugger.log("", e);
-        }finally {
-
+        }catch(Exception e) {
         }
         closeSocket(socket);
         return(leaderUuid);

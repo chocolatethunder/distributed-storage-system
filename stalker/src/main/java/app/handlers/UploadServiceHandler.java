@@ -14,7 +14,7 @@ import app.FileStreamer;
  */
 public class UploadServiceHandler implements Runnable {
 
-    private final int server_port = ConfigManager.getCurrent().getLeader_admin_port();
+    private int server_port;
     private final Socket socket;
     private DataInputStream in = null;
     private BufferedOutputStream bufferedOutputStream = null;
@@ -34,6 +34,7 @@ public class UploadServiceHandler implements Runnable {
         Debugger.log("Upload Service: Started upload process...", null);
         CommsHandler commsLink = new CommsHandler();
         try{
+            server_port = ConfigManager.getCurrent().getLeader_admin_port();
 //          1. get permissions from leader
 //------------------------------------------------------------
             //going to need IP of leader

@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 public class ListenerThread implements Runnable{
 
 
-    private int serverPort = 11114;
+    private int serverPort;
     private boolean running = false;
     private boolean verbose = true;
     private volatile IndexFile index;

@@ -40,7 +40,7 @@ public class QueueHandler implements  Runnable {
     }
     public boolean processJob(){
         CommsHandler commLink = new CommsHandler();
-        Socket worker;
+        Socket worker = null;
         try{
             System.out.println(NetworkUtils.timeStamp(1) + " Processing job...");
             worker = NetworkUtils.createConnection(q.getInetAddr().getHostAddress(), ConfigManager.getCurrent().getLeader_admin_port());
@@ -68,8 +68,18 @@ public class QueueHandler implements  Runnable {
         catch (InterruptedException e){
         }
         catch (IOException e){
+
             e.printStackTrace();
             return(false);
+        }
+        catch (Exception e){
+
+        }
+        try{
+            worker.close();
+        }
+        catch (Exception e){
+
         }
 
 
@@ -90,7 +100,7 @@ public class QueueHandler implements  Runnable {
     //send index update to all stalkers
     public boolean sendUpdates(TcpPacket t){
         CommsHandler commLink = new CommsHandler();
-        int port = 33333;
+        int port = ConfigManager.getCurrent().getElection_port();
         Debugger.log("Sending out updates...", null);
         HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString(ConfigManager.getCurrent().getStalker_list_path()));
         m.remove(ConfigManager.getCurrent().getLeader_id());
@@ -105,8 +115,11 @@ public class QueueHandler implements  Runnable {
             while(attempts < 3){
                 try{
                     stalker = NetworkUtils.createConnection(stalkerip, port);
-                    commLink.sendPacket(stalker,MessageType.UPDATE, t.getMessage(), false);
-                    stalker.close();
+
+                    if(commLink.sendPacket(stalker,MessageType.UPDATE, t.getMessage(), true) == MessageType.ACK){
+                        stalker.close();
+                    }
+
                 }
                 catch (IOException e){
                     e.printStackTrace();

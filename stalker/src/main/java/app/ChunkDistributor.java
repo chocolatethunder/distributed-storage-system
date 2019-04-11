@@ -14,7 +14,7 @@ public class ChunkDistributor {
     private boolean debug = false;
     private String chunkDir;
     private CommsHandler commLink;
-    private int port = ConfigManager.getCurrent().getHarm_listen();
+    private int port;
 
     //we are going to hard code this for now
     private int harm_count = 4;
@@ -28,6 +28,7 @@ public class ChunkDistributor {
         harm_list = h_list;
         harm_count = h_list.size();
         commLink = new CommsHandler();
+        port = ConfigManager.getCurrent().getHarm_listen();
     }
 
     //take an index entry object and process distribute
