@@ -11,6 +11,7 @@ import java.io.*;
 import java.net.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class App {
@@ -46,7 +47,24 @@ public class App {
 //        health.healthCheck(ind);
 //        System.out.println("Spot 4");
 //        health.status();
+//
+//
+//        Runnable periodic_health_check = new Runnable(){
+//            public void run(){
+//                System.out.println("Commencing periodic health check.");
+//                health.healthCheck(ind);
+//            }
+//        };
+
+        ScheduledExecutorService exec = Executors.newScheduledThreadPool(4);
+        exec.scheduleAtFixedRate(periodic_health_check, 15, 30, TimeUnit.SECONDS);
+
         // will keep on listening for requests from STALKERs
+
+
+
+
+
         while (true) {
             try {
                 STALKER_Client = HARM_server.accept();
