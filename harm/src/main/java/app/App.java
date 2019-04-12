@@ -55,9 +55,9 @@ public class App {
 //                health.healthCheck(ind);
 //            }
 //        };
-
-        ScheduledExecutorService exec = Executors.newScheduledThreadPool(4);
-        exec.scheduleAtFixedRate(periodic_health_check, 15, 30, TimeUnit.SECONDS);
+//
+//        ScheduledExecutorService exec = Executors.newScheduledThreadPool(4);
+//        exec.scheduleAtFixedRate(periodic_health_check, 15, 30, TimeUnit.SECONDS);
 
         // will keep on listening for requests from STALKERs
 
