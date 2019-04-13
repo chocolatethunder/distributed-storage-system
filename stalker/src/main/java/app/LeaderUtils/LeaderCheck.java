@@ -110,17 +110,17 @@ public class LeaderCheck {
         int timeoutForReply = 4;
         Socket socket = null;
         try {
-            Debugger.log("Asking for leader from: " + entry + "at " + stalkerMap.get(entry) + "on port: " + port, null);
+            Debugger.log("Leadercheck: Asking for leader from: " + entry + "at " + stalkerMap.get(entry) + "on port: " + port, null);
             socket = NetworkUtils.createConnection(stalkerMap.get(entry), port);
             if (socket != null){
                 //socket.setSoTimeout(1000 * timeoutForReply);
-                Debugger.log("Connection established", null);
+                Debugger.log("Leadercheck: Connection established", null);
                 // create a leader packet and send it to this host
                 CommsHandler commsHandler = new CommsHandler();
                 MessageType m = null;
                 //if messagetype is ack then this is a new
                 m = commsHandler.sendPacket(socket, MessageType.LEADER, "Asking for a Leader", true);
-                Debugger.log("Vote recieved", null);
+                Debugger.log("Leadercheck: Vote recieved", null);
                 if (m == MessageType.ACK){
                     // listen for other people leader
                     TcpPacket tcpPacket = commsHandler.receivePacket(socket);
@@ -134,6 +134,7 @@ public class LeaderCheck {
                     leaderIP = ep.get().getIp();
                     //System.out.println("Election vote: " + leaderUuid + ", " + leaderIP);
                 }
+                Debugger.log("Leadercheck: connection closed", null);
                 NetworkUtils.closeSocket(socket);
 
             }
