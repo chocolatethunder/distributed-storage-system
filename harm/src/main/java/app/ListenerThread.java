@@ -36,7 +36,6 @@ public class ListenerThread implements Runnable {
         ConfigManager.getCurrent().getElection_port();
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
-
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
@@ -66,9 +65,8 @@ public class ListenerThread implements Runnable {
                     }
 
                     //check for corrupted chunks here
-                    HealthStat stat = new HealthStat();
-                    stat.healthCheck(Indexer.loadFromFile());
-                    Map<String, String> corruptList = stat.getCorruptList();
+                    // I fixed it with my ingeniousness
+                    Map<String, String> corruptList = HealthStat.getInstance().getCorruptList();
 
                     if(corruptList.isEmpty()) {
 

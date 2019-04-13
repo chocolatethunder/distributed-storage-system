@@ -1,6 +1,7 @@
 package app.health_utils;
 
 
+import app.Debugger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -15,12 +16,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 // Core logics of health checkups
+// This class is a Singleton
 public class HealthStat{
 
+    // Singleton obj
+    private static HealthStat health_instance = null;
     // { ChunkName(GUIDs), Hash }
     private Map<String,String> corruptList;
 
-    public HealthStat(){
+    private HealthStat(){
         corruptList = new HashMap<>();
     }
 
@@ -31,7 +35,7 @@ public class HealthStat{
     // Function to be called for periodic health check
     // preferably once every 1 minute, this can get pretty intensive computational-power wise
     public void healthCheck(IndexFile ind){
-        System.out.println("Commencing Health Check");
+        Debugger.log("Commencing Self Diagnosis", null);
         refresh();
         Map<String, String> entries = ind.getEntries();
         // Looping through the entries and checking the files
@@ -54,7 +58,7 @@ public class HealthStat{
             catch (IOException e){
                 //if the file is corrupt or empty, report as corrupt
                 e.printStackTrace();
-                System.out.println(entry.getKey() + " is inaccessible.");
+                Debugger.log(entry.getKey() + " is inaccessible.",null);
 
             }
             // Check digest
@@ -63,7 +67,7 @@ public class HealthStat{
                 // eq, good  hash do nothing (?)
             }else{
                 // corrupted, add to list
-                System.out.println(entry.getKey() + " is corrupted, adding to corrupted list.");
+                Debugger.log(entry.getKey() + " is corrupted, adding to corrupted list.",null);
                 corruptList.put(entry.getKey(),entry.getValue());
             }
         }
@@ -72,30 +76,28 @@ public class HealthStat{
     // Function to be called for Health Report
     // returns a nicely formatted string for report
     public String status(){
-        System.out.println("Requesting Health Report");
+//        System.out.println("Requesting Health Report");
         ObjectMapper mapper = new ObjectMapper();
         String strRes = "";
         if(corruptList.isEmpty()) {
             // All Green
             HealthResponse response = new HealthResponse("GOOD");
             try {
-                strRes = mapper.writeValueAsString(response);
+                strRes = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
                 System.out.println("Error generating response message.");
             }
-            System.out.println(strRes);
             return strRes;
         }
         // Corruption detected
         HealthResponse response = new HealthResponse("CORR", corruptList.keySet());
         try {
-            strRes = mapper.writeValueAsString(response);
+            strRes = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             System.out.println("Error generating response message.");
         }
-        System.out.println(strRes);
         return strRes;
     }
 
@@ -103,8 +105,12 @@ public class HealthStat{
     ////////////////////getter/setter
 
     public Map<String, String> getCorruptList() {return corruptList; }
-    public void setCorruptList(Map<String, String> corruptList) { this.corruptList = corruptList; }
 
+    // call to get instance
+    public static HealthStat getInstance(){
+        if(health_instance == null) health_instance = new HealthStat();
+        return health_instance;
+    }
 
 
 }

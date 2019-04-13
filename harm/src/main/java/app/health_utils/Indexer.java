@@ -52,6 +52,11 @@ public class Indexer {
             File temp = new File(tempfile);
             File indexfile = new File(indexPath);
 
+            // check for parent dir, create dir if needed
+            File parentDir = temp.getParentFile();
+            if(! parentDir.exists()) parentDir.mkdirs();
+            parentDir = indexfile.getParentFile();
+            if(! parentDir.exists()) parentDir.mkdirs();
 
             if (temp.exists()){
                 temp.delete();

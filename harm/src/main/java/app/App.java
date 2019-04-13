@@ -4,12 +4,16 @@
 package app;
 
 
+import app.health_utils.HealthStat;
+import app.health_utils.Indexer;
+
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class App {
@@ -32,6 +36,22 @@ public class App {
         Thread listenerThread = new Thread(new ListenerThread(true));
         listenerThread.start();
 
+        // Let's cook some magic
+        // Hiring security guards
+        Runnable periodic_health_check = new Runnable(){
+            public void run(){
+                // tell the guards to patrol
+                Debugger.log("Commencing periodic self diagnosis.",null);
+                HealthStat.getInstance().healthCheck(Indexer.loadFromFile());
+                // tell them to write reports
+                Debugger.log("Health status post check:", null);
+                Debugger.log(HealthStat.getInstance().status(),null);
+            }
+        };
+        ScheduledExecutorService exec = Executors.newScheduledThreadPool(4);
+        // bug them every 30s
+        exec.scheduleAtFixedRate(periodic_health_check, 15, 30, TimeUnit.SECONDS);
+
         int macID = NetworkUtils.getMacID();
         CommsHandler commLink = new CommsHandler();
         //initialize socket and input stream
@@ -49,18 +69,7 @@ public class App {
 
 
         System.out.println(NetworkUtils.timeStamp(1) + "Waiting...");
-        // TODO -  Add Periodic Health Checks (call HealthStat.healthCheck(IndexFile) for a check up and HealthStat.status() for a report)
-        // Test codes used for debugging:
-//        IndexFile ind = new IndexFile();
-//        System.out.println("Spot 1");
-//        HealthStat health = new HealthStat();
-//        System.out.println("Spot 2");
-//        ind.add("ABC","1337");
-//        System.out.println("Spot 3");
-//        health.healthCheck(ind);
-//        System.out.println("Spot 4");
-//        health.status();
-        // will keep on listening for requests from STALKERs
+
         while (true) {
             try {
                 STALKER_Client = HARM_server.accept();
