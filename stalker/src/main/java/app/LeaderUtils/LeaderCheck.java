@@ -20,7 +20,6 @@ public class LeaderCheck {
     public LeaderCheck()
     {
         cfg = ConfigManager.getCurrent();
-        this.ids = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
     }
 
 
@@ -110,7 +109,7 @@ public class LeaderCheck {
 
     public int askForLeader(int entry){
         stalkerMap = updateStalkerMap();
-        int port = cfg.getLeader_report();
+        int port = cfg.getElection_port();
         int timeoutForReply = 4;
         Socket socket = null;
         try {
