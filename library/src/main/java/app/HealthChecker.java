@@ -39,12 +39,10 @@ public class HealthChecker implements Runnable{
     public HealthChecker(Module checker, AtomicLong spaceAvailableSoFar, boolean debugMode){
         cfg = ConfigManager.getCurrent();
         requestSender = checker;
-        HashMap<Integer, String> stalkers =  NetworkUtils.mapFromJson(NetworkUtils.fileToString(ConfigManager.getCurrent().getStalker_list_path()));
-        stalkerList = stalkers;
+        stalkerList =  NetworkUtils.getStalkerMap(cfg.getStalker_list_path());
 
         if(checker == Module.STALKER){
-            HashMap<Integer, String> harms =  NetworkUtils.mapFromJson(NetworkUtils.fileToString(ConfigManager.getCurrent().getHarm_list_path()));
-            harmList = harms;
+            harmList =  NetworkUtils.mapFromJson(NetworkUtils.fileToString(cfg.getHarm_list_path()));
         }
         this.spaceAvailableSoFar = spaceAvailableSoFar;
         this.debugMode = debugMode;
@@ -209,7 +207,7 @@ public class HealthChecker implements Runnable{
 
         @Override
         public void run() {
-            port = ConfigManager.getCurrent().getElection_port();
+            port = ConfigManager.getCurrent().getHealth_check_port();
             if(debugMode) {
                 Debugger.log("Health Checker Task for host: " + host +
                         " started at: " + NetworkUtils.timeStamp(1), null);
