@@ -43,29 +43,8 @@ public class HealthStat{
         Map<String, String> entries = ind.getEntries();
         // Looping through the entries and checking the files
         for (Map.Entry<String, String> entry : entries.entrySet()){
-            // Opening File
-//            MessageDigest md = null;
-//            try {
-//                md = MessageDigest.getInstance("MD5");
-//            } catch (NoSuchAlgorithmException e) {
-//                // shouldn't arrive here
-//                e.printStackTrace();
-//            }
-//            try (InputStream is = Files.newInputStream(Paths.get(entry.getKey()));
-//                 DigestInputStream dis = new DigestInputStream(is, md)) {
-//                int i;
-//                while ((i = dis.read()) != -1){
-//                    // read through the file & update digest
-//                }
-//            }
-//            catch (IOException e){
-//                //if the file is corrupt or empty, report as corrupt
-//                Debugger.log(entry.getKey() + " is inaccessible.",e);
-//
-//            }
-            // Check digest
 
-            File file = new File(entry.getKey());
+            File file = new File("storage/" + entry.getKey());
             long check = 0;
             try{
                 check =  FileUtils.checksumCRC32(file);

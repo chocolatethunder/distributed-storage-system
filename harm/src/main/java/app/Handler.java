@@ -49,7 +49,7 @@ public class Handler implements Runnable {
             }
             // creating the index file to store the chunk information
             HashIndex hashIndex = HashIndexer.loadFromFile();
-            hashIndex.add(storage_path + request.getFileName(), request.getFileHash());
+            hashIndex.add(request.getFileName(), request.getFileHash());
             HashIndexer.saveToFile(hashIndex);
 
 

@@ -50,7 +50,6 @@ public class ListenerThread implements Runnable {
                    // Debugger.log("DiscManager: Harm server: Accepted connection from stalker : " + client, null);
 
                 }
-
                 // receive packet on the socket link
                 TcpPacket req = commLink.receivePacket(client);
 
@@ -63,6 +62,8 @@ public class ListenerThread implements Runnable {
                     //check for corrupted chunks here
                     // I fixed it with my ingeniousness
                     Map<String, String> corruptList = HealthStat.getInstance().getCorruptList();
+
+
 
                     if(corruptList.isEmpty()) {
 
@@ -78,19 +79,6 @@ public class ListenerThread implements Runnable {
                                 corruptList.keySet(),
                                 Module.HARM));
 
-
-//                        // receive packet on the socket link for replacing corrupted chunks
-//                        TcpPacket replaceReq;
-//                        for(int i = 0; i < corruptList.size() ; i++) {
-//
-//                            replaceReq = commLink.receivePacket(client);
-//                            if (replaceReq.getMessageType() == MessageType.REPLACE) {
-//                                commLink.sendResponse(client, MessageType.ACK);
-//                            }
-//
-//                            Request r = NetworkUtils.getPacketContents(replaceReq);
-//                            executorService.submit(new ReplaceHandler(r.getFileName(), r.getHarmAddresses()));
-//                        }
                     }
                 }
                 else {
