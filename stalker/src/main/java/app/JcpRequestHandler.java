@@ -6,6 +6,7 @@ import app.handlers.ServiceHandlerFactory;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -14,7 +15,7 @@ import java.util.concurrent.Executors;
  */
 public class JcpRequestHandler implements Runnable {
 
-     private final int serverPort = ConfigManager.getCurrent().getJcp_req_port();
+     private int serverPort;
      private boolean running = true;
      private IndexFile index;
      public JcpRequestHandler(IndexFile ind){
@@ -27,18 +28,21 @@ public class JcpRequestHandler implements Runnable {
      */
     @Override
     public void run() {
-
+        serverPort =  ConfigManager.getCurrent().getJcp_req_port();
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
         // we can change this later to increase or decrease
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
             server = new ServerSocket(serverPort);
+            server.setSoTimeout(1000);
+            server.setReuseAddress(true);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Debugger.log("JCP request handler: Waiting...", null);
+        Debugger.log("JCP request handler: Listening on port " + serverPort, null);
+        Debugger.log("JCP server addr: " + server, null);
         // will keep on listening for requests
         while (!Thread.interrupted()) {
             try {
@@ -56,12 +60,23 @@ public class JcpRequestHandler implements Runnable {
                     running = false;
                     client.close();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            }
+            catch (SocketTimeoutException ex){
+            }
+            catch (Exception e) {
             }
         }
-        executorService.shutdownNow();
+        try{
+            server.close();
+            Debugger.log("Server closed", null);
+        }
+        catch (Exception e){
+            Debugger.log("Error closing server", null);
+        }
+
+
         Debugger.log("JCP Req: Service interrupted", null);
+        executorService.shutdownNow();
     }
 
 

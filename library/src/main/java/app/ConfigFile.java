@@ -3,9 +3,6 @@ package app;
 public class ConfigFile {
     private String conf_path;
     private int leader_id;
-
-
-
     private boolean reelection = false;
 
     private int role = 0;
@@ -36,15 +33,16 @@ public class ConfigFile {
     private int STK_STK_R = 11002;
 
 
-    private int jcp_req_port = 11111;
-    private int leader_report = 11112;
+    private int jcp_req_port = 50000;
+    private int leader_report = 50001;
 
-    private int leader_admin_port = 11113;
-    //health check as welll
-    private int election_port = 11114;
+    private int leader_admin_port = 50002;
+    private int election_port = 50003;
+    private int health_check_port = 50004;
+    private int harm_listen_port = 50005;
 
-    private int harm_listen_port = 11115;
-    private int harm_listen = 22222;
+    //the port for requests
+    private int harm_listen = 50006;
 
     private int debug_mode = 3;
 
@@ -78,7 +76,13 @@ public class ConfigFile {
     public void setRole(int role) {
         this.role = role;
     }
+    public int getHealth_check_port() {
+        return health_check_port;
+    }
 
+    public void setHealth_check_port(int health_check_port) {
+        this.health_check_port = health_check_port;
+    }
     public String getBroadcast_ip() {
         return broadcast_ip;
     }

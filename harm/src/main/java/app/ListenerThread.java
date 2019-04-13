@@ -22,7 +22,7 @@ public class ListenerThread implements Runnable {
 
 
     private ConfigFile cfg;
-    private final int serverPort = ConfigManager.getCurrent().getElection_port();
+    private int serverPort;
     private boolean running = true;
     private boolean debugMode = true;
 
@@ -33,7 +33,7 @@ public class ListenerThread implements Runnable {
 
     @Override
     public void run() {
-        ConfigManager.getCurrent().getElection_port();
+        serverPort = ConfigManager.getCurrent().getHealth_check_port();
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
         // we can change this later to increase or decrease
@@ -51,7 +51,7 @@ public class ListenerThread implements Runnable {
                 //accept connection from a STALKER
                 Socket client = server.accept();
                 if(debugMode) {
-                    Debugger.log("DiscManager: Harm server: Accepted connection from stalker : " + client, null);
+                   // Debugger.log("DiscManager: Harm server: Accepted connection from stalker : " + client, null);
 
                 }
 
@@ -61,7 +61,7 @@ public class ListenerThread implements Runnable {
                 //checking for request type if health check
                 if (req.getMessageType() == MessageType.HEALTH_CHECK) {
                     if(debugMode) {
-                        Debugger.log("DiscManager: Harm server: Received health Check request", null);
+                        //Debugger.log("DiscManager: Harm server: Received health Check request", null);
                     }
 
                     //check for corrupted chunks here
@@ -85,7 +85,7 @@ public class ListenerThread implements Runnable {
                 }
                 else {
                     running = false;
-                    client.close();
+                    //client.close();
                 }
             } catch (IOException e) {
                 Debugger.log("", e);

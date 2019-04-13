@@ -27,23 +27,18 @@ public class LeaderResponder implements Runnable {
     public LeaderResponder (Socket socket)
     {
         this.socket = socket;
-        String stalkerList = NetworkUtils.fileToString(ConfigManager.getCurrent().getStalker_list_path());
-        this.stalkerMap = NetworkUtils.mapFromJson(stalkerList);
-        ids = NetworkUtils.mapToSList(stalkerMap);
+        Debugger.log("Request for leader vote accepted " + socket, null);
     }
 
     public void sendLeader()
     {
+        this.stalkerMap = NetworkUtils.getStalkerMap(ConfigManager.getCurrent().getStalker_list_path());
+        ids = NetworkUtils.mapToSList(stalkerMap);
         // create a election packet and send it to this host
         CommsHandler commsHandler = new CommsHandler();
         commsHandler.sendResponse(this.socket, MessageType.ACK);
         commsHandler.sendPacketWithoutAck(this.socket, MessageType.ELECTION, electionPacket());
-
-        try{
-            socket.close();
-        } catch (IOException e) {
-            Debugger.log("", e);
-        }
+        NetworkUtils.closeSocket(socket);
     }
 
     // Response Packet not using rn because assuming everyone knows everyone
@@ -62,51 +57,8 @@ public class LeaderResponder implements Runnable {
             Debugger.log("", e);
         }
         return electionPkt;
-
     }
 
-//    /** May be used later*/
-//    public static void broadcastLeader(){
-//
-//        // broadcast this leader
-//        for(Map.Entry<Integer, String> entry : stalkerMap.entrySet()) {
-//            // entry.getValue(); // get the IP of the this UUID
-//            // entry.getKey();   // uuid;
-//
-//            int port = 11114;
-//            int timeoutForReply = 5;
-//            Debugger.log("LeaderResponder: Election In Progress", null);
-//            Socket socket = null;
-//            try {
-//                socket = NetworkUtils.createConnection(entry.getValue(), port);
-//                socket.setSoTimeout(1000 * timeoutForReply);
-//
-//                //sending the health check request
-//                // create a election packet and send it to this host
-//                CommsHandler commsHandler = new CommsHandler();
-//                String electionPacket = electionPacket();
-//                commsHandler.sendPacketWithoutAck(socket, MessageType.ELECTION, electionPacket);
-//
-//                // listen for other people leader
-//
-//            } catch (SocketException e) {
-//
-//                // server has not replied within expected timeoutTime
-//                Debugger.log("", e);
-//            } catch (IOException e) {
-//                Debugger.log("", e);
-//            }finally {
-//                try{
-//                    socket.close();
-//                } catch (IOException e) {
-//                    Debugger.log("", e);
-//                }
-//            }
-//
-//        }
-//
-//
-//    }
 
     // reply with the leader info
     @Override

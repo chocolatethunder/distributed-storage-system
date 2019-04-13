@@ -4,10 +4,10 @@
 package app;
 
 import app.LeaderUtils.CRUDQueue;
+import app.LeaderUtils.LeaderCheck;
 import app.LeaderUtils.RequestAdministrator;
 import app.chunk_utils.Indexer;
 import app.chunk_utils.IndexFile;
-import sun.nio.ch.Net;
 
 import java.io.*;
 import java.net.Socket;
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class App {
 
@@ -30,107 +31,42 @@ public class App {
     private static int disc_timeout;
     private static int debug_mode = 3;
     private static ConfigFile cfg;
+    private static boolean connected = false;
+    private static  boolean running = false;
 
     public static void main(String[] args) {
-        //debugging modes: 0 - none; 1 - message only; 2 - stack traces only; 3 - stack and
+        //debugging modes: 0 - none; 1 - message only; 2 - stack traces only; 3 - stack and message
         Debugger.setMode(3);
         Debugger.toggleFileMode();
+        //make sure the directories are available
         initStalker();
-        boolean running = false;
-
         ConfigManager.loadFromFile("config/config.cfg", "default", true);
         cfg = ConfigManager.getCurrent();
         loadConfig(cfg);
         ind = Indexer.loadFromFile();
-
-        //starting listener thread for health check and leader election
-        Thread listenerForHealth = new Thread( new ListenerThread(ind));
-        listenerForHealth.start();
-
+        //start the election listener
+        Thread elecListen = new Thread(new ElectionListener());
+        //health listener listens for health checks
+        Thread healthListener = new Thread(new HealthListener());
         //First thing to do is locate all other stalkers and print the stalkers to file
         //check the netDiscovery class to see where the file is being created
         Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, disc_timeout, false));
         discManager.start();
-        boolean connected = false;
+        healthListener.start();
+        elecListen.start();
         Debugger.log("Stalker Main: This Stalker's macID: " + NetworkUtils.getMacID() + "\n\n", null);
-        Debugger.log("Stalker Main: Discovering nodes on network...", null);
 
-        List<Integer> stalkerList = null;
-        Map<Integer, NodeAttribute> harmlist = null;
-        int attempts = 0;
-
-        //wait for at least 2 connections
-        while (!connected){
-            //we will wait for network discovery to do its thing
-            wait((disc_timeout * 1000) + 1000);
-            try{
-                stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
-                harmlist = NetworkUtils.getNodeMap(cfg.getHarm_list_path());
-            }
-            catch (Exception e){
-                //Debugger.log("", null);
-            }
-
-            Debugger.log("Debug 1", null);
-            try{
-                if (harmlist != null && !harmlist.isEmpty()){
-                    Debugger.log("Populating harm list...", null);
-                }
-                else{
-                    Debugger.log("Stalker Main: No HARM targets detected...", null);
-                }
-
-                if (stalkerList != null && stalkerList.size() >= 0){
-                    LeaderCheck leaderchecker = new LeaderCheck();
-                    if(leaderchecker.tryLeader()){
-                        connected = true;
-                        running = true;
-                        cfg = ConfigManager.getCurrent();
-                        Debugger.log("Leader uuid = " + cfg.getLeader_id(), null);
-                    }
-
-                    if(stalkerList.size() >= cfg.getElection_threshold_s()){
-                        connected = true;
-                    }
-                    Debugger.log("Threshold for initiation met...", null);
-                }
-                else{
-
-                    Debugger.log("Stalker Main: No STALKERs detected yet...", null);
-                    Debugger.log("Stalker Main: Waiting for servers to become available...", null);
-                }
-            }
-            catch(NullPointerException e){
-                Debugger.log("", e);
-            }
-
-            attempts++;
-        }
-
-        Debugger.log("Stalker Main: System discovery complete!", null);
-        int test = 0;
-        //starting task for health checks on STALKERS and HARM targets
-        Thread healthChecker = new Thread(new HealthChecker(Module.STALKER, null, true));
-        healthChecker.start();
-        //election based on networkDiscovery results
-        //main loop
-
-        // store the
-        List<Thread> live_threads = new ArrayList<>();
-        LeaderCheck leaderchecker = new LeaderCheck();
-
-
-        //check if leader already found
-        if(!running){
-            //if not then start election
-            leaderchecker.election(0);
-            leaderUuid = LeaderCheck.getLeaderUuid();
-            cfg.setLeader_id(leaderUuid);
-            ConfigManager.saveToFile(cfg);
+        //try and connect to the servers
+        connectToServers();
+        if (!running){
+            LeaderCheck l = new LeaderCheck();
+            l.election(0);
         }
 
         while (true){
             //reelect
+            //starting task for health checks on STALKERS and HARM targets
+
             HashMap<Integer, String> stalkermap = NetworkUtils.getStalkerMap(cfg.getStalker_list_path());
             stalkermap.remove(leaderUuid);
             int role = ElectionUtils.identifyRole(NetworkUtils.mapToSList(stalkermap),leaderUuid);
@@ -145,6 +81,8 @@ public class App {
                     }
                 }
             }
+            Thread healthChecker = new Thread( new HealthChecker(Module.STALKER, new AtomicLong(0), false));
+            healthChecker.start();
             switch (role){
                 case 0:
                     Debugger.log("<<<<<<<-----Leader Online----->>>>>>> \n\n", null);
@@ -170,52 +108,122 @@ public class App {
                         Debugger.log("", e);
                     }
                     break;
-                case 1:
+                default:
                     Debugger.log("<<<<<<<-----Worker Online----->>>>>>>\n\n", null);
                     Thread jcpReq = new Thread(new JcpRequestHandler(ind));
                     jcpReq.start();
                     //while no reelection is called
                     while(!ConfigManager.getCurrent().isReelection()){
-                        //wait 10 seconds
-                        wait(3000);
+                        //wait 1 seconds
+                        wait(1000);
                     }
-                    Debugger.log("Interrupted", null);
                     //interrupt any workers
                     jcpReq.interrupt();
+                    Debugger.log("Worker Interrupted", null);
                     try {
-                        jcpReq.interrupt();
+                        healthChecker.interrupt();
+                        healthChecker.join();
                         jcpReq.join();
                     }
                     catch(InterruptedException e){
                         Debugger.log("", e);
                     }
                     break;
-                case 2:
-                    Debugger.log("<<<<<<<-----Vice Leader Online----->>>>>>>\n\n", null);
-                    Thread vice = new Thread(new JcpRequestHandler(ind));
-                    vice.start();
-                    //while no reelection called
-                    while(!ConfigManager.getCurrent().isReelection()){
-                        //wait 10 seconds
-                        wait(10000);
-                    }
-                    try {
-                        //interrupt vice leader
-                        vice.interrupt();
-                        vice.join();
-                    }
-                    catch(InterruptedException e){
-                        Debugger.log("", e);
-                    }
-                    break;
+//                case 2:
+//                    Debugger.log("<<<<<<<-----Vice Online----->>>>>>>\n\n", null);
+//                    Thread vice = new Thread(new JcpRequestHandler(ind));
+//                    vice.start();
+//                    //while no reelection called
+//                    while(!ConfigManager.getCurrent().isReelection()){
+//                        //wait 10 seconds
+//                        wait(1000);
+//                    }
+//                    try {
+//                        //interrupt vice leader
+//                        vice.interrupt();
+//                        Debugger.log("Worker Interrupted", null);
+//                        healthChecker.interrupt();
+//                        healthChecker.join();
+//                        vice.join();
+//                    }
+//                    catch(InterruptedException e){
+//                        Debugger.log("", e);
+//                    }
+//                    break;
             }
+            wait(3000);
+            LeaderCheck leaderchecker = new LeaderCheck();
             leaderchecker.election(1);
+            cfg = ConfigManager.getCurrent();
             leaderUuid = cfg.getLeader_id();
+            cfg.setReelection(false);
+            running = false;
             // Leader election by asking for a leader
         }
 
 
     }
+
+
+
+
+    public static void connectToServers(){
+        Debugger.log("Stalker Main: Discovering nodes on network...", null);
+        List<Integer> stalkerList = null;
+        Map<Integer, NodeAttribute> harmlist = null;
+        int attempts = 0;
+        //wait for at least 2 connections
+        while (!connected){
+            //we will wait for network discovery to do its thing
+            wait((disc_timeout * 1000) + 1000);
+            try{
+                stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
+                harmlist = NetworkUtils.getNodeMap(cfg.getHarm_list_path());
+            }
+            catch (Exception e){
+                //Debugger.log("", null);
+            }
+            Debugger.log("Debug 1", null);
+            try{
+                if (harmlist != null && !harmlist.isEmpty()){
+                    Debugger.log("Populating harm list...", null);
+                }
+                else{
+                    Debugger.log("Stalker Main: No HARM targets detected...", null);
+                }
+                LeaderCheck leaderchecker = new LeaderCheck();
+                if (stalkerList != null && stalkerList.size() > 0){
+                    if(leaderchecker.tryLeader()){
+                        connected = true;
+                        running = true;
+                        cfg = ConfigManager.getCurrent();
+                        ind = Indexer.loadFromFile();
+                        Debugger.log("Leader uuid = " + cfg.getLeader_id(), null);
+                    }
+                }
+                if (stalkerList != null && stalkerList.size() >= cfg.getElection_threshold_s()){
+
+                    if(harmlist.size() >= 1){
+                        connected = true;
+                        Debugger.log("Threshold for initiation met...", null);
+                    }
+
+                }
+                else{
+
+                    Debugger.log("Stalker Main: No STALKERs detected yet...", null);
+                    Debugger.log("Stalker Main: Waiting for servers to become available...", null);
+                }
+            }
+            catch(NullPointerException e){
+                Debugger.log("", e);
+            }
+
+            attempts++;
+        }
+        Debugger.log("Stalker Main: System discovery complete!", null);
+    }
+
 
     public static void loadConfig(ConfigFile cfg){
         disc_timeout = cfg.getStalker_update_freq();
@@ -242,10 +250,14 @@ public class App {
     //will block worker from doing anythin until the leader is confirmed
     public static boolean getConfirmation(int uuid) {
         CommsHandler commLink = new CommsHandler();
+        Map<Integer, String> stalkerMap = NetworkUtils.getStalkerMap(ConfigManager.getCurrent().getStalker_list_path());
         boolean success = false;
         while (!success) {
             try {
-                Socket leader = NetworkUtils.createConnection(NetworkUtils.getStalkerMap(cfg.getStalker_list_path()).get(uuid), cfg.getLeader_report());
+                Debugger.log("Stalker main: Asking leader for permission to start...", null);
+                Debugger.log("leader: " + cfg.getLeader_id(), null);
+                Socket leader = NetworkUtils.createConnection(stalkerMap.get(cfg.getLeader_id()), cfg.getLeader_report());
+
                 if (leader != null) {
                     //get confirmation from leader
                     if (commLink.sendPacket(leader, MessageType.CONFIRM, "", true) == MessageType.CONFIRM) {
@@ -268,8 +280,9 @@ public class App {
                     wait(5000);
                 }
             } catch (IOException e) {
+                Debugger.log("Stalker main: Attempt failed when connecting to leader...", e);
                 wait(5000);
-                Debugger.log("", e);
+                Debugger.log("Stalker main: Trying again...", null);
             }
 
         }

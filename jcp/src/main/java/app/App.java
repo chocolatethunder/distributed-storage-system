@@ -63,8 +63,6 @@ public class App {
             try{
                 stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
                 if (stalkerList != null && stalkerList.size() >= 1){
-                    Debugger.log("JCP connected to servers!", null);
-                    consoleOutput.append("JCP Main: Connected to server!.\n");
                     connected = true;
                 }
                 else{
@@ -78,12 +76,13 @@ public class App {
             }
             attempts++;
         }
+        consoleOutput.append("Connected to server!.\n");
         Debugger.log("JCP Main: System ready to take requests!", null);
 
         requestSender = RequestSender.getInstance();
         //starting health checker tasks for each stalker in the stalker list
-        Thread healthChecker= new Thread(new HealthChecker(Module.JCP, totalDiskSpace, true));
-        healthChecker.start();
+//        Thread healthChecker= new Thread(new HealthChecker(Module.JCP, totalDiskSpace, true));
+//        healthChecker.start();
         retrieveFiles();
         //ip of stalker we'll just use the one at index 1 for now
         while(true){
@@ -167,7 +166,7 @@ public class App {
             retrieveFiles();
         }
         else{
-            consoleOutput.append("JCP Main: Connecting to server, please wait.\n");
+            consoleOutput.append("Connecting to server, please wait.\n");
         }
 
 

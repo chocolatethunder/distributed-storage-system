@@ -33,14 +33,14 @@ public class QueueHandler implements  Runnable {
                 getJob();
                 if (!processJob()){
                     //if it fails we'll put it back in the queue
-                    queueJob();
+                    //queueJob();
                 }
                 break;
         }
     }
     public boolean processJob(){
         CommsHandler commLink = new CommsHandler();
-        Socket worker;
+        Socket worker = null;
         try{
             System.out.println(NetworkUtils.timeStamp(1) + " Processing job...");
             worker = NetworkUtils.createConnection(q.getInetAddr().getHostAddress(), ConfigManager.getCurrent().getLeader_admin_port());
@@ -66,10 +66,21 @@ public class QueueHandler implements  Runnable {
             }
         }
         catch (InterruptedException e){
+            Debugger.log("", e);
         }
         catch (IOException e){
+
             e.printStackTrace();
             return(false);
+        }
+        catch (Exception e){
+            Debugger.log("", e);
+        }
+        try{
+            worker.close();
+        }
+        catch (Exception e){
+
         }
 
 
@@ -90,36 +101,35 @@ public class QueueHandler implements  Runnable {
     //send index update to all stalkers
     public boolean sendUpdates(TcpPacket t){
         CommsHandler commLink = new CommsHandler();
-        int port = 11114;
+        int port = ConfigManager.getCurrent().getElection_port();
         Debugger.log("Sending out updates...", null);
         HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString(ConfigManager.getCurrent().getStalker_list_path()));
         m.remove(ConfigManager.getCurrent().getLeader_id());
         List<Integer> s_list = NetworkUtils.mapToSList(m);
         Socket stalker = null;
         for (Integer id : s_list){
-
             int attempts = 0;
-
             String stalkerip =  m.get(id);
-            Debugger.log("Sending update to " + stalkerip, null);
-            while(attempts < 3){
+
+            while(attempts < 1){
                 try{
+                    Debugger.log("Sending update to: " + stalkerip + " on port: " + port, null);
                     stalker = NetworkUtils.createConnection(stalkerip, port);
-                    commLink.sendPacket(stalker,MessageType.UPDATE, t.getMessage(), false);
-                    stalker.close();
+
+                    if(commLink.sendPacket(stalker,MessageType.UPDATE, t.getMessage(), true) == MessageType.ACK){
+                        stalker.close();
+                    }
+
                 }
                 catch (IOException e){
+                    Debugger.log("",e);
                     e.printStackTrace();
-                    return(false);
+                }
+                catch (Exception e){
+                    Debugger.log("",e);
                 }
                 attempts++;
             }
-
-
-//            if (stalker != null){
-//                break;
-//            }
-
 
         }
         return(true);

@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
 // the leader does this by maintaining a queue of requests sent by the stalkers
 public class StalkerRequestHandler implements Runnable {
 
-    private int serverPort = ConfigManager.getCurrent().getLeader_report();
+    private int serverPort;
     private boolean running = true;
     private CRUDQueue pQueue;
     private static volatile IndexFile indexFile;
@@ -29,6 +29,7 @@ public class StalkerRequestHandler implements Runnable {
     }
     @Override
     public void run(){
+        serverPort = ConfigManager.getCurrent().getLeader_report();
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
         Socket client;
@@ -40,7 +41,7 @@ public class StalkerRequestHandler implements Runnable {
             Debugger.log("", e);
             return;
         }
-        Debugger.log("Stalker Request Handler: Leader is now taking requests...", null);
+        Debugger.log("Stalker Request Handler: Leader is now taking requests on port ..." + serverPort, null);
         while(running){
             try{
                 client = server.accept();
@@ -58,11 +59,14 @@ public class StalkerRequestHandler implements Runnable {
                 }
                 else if (m == MessageType.DISCOVER){
                     indexFile = Indexer.loadFromFile();
-                    commLink.sendPacket(client, MessageType.ACK, NetworkUtils.serializeObject(indexFile), false);
+                    if(commLink.sendPacket(client, MessageType.ACK, "", true) == MessageType.ACK){
+                        commLink.sendPacket(client, MessageType.ACK, NetworkUtils.serializeObject(indexFile), false);
+                    }
+
                 }
                 else if (m == MessageType.UPLOAD || m == MessageType.DOWNLOAD || m == MessageType.DELETE){
                     //the socket can be closed client side
-                    commLink.sendPacket(client, MessageType.ACK, "", true);
+                    commLink.sendPacket(client, MessageType.ACK, "stalker request to queue", false);
                     //make a queueEntry with the request and Inet addr for later connection
                     QueueEntry toPut = new QueueEntry(req, client.getInetAddress());
                     executorService.submit(new QueueHandler(0, toPut, pQueue));
@@ -72,7 +76,15 @@ public class StalkerRequestHandler implements Runnable {
                 Debugger.log("", e);
             }
         }
+        try{
+            server.close();
+            Debugger.log("Server closed", null);
+        }
+        catch (Exception e){
+            Debugger.log("Error closing server", null);
+        }
 
     }
+
 
 }

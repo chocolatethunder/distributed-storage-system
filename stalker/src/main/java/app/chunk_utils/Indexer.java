@@ -27,7 +27,7 @@ public class Indexer {
         }
         catch (IOException e){
             //if the file is corrupt or empty we create a new IndexFile
-            Debugger.log("", e);
+            Debugger.log("Indexer: Index file not found...", null);
             System.out.println("Indexer: Creating new indexfile");
             IndexFile temp = new IndexFile();
             saveToFile(temp);
@@ -43,7 +43,7 @@ public class Indexer {
             ind = Optional.of(mapper.readValue(serial, IndexFile.class));
         }
         catch(Exception e){
-           Debugger.log("", e);
+           Debugger.log("Indexer: Could not parse string to indexFile", null);
            return null;
         }
         System.out.println("Indexer: Indexfile loaded from file.");
@@ -82,7 +82,7 @@ public class Indexer {
 
         }
         catch(IOException e){
-            Debugger.log("Indexer: Could not write to indexfile!", e);
+            Debugger.log("Indexer: Could not write to indexfile!", null);
             return false;
         }
         return(true);
