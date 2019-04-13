@@ -19,7 +19,7 @@ public class ConfigFile {
 
     private int stalker_update_freq = 3;
     private int harm_update_freq = 3;
-    private int jcp_update_freq = 3;
+    private int jcp_update_freq = 1;
 
     private int time_to_reboo = 60000;
 

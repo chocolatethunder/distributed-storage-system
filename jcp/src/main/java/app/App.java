@@ -52,30 +52,50 @@ public class App {
         //this beast will be running at all times
         Thread discManager = new Thread(new DiscoveryManager(Module.JCP, discoveryTimeout, false));
         discManager.start();
-        List<Integer> stalkerList;
+        List<Integer> stalkerList = null;
         Map<Integer, NodeAttribute> harmlist;
 
-        int attempts = 0;
+        String periods = ".";
+        int anim = 0;
+        int attempts = 1;
         //wait for at least 1 connection
+        consoleOutput.setText("Connecting to servers please wait.\n");
         while (!connected){
             //we will wait for network discovery to do its thing
-            wait((discoveryTimeout * 1000) + 1000);
+            wait((discoveryTimeout * 100));
             try{
                 stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
-                if (stalkerList != null && stalkerList.size() >= 1){
+                //we're going to need at least 2 servers (worker and leader)
+                if (stalkerList != null && stalkerList.size() >= 2){
                     connected = true;
                 }
                 else{
-                    Debugger.log("JCP Main: No STALKERs detected yet...", null);
-                    Debugger.log( "JCP Main: Waiting for servers to become available...", null);
+                    if (attempts % 10 == 0)
+                    {
+                        Debugger.log("JCP Main: No STALKERs detected yet...", null);
+                        Debugger.log( "JCP Main: Waiting for servers to become available...", null);
+                        attempts = 1;
+                    }
                 }
 
             }
             catch(NullPointerException e){
-                Debugger.log("JCP Main: Problem during network discovery...", e);
+                //Debugger.log("JCP Main: Problem during network discovery...", null);
             }
+
+            if (anim == 5){
+                anim = 0;
+                periods = ".";
+            }
+            else{
+                periods += " .";
+            }
+
+            consoleOutput.setText("Connecting to servers please wait." + periods +  "\n");
             attempts++;
+            anim ++;
         }
+        consoleOutput.append((stalkerList.size() -1) +  "servers available.\n");
         consoleOutput.append("Connected to server!.\n");
         Debugger.log("JCP Main: System ready to take requests!", null);
 
@@ -87,7 +107,15 @@ public class App {
         //ip of stalker we'll just use the one at index 1 for now
         while(true){
             try{
-                Thread.sleep((10000));
+                stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
+                if (stalkerList.size() -1 == 0){
+                    connected = false;
+                }
+                else{
+                    connected = true;
+                }
+                retrieveFiles();
+                Thread.sleep((5000));
             }
             catch (InterruptedException e){
                 e.printStackTrace();
@@ -133,7 +161,7 @@ public class App {
             }
             //remove this:
             listOfFiles.setModel(listModel);
-            consoleOutput.append("Listed files.\n");
+            //consoleOutput.append("Listed files.\n");
             Debugger.log("JCP Main: File list operation complete", null);
             try{ connection.close();}
             catch(IOException e){ Debugger.log("", e);;}
@@ -234,7 +262,7 @@ public class App {
     public static void initJFrame(){
         String request = null;
         String filename = null;
-
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         //set up the gui
 		JButton uploadButton = new JButton("Upload");
 		JButton listButton = new JButton("List Files");
@@ -303,9 +331,9 @@ public class App {
         downloadButton.addActionListener(downloadListener);
         DeleteListener deleteListener = new DeleteListener();
         deleteButton.addActionListener(deleteListener);
-
+        
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainFrame.setPreferredSize(new Dimension(500,400));
+		mainFrame.setPreferredSize(new Dimension((int) screenSize.getWidth()/2,(int)screenSize.getHeight()/2));
 		mainFrame.pack();
 		mainFrame.setVisible(true);
 
