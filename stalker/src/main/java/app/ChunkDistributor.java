@@ -49,7 +49,7 @@ public class ChunkDistributor {
                 //get target ip from harm list
                 Integer target_path = harm_list.get(token);
                 //String target_ip = "127.0.0.1";
-
+                c.setHash(createDigest(c.getChunk_path()));
                 if(sendChunk(c, target_path)) {
                     //add the address to the replica list if OK
                     //for now the port number is the identifier
@@ -97,7 +97,7 @@ public class ChunkDistributor {
                 Socket harmServer = NetworkUtils.createConnection(targ.getAddress(), port);
                 //if everything went well then we can send the damn file
                 //send the packet to the harm target
-                if(commLink.sendPacket(harmServer, MessageType.UPLOAD, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.UPLOAD, createDigest(c.getChunk_path())), true) == MessageType.ACK){
+                if(commLink.sendPacket(harmServer, MessageType.UPLOAD, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.UPLOAD, c.getHash()), true) == MessageType.ACK){
                     FileStreamer fileStreamer = new FileStreamer(harmServer);
                     fileStreamer.sendFileToSocket(c.getChunk_path());
                     harmServer.close();

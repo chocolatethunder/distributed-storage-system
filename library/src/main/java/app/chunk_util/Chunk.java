@@ -14,6 +14,8 @@ public class Chunk {
     private String chunk_path;
     private long chunk_size;
 
+    private String hash;
+
     //this list will contain the adresses of each of the chunk replicas that
     // are hosted on then harm targets. will probably become an object in the future
     private List<Integer> replicas;
@@ -60,6 +62,12 @@ public class Chunk {
 
 
     //////////////////////////////////-----------------------  Getter/Setters
+
+
+    public String getHash() { return hash; }
+
+    public void setHash(String hash) { this.hash = hash; }
+
     public String getUuid() { return uuid; }
     public void setUuid(String uuid) { this.uuid = uuid; }
     public int getChunk_index() { return chunk_index; }
