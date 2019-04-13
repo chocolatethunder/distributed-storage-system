@@ -129,7 +129,7 @@ public class LeaderCheck {
                 MessageType m = null;
                 //if messagetype is ack then this is a new
                 m = commsHandler.sendPacket(socket, MessageType.LEADER, "Asking for a Leader", true);
-                Debugger.log("Leadercheck: Vote recieved", null);
+
                 if (m == MessageType.ACK){
                     // listen for other people leader
                     TcpPacket tcpPacket = commsHandler.receivePacket(socket);
@@ -141,6 +141,7 @@ public class LeaderCheck {
 
                     leaderUuid = Integer.valueOf(ep.get().getUuid());
                     leaderIP = ep.get().getIp();
+                    Debugger.log("Leadercheck: Vote recieved" + leaderUuid, null);
                     //System.out.println("Election vote: " + leaderUuid + ", " + leaderIP);
                 }
                 Debugger.log("Leadercheck: connection closed", null);
