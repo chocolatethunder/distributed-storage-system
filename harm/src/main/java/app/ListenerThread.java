@@ -94,7 +94,8 @@ public class ListenerThread implements Runnable {
                                 commLink.sendResponse(client, MessageType.ACK);
                             }
 
-                            executorService.submit(new ReplaceHandler(replaceReq));
+                            Request r = NetworkUtils.getPacketContents(replaceReq);
+                            executorService.submit(new ReplaceHandler(r.getFileName(), r.getHarmAddresses()));
                         }
                     }
                 }
