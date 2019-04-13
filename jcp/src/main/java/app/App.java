@@ -107,6 +107,7 @@ public class App {
         //ip of stalker we'll just use the one at index 1 for now
         while(true){
             try{
+                //make sure there are still servers
                 stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
                 if (stalkerList.size() -1 == 0){
                     connected = false;
@@ -114,6 +115,7 @@ public class App {
                 else{
                     connected = true;
                 }
+
                 Thread.sleep((5000));
             }
             catch (InterruptedException e){
