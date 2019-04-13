@@ -375,7 +375,7 @@ public class HealthChecker implements Runnable{
                     if (commsLink.sendPacket(harmServer,
                             MessageType.DELETE,
                             NetworkUtils.createSerializedRequest(chunkId,
-                                    MessageType.DELETE), true) == MessageType.ACK) {
+                                    MessageType.DELETE, ""), true) == MessageType.ACK) {
                         harmServer.close();
                     }
                 }

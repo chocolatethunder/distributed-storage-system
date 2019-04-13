@@ -9,15 +9,17 @@ public class Request {
     private MessageType requestType;
     private Set<String> harmAddresses;
 
+    private String fileHash;
     public Request(){}
     public Request(String fileName, MessageType r){
         this.fileName = fileName;
         this.requestType = r;
     }
-    public Request(String fileName, MessageType r, int fileSize){
+    public Request(String fileName, MessageType r, int fileSize, String fileHash){
         this.fileName = fileName;
         this.fileSize = fileSize;
         this.requestType = r;
+        this.fileHash = fileHash;
     }
 
     public Request(String fileName, MessageType r, Set<String> ips){
@@ -25,6 +27,7 @@ public class Request {
         this.requestType = r;
         this.harmAddresses = ips;
     }
+
 
 
     public String getFileName() {
@@ -58,5 +61,12 @@ public class Request {
 
     public void setHarmAddresses( Set<String> ips) {
         this.harmAddresses = ips;
+    }
+    public String getFileHash() {
+        return fileHash;
+    }
+
+    public void setFileHash(String fileHash) {
+        this.fileHash = fileHash;
     }
 }

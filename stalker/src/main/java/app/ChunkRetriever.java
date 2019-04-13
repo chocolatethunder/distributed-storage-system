@@ -55,7 +55,7 @@ public class ChunkRetriever {
                 }
                 try{
                     Socket harmServer = NetworkUtils.createConnection(targ.getAddress(), ConfigManager.getCurrent().getHarm_listen());
-                    if(commLink.sendPacket(harmServer, MessageType.DOWNLOAD, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.DOWNLOAD), true) == MessageType.ACK){
+                    if(commLink.sendPacket(harmServer, MessageType.DOWNLOAD, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.DOWNLOAD, ""), true) == MessageType.ACK){
                         FileStreamer fileStreamer = new FileStreamer(harmServer);
                         fileStreamer.receiveFileFromSocket(chunkDir + c.getUuid());
                         harmServer.close();
