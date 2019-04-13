@@ -4,7 +4,9 @@ package app.health_utils;
 import app.Debugger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -42,27 +44,36 @@ public class HealthStat{
         // Looping through the entries and checking the files
         for (Map.Entry<String, String> entry : entries.entrySet()){
             // Opening File
-            MessageDigest md = null;
-            try {
-                md = MessageDigest.getInstance("MD5");
-            } catch (NoSuchAlgorithmException e) {
-                // shouldn't arrive here
-                e.printStackTrace();
-            }
-            try (InputStream is = Files.newInputStream(Paths.get(entry.getKey()));
-                 DigestInputStream dis = new DigestInputStream(is, md)) {
-                int i;
-                while ((i = dis.read()) != -1){
-                    // read through the file & update digest
-                }
-            }
-            catch (IOException e){
-                //if the file is corrupt or empty, report as corrupt
-                Debugger.log(entry.getKey() + " is inaccessible.",e);
-
-            }
+//            MessageDigest md = null;
+//            try {
+//                md = MessageDigest.getInstance("MD5");
+//            } catch (NoSuchAlgorithmException e) {
+//                // shouldn't arrive here
+//                e.printStackTrace();
+//            }
+//            try (InputStream is = Files.newInputStream(Paths.get(entry.getKey()));
+//                 DigestInputStream dis = new DigestInputStream(is, md)) {
+//                int i;
+//                while ((i = dis.read()) != -1){
+//                    // read through the file & update digest
+//                }
+//            }
+//            catch (IOException e){
+//                //if the file is corrupt or empty, report as corrupt
+//                Debugger.log(entry.getKey() + " is inaccessible.",e);
+//
+//            }
             // Check digest
-            String hash = md.digest().toString();
+
+            File file = new File(entry.getValue());
+            long check = 0;
+            try{
+                check =  FileUtils.checksumCRC32(file);
+            }
+            catch (Exception e){
+                Debugger.log("Could not make checksum", null);
+            }
+            String hash = String.valueOf(check);
             Debugger.log("File:" + entry.getKey(),null);
             Debugger.log("Calculated Hash" + hash, null);
             Debugger.log("Saved Hash: "+ entry.getValue(),null);

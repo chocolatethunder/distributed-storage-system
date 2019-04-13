@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.Random;
 import app.chunk_util.Chunk;
 import app.chunk_util.IndexEntry;
+import org.apache.commons.io.FileUtils;
 
 public class ChunkDistributor {
     private boolean debug = false;
@@ -133,31 +134,43 @@ public class ChunkDistributor {
     public void debug() { debug = !debug; }
     public static String createDigest(String uuid){
         // Opening File
-        MessageDigest md = null;
-        try {
-            md = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            // shouldn't arrive here
-            e.printStackTrace();
+
+        File file = new File(uuid);
+        long check = 0;
+        try{
+            check =  FileUtils.checksumCRC32(file);
+        }
+        catch (Exception e){
+            Debugger.log("Could not make checksum", null);
         }
 
 
-        try (InputStream is = Files.newInputStream(Paths.get(uuid));
-             DigestInputStream dis = new DigestInputStream(is, md)) {
-            int i;
-            while ((i = dis.read()) != -1){
-                // read through the file & update digest
-            }
-        }
-        catch (IOException e){
-            //if the file is corrupt or empty, report as corrupt
-            e.printStackTrace();
-            System.out.println(uuid + " is inaccessible.");
+//        MessageDigest md = null;
+//        try {
+//            md = MessageDigest.getInstance("MD5");
+//        } catch (NoSuchAlgorithmException e) {
+//            // shouldn't arrive here
+//            e.printStackTrace();
+//        }
+//
+//
+//
+//        try (InputStream is = Files.newInputStream(Paths.get(uuid));
+//             DigestInputStream dis = new DigestInputStream(is, md)) {
+//            int i;
+//            while ((i = dis.read()) != -1){
+//                // read through the file & update digest
+//            }
+//        }
+//        catch (IOException e){
+//            //if the file is corrupt or empty, report as corrupt
+//            e.printStackTrace();
+//            System.out.println(uuid + " is inaccessible.");
+//
+//        }
+//        // Check digest
+//        String hash = md.digest().toString();
 
-        }
-        // Check digest
-        String hash = md.digest().toString();
-
-        return hash;
+        return String.valueOf(check);
     }
 }
