@@ -27,7 +27,7 @@ public class LeaderResponder implements Runnable {
     public LeaderResponder (Socket socket)
     {
         this.socket = socket;
-        Debugger.log("Request for leader vote accepted", null);
+        Debugger.log("Request for leader vote accepted " + socket, null);
     }
 
     public void sendLeader()
@@ -38,6 +38,7 @@ public class LeaderResponder implements Runnable {
         CommsHandler commsHandler = new CommsHandler();
         commsHandler.sendResponse(this.socket, MessageType.ACK);
         commsHandler.sendPacketWithoutAck(this.socket, MessageType.ELECTION, electionPacket());
+        NetworkUtils.closeSocket(socket);
     }
 
     // Response Packet not using rn because assuming everyone knows everyone
