@@ -63,7 +63,7 @@ public class HealthChecker implements Runnable{
         // for each node in the stalker list, scheduling a task to occur at interval
         if(stalkerList != null) {
             for (Map.Entry<Integer, String> entry : stalkerList.entrySet()) {
-                Debugger.log("Health Checker: Starting scheduled health task for stalker node: " + entry.getValue(), null);
+               // Debugger.log("Health Checker: Starting scheduled health task for stalker node: " + entry.getValue(), null);
                 addTimerTask(timer,
                         entry.getKey(),
                         entry.getValue(),
@@ -209,8 +209,8 @@ public class HealthChecker implements Runnable{
         public void run() {
             port = ConfigManager.getCurrent().getHealth_check_port();
             if(debugMode) {
-                Debugger.log("Health Checker Task for host: " + host +
-                        " started at: " + NetworkUtils.timeStamp(1), null);
+                //Debugger.log("Health Checker Task for host: " + host +
+                       // " started at: " + NetworkUtils.timeStamp(1), null);
             }
             Socket socket = null;
             try {
@@ -263,7 +263,7 @@ public class HealthChecker implements Runnable{
             catch (SocketException e) {
                 //(socket);
                 // server has not replied within expected timeoutTime
-                Debugger.log("STALKER at : " + host  + "has died!", null);
+                Debugger.log("Module at : " + host  + "has died!", null);
                 updateConfigAndEndTask();
                 if(debugMode) {
                     Debugger.log("", e);
@@ -271,7 +271,7 @@ public class HealthChecker implements Runnable{
 
             } catch (IOException e) {
                 // any other IO exception, also stop the task and assume the node is dead
-                Debugger.log("STALKER at : " + host  + "has died!", null);
+                Debugger.log("Module at : " + host  + "has died!", null);
                 updateConfigAndEndTask();
                 if(debugMode) {
                     Debugger.log("", e);

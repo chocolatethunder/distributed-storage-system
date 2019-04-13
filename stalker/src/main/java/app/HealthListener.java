@@ -20,7 +20,7 @@ public class HealthListener implements Runnable{
 
     private int serverPort;
     private boolean running = true;
-    private boolean verbose = true;
+    private boolean verbose = false;
     private volatile IndexFile index;
 
     public HealthListener(){}

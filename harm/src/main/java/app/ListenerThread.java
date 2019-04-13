@@ -49,7 +49,7 @@ public class ListenerThread implements Runnable {
                 //accept connection from a STALKER
                 Socket client = server.accept();
                 if(debugMode) {
-                    Debugger.log("DiscManager: Harm server: Accepted connection from stalker : " + client, null);
+                   // Debugger.log("DiscManager: Harm server: Accepted connection from stalker : " + client, null);
 
                 }
 
@@ -59,7 +59,7 @@ public class ListenerThread implements Runnable {
                 //checking for request type if health check
                 if (req.getMessageType() == MessageType.HEALTH_CHECK) {
                     if(debugMode) {
-                        Debugger.log("DiscManager: Harm server: Received health Check request", null);
+                        //Debugger.log("DiscManager: Harm server: Received health Check request", null);
                     }
 
                     //_______TO:DO check for corrupted chunks here
