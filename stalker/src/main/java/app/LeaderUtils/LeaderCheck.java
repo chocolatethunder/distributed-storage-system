@@ -132,6 +132,7 @@ public class LeaderCheck {
                     leaderIP = ep.get().getIp();
                     //System.out.println("Election vote: " + leaderUuid + ", " + leaderIP);
                 }
+                NetworkUtils.closeSocket(socket);
 
             }
         } catch (SocketException e) {
