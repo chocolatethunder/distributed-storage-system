@@ -1,10 +1,14 @@
 package app;
 
+import java.util.Set;
+
 public class Request {
 
     private String fileName;
     private int fileSize;
     private MessageType requestType;
+    private Set<String> harmAddresses;
+
     private String fileHash;
     public Request(){}
     public Request(String fileName, MessageType r){
@@ -17,6 +21,14 @@ public class Request {
         this.requestType = r;
         this.fileHash = fileHash;
     }
+
+    public Request(String fileName, MessageType r, Set<String> ips){
+        this.fileName = fileName;
+        this.requestType = r;
+        this.harmAddresses = ips;
+    }
+
+
 
     public String getFileName() {
         return fileName;
@@ -42,6 +54,14 @@ public class Request {
         this.requestType = requestType;
     }
 
+
+    public Set<String> getHarmAddresses() {
+        return harmAddresses;
+    }
+
+    public void setHarmAddresses( Set<String> ips) {
+        this.harmAddresses = ips;
+    }
     public String getFileHash() {
         return fileHash;
     }

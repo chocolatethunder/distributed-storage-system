@@ -269,11 +269,19 @@ public class HealthChecker implements Runnable{
 
                             if(!corruptedList.isEmpty()){
 
-                                Set<String> addressesOfCopies = getAddressesOfCopies(corruptedList);
+                                Map<String, Set<String>> addressesOfCopies = getAddressesOfCopies(corruptedList);
+
+                                for(Map.Entry<String, Set<String>> entry : addressesOfCopies.entrySet()) {
+
+                                    if(commsHandler.sendPacket(socket, MessageType.REPLACE,
+                                            NetworkUtils.createSerializedRequest(entry.getKey(), MessageType.REPLACE, entry.getValue()), true) == MessageType.ACK){
+                                        continue;
+                                    }
+
+                                }
+
 
                             }
-                            // do something with the corrupted chunks
-                            deleteChunks(corruptedList);
 
                         }
                     }
@@ -316,27 +324,34 @@ public class HealthChecker implements Runnable{
         }
 
 
-        private Set<String> getAddressesOfCopies(Set<String> corruptedList) {
-            Set<String> harmIps = new HashSet<>();
+        private Map<String, Set<String>> getAddressesOfCopies(Set<String> corruptedList) {
+            Map<String, Set<String>> harmIps = new HashMap<>();
 
             IndexFile indexFile = Indexer.loadFromFile();
             Map<String, List<Integer>> chunkIndex = indexFile.getChunkIndex();
 
+            Map<Integer, NodeAttribute> harmList = NetworkUtils.getNodeMap(ConfigManager.getCurrent().getHarm_list_path());
 
             for (String corruptedChunkId : corruptedList) {
                 Set<Integer> macIds = chunkIndex.get(corruptedChunkId).stream()
                         .filter(macId -> macId != this.uuid)  // filering out the current harm
                         .collect(Collectors.toSet());
 
-                Map<Integer, String> harmList = NetworkUtils.mapFromJson(NetworkUtils
-                        .fileToString(cfg.getHarm_list_path()));
+                Set<String> addresses = new HashSet<>();
+//                for (Map.Entry<Integer, String> harmTarget : harmList.entrySet()) {
+//
+//                    if (macIds.contains(harmTarget.getKey())) {
+//                        addresses.add(harmTarget.getValue());
+//                    }
+//                }
 
-                for (Map.Entry<Integer, String> harmTarget : harmList.entrySet()) {
-
-                    if (macIds.contains(harmTarget.getKey())) {
-                        harmIps.add(harmTarget.getValue());
-                    }
+                for (int macId : macIds){
+                    addresses.add(harmList.get(macId).getAddress());
                 }
+
+                harmIps.put(corruptedChunkId, addresses);
+
+
             }
 
             return harmIps;

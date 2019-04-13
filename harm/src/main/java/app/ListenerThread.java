@@ -33,7 +33,7 @@ public class ListenerThread implements Runnable {
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
         // we can change this later to increase or decrease
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        ExecutorService executorService = Executors.newFixedThreadPool(20);
         try {
             server = new ServerSocket(serverPort);
 
@@ -80,7 +80,17 @@ public class ListenerThread implements Runnable {
 
 
                         // receive packet on the socket link for replacing corrupted chunks
-                        TcpPacket replaceReq = commLink.receivePacket(client);
+                        TcpPacket replaceReq;
+                        for(int i = 0; i < corruptList.size() ; i++) {
+
+                            replaceReq = commLink.receivePacket(client);
+                            if (replaceReq.getMessageType() == MessageType.REPLACE) {
+                                commLink.sendResponse(client, MessageType.ACK);
+                            }
+
+                            Request r = NetworkUtils.getPacketContents(replaceReq);
+                            executorService.submit(new ReplaceHandler(r.getFileName(), r.getHarmAddresses()));
+                        }
                     }
                 }
                 else {
