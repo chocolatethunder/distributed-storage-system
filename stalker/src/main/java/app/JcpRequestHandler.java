@@ -41,6 +41,7 @@ public class JcpRequestHandler implements Runnable {
             e.printStackTrace();
         }
         Debugger.log("JCP request handler: Listening on port " + serverPort, null);
+        Debugger.log("JCP server addr: " + server, null);
         // will keep on listening for requests
         while (!Thread.interrupted()) {
             try {
