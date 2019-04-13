@@ -64,7 +64,6 @@ public class ElectionListener implements Runnable{
 
                 Debugger.log("Listener: Socket timeout", e);
             }
-            Debugger.log("Election listener: alive", null);
         }
 
     }

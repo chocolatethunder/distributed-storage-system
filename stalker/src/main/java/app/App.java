@@ -201,10 +201,11 @@ public class App {
                 }
                 if (stalkerList != null && stalkerList.size() >= cfg.getElection_threshold_s()){
 
-                    if(stalkerList.size() >= cfg.getElection_threshold_s()){
+                    if(harmlist.size() >= 1){
                         connected = true;
+                        Debugger.log("Threshold for initiation met...", null);
                     }
-                    Debugger.log("Threshold for initiation met...", null);
+
                 }
                 else{
 

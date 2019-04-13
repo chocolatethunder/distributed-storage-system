@@ -87,18 +87,19 @@ public class LeaderCheck {
                         ConfigManager.saveToFile(cfg);
                         Indexer.saveToFile(Indexer.fromString(t.getMessage()));
                         Debugger.log("Leader found", null);
+                        NetworkUtils.closeSocket(socket);
                         return true;
                     }
                 }
 
-                NetworkUtils.closeSocket(socket);
             }catch (Exception e) {
                 //Debugger.log("", e);
             }
             finally {
-                //NetworkUtils.closeSocket(socket);
+                NetworkUtils.closeSocket(socket);
             }
         }
+
         Debugger.log("No leader found", null);
         return false;
     }
@@ -119,7 +120,7 @@ public class LeaderCheck {
                 MessageType m = null;
                 //if messagetype is ack then this is a new
                 m = commsHandler.sendPacket(socket, MessageType.LEADER, "Asking for a Leader", true);
-                Debugger.log("Ack recieved", null);
+                Debugger.log("Vote recieved", null);
                 if (m == MessageType.ACK){
                     // listen for other people leader
                     TcpPacket tcpPacket = commsHandler.receivePacket(socket);
