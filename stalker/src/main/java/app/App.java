@@ -83,7 +83,7 @@ public class App {
                     Debugger.log("Stalker Main: No HARM targets detected...", null);
                 }
 
-                if (stalkerList != null && stalkerList.size() >= 0){
+                if (stalkerList != null && stalkerList.size() >= cfg.getElection_threshold_s()){
                     LeaderCheck leaderchecker = new LeaderCheck();
                     if(leaderchecker.tryLeader()){
                         connected = true;
