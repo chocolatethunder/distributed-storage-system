@@ -250,8 +250,6 @@ public class HealthChecker implements Runnable{
                         });
 // use it
                         Set<String> corruptedList = reader.readValue(corruptedChunksListNode);
-                        Debugger.log(corruptedList.toString(), null);
-
                         if(status.equals("SUCCESS")){
                             if (target == Module.STALKER && this.spaceToUpdate != null) {
                                 this.spaceToUpdate.set(availableSpace);
