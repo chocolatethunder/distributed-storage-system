@@ -251,7 +251,6 @@ public class HealthChecker implements Runnable{
 // use it
                         Set<String> corruptedList = reader.readValue(corruptedChunksListNode);
                         Debugger.log(corruptedList.toString(), null);
-                        Debugger.log("Debug 0", null);
 
                         if(status.equals("SUCCESS")){
                             if (target == Module.STALKER && this.spaceToUpdate != null) {
@@ -270,14 +269,12 @@ public class HealthChecker implements Runnable{
 
                             Debugger.log("Health check: Corrupted chunk detected on HARM: " + host, null);
                             if(!corruptedList.isEmpty()){
-                                Debugger.log("Debug 1", null);
                                 Map<String, Set<String>> addressesOfCopies = getAddressesOfCopies(corruptedList);
 
                                 for (String uuid : addressesOfCopies.keySet()){
 
                                     Chunk c = null;
                                     CommsHandler commLink = new CommsHandler();
-                                    Debugger.log("Debug 2", null);
                                     //lets get the chunk first
                                     Debugger.log("Health Checker: Attempting to retrieve copy of corrupted chunk", null);
                                     for (String addr : addressesOfCopies.get(uuid)){
@@ -297,13 +294,11 @@ public class HealthChecker implements Runnable{
                                         catch (Exception e){
                                             Debugger.log("Health check: could not get copy of chunk", null);
                                         }
-                                        Debugger.log("Debug 3", null);
-
                                     }
                                     if (c == null){
                                         throw new RuntimeException("Health check: Could not retrieve chunks");
                                     }
-                                    try {Debugger.log("Debug 4", null);
+                                    try {
 
                                         Debugger.log("Health Checker: Sending replacement chunk.", null);
                                         socket = NetworkUtils.createConnection(host, cfg.getHarm_listen());
@@ -316,14 +311,13 @@ public class HealthChecker implements Runnable{
                                             NetworkUtils.closeSocket(socket);
                                             break;
                                         }
+                                        Debugger.log("Health check: File replaced", null);
                                     }
                                     catch (Exception e){
                                         Debugger.log("Health check: Error replacing chunk", e);
                                     }
 
                                 }
-
-
                             }
 
                         }

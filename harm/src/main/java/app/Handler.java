@@ -1,7 +1,9 @@
 package app;
 
+import app.chunk_util.Indexer;
 import app.health_utils.HashIndex;
 import app.health_utils.HashIndexer;
+import app.health_utils.HealthStat;
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
@@ -61,7 +63,7 @@ public class Handler implements Runnable {
             File f = new File(storage_path + request.getFileName());
             f.delete();
             HashIndex hashIndex = HashIndexer.loadFromFile();
-            hashIndex.remove(storage_path + request.getFileName());
+            hashIndex.remove(request.getFileName());
             HashIndexer.saveToFile(hashIndex);
             commLink.sendResponse(socket, MessageType.ACK);
         }
@@ -72,6 +74,7 @@ public class Handler implements Runnable {
             streamer.receiveFileFromSocket(storage_path + request.getFileName());
             //delete logic here
             Debugger.log("Chunk replaced without fail!", null);
+            HealthStat.getInstance().healthCheck(HashIndexer.loadFromFile());
         }
         else{
             Debugger.log("invalid request", null);

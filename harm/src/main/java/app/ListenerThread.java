@@ -58,13 +58,9 @@ public class ListenerThread implements Runnable {
                     if(debugMode) {
                         //Debugger.log("DiscManager: Harm server: Received health Check request", null);
                     }
-
                     //check for corrupted chunks here
                     // I fixed it with my ingeniousness
                     Map<String, String> corruptList = HealthStat.getInstance().getCorruptList();
-
-
-
                     if(corruptList.isEmpty()) {
 
                         executorService.submit(new HealthCheckResponder(client,
