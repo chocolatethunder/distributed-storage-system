@@ -311,7 +311,7 @@ public class HealthChecker implements Runnable{
                     // kill and the threads
                     for(Map.Entry<Integer, String> entry : stalkerMap.entrySet())
                     {
-                        int port = 11115;
+                        int port = cfg.getElection_port();
                         Socket socket;
                         try {
                             socket = NetworkUtils.createConnection(entry.getValue(), port);
