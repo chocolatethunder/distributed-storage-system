@@ -81,8 +81,8 @@ public class App {
                     }
                 }
             }
-            Thread healthChecker = new Thread( new HealthChecker(Module.STALKER, new AtomicLong(0), false));
-            healthChecker.start();
+//            Thread healthChecker = new Thread( new HealthChecker(Module.STALKER, new AtomicLong(0), false));
+//            healthChecker.start();
             switch (role){
                 case 0:
                     Debugger.log("<<<<<<<-----Leader Online----->>>>>>> \n\n", null);
@@ -121,8 +121,8 @@ public class App {
                     jcpReq.interrupt();
                     Debugger.log("Worker Interrupted", null);
                     try {
-                        healthChecker.interrupt();
-                        healthChecker.join();
+//                        healthChecker.interrupt();
+//                        healthChecker.join();
                         jcpReq.join();
                     }
                     catch(InterruptedException e){
@@ -142,8 +142,8 @@ public class App {
                         //interrupt vice leader
                         vice.interrupt();
                         Debugger.log("Worker Interrupted", null);
-                        healthChecker.interrupt();
-                        healthChecker.join();
+//                        healthChecker.interrupt();
+//                        healthChecker.join();
                         vice.join();
                     }
                     catch(InterruptedException e){
