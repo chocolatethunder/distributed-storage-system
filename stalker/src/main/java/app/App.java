@@ -95,8 +95,6 @@ public class App {
                 }
                 if (stalkerList != null && stalkerList.size() >= cfg.getElection_threshold_s()){
 
-
-
                     if(stalkerList.size() >= cfg.getElection_threshold_s()){
                         connected = true;
                     }
