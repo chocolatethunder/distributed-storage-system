@@ -53,6 +53,8 @@ public class QueueHandler implements  Runnable {
                 if (q.getMessageType() == MessageType.UPLOAD || q.getMessageType() == MessageType.DELETE){
                     TcpPacket t = null;
                     t = commLink.receivePacket(worker);
+                    commLink.sendResponse(worker, MessageType.ACK);
+                    NetworkUtils.closeSocket(worker);
                     sendUpdates(t);
                     Thread th = new Thread(new IndexManager(Indexer.loadFromFile(), Indexer.deserializeUpdate(t.getMessage())));
                     th.start();
@@ -60,9 +62,9 @@ public class QueueHandler implements  Runnable {
                     Debugger.log("Stalkers have been updated", null);
 
                 }
-                commLink.sendResponse(worker, MessageType.ACK);
+
                 Debugger.log( "job complete", null);
-                worker.close();
+                //worker.close();
             }
         }
         catch (InterruptedException e){
