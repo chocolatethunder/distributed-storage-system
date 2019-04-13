@@ -134,7 +134,7 @@ public class ChunkDistributor {
         // Opening File
         MessageDigest md = null;
         try {
-            md = MessageDigest.getInstance("SHA-256");
+            md = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
             // shouldn't arrive here
             e.printStackTrace();

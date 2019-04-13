@@ -107,6 +107,7 @@ public class App {
         dirs.add(new File("storage"));
         dirs.add(new File("config"));
         dirs.add(new File("logs"));
+        dirs.add(new File("temp"));
         NetworkUtils.initDirs(dirs, false, 1);
     }
     /**

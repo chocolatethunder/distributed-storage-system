@@ -2,7 +2,9 @@ package app;
 
 import app.health_utils.HashIndex;
 import app.health_utils.HashIndexer;
+import org.apache.commons.io.FileUtils;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.io.File;
 
@@ -16,12 +18,15 @@ public class Handler implements Runnable {
     private final Request request;
     private String storage_path;
     private CommsHandler commLink;
+    private String temp_path;
 
     public Handler(Socket socket, TcpPacket packet, int harm_id) {
         this.socket = socket;
         this.requestType = packet.getMessageType();
         this.request = NetworkUtils.getPacketContents(packet);
         this.storage_path = "storage/";
+        this.temp_path = "temp/";
+
         commLink = new CommsHandler();
     }
 
@@ -33,7 +38,20 @@ public class Handler implements Runnable {
         // depending on the request type, it call appropriate method from streamer class
         if (requestType == MessageType.UPLOAD) {
             commLink.sendResponse(socket, MessageType.ACK);
-            streamer.receiveFileFromSocket(storage_path + request.getFileName());
+            String temp_file = temp_path + request.getFileName();
+            String file_path = storage_path + request.getFileName();
+            streamer.receiveFileFromSocket(temp_file);
+            try{
+                FileUtils.moveFile(new File(temp_file), new File(file_path));
+            }
+            catch (IOException e){
+                Debugger.log("Could not copy file", null);
+            }
+
+
+
+
+
 
 
             // creating the index file to store the chunk information
