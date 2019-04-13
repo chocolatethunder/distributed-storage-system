@@ -135,10 +135,10 @@ public class NetworkUtils {
                 fileString = newLineRemove(fileString);
             }
         } catch (IOException e) {
-            Debugger.log("", e);
+            Debugger.log("No stalkers yet...", null);
             return (null);
         } catch (NullPointerException ex) {
-            Debugger.log("", ex);
+            Debugger.log("No stalkers yet...", null);
             return (null);
         }
         return fileString;

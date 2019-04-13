@@ -83,12 +83,15 @@ public class App {
                     Debugger.log("Stalker Main: No HARM targets detected...", null);
                 }
                 LeaderCheck leaderchecker = new LeaderCheck();
-                if(leaderchecker.tryLeader()){
-                    connected = true;
-                    running = true;
-                    cfg = ConfigManager.getCurrent();
-                    ind = Indexer.loadFromFile();
-                    Debugger.log("Leader uuid = " + cfg.getLeader_id(), null);
+
+                if (stalkerList != null && stalkerList.size() > 0){
+                    if(leaderchecker.tryLeader()){
+                        connected = true;
+                        running = true;
+                        cfg = ConfigManager.getCurrent();
+                        ind = Indexer.loadFromFile();
+                        Debugger.log("Leader uuid = " + cfg.getLeader_id(), null);
+                    }
                 }
                 if (stalkerList != null && stalkerList.size() >= cfg.getElection_threshold_s()){
 
