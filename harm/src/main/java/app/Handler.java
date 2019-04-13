@@ -38,7 +38,7 @@ public class Handler implements Runnable {
 
             // creating the index file to store the chunk information
             IndexFile indexFile = new IndexFile();
-            indexFile.add(request.getFileName(), Indexer.createDigest(storage_path + request.getFileName()));
+            indexFile.add(request.getFileName(), request.getFileHash());
             Indexer.saveToFile(indexFile);
 
 
@@ -49,6 +49,7 @@ public class Handler implements Runnable {
         else if (requestType == MessageType.DELETE) {
             File f = new File(storage_path + request.getFileName());
             f.delete();
+
             commLink.sendResponse(socket, MessageType.ACK);
         }
         else {

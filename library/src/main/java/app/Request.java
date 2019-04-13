@@ -5,16 +5,19 @@ public class Request {
     private String fileName;
     private int fileSize;
     private MessageType requestType;
+    private String fileHash;
     public Request(){}
     public Request(String fileName, MessageType r){
         this.fileName = fileName;
         this.requestType = r;
     }
-    public Request(String fileName, MessageType r, int fileSize){
+    public Request(String fileName, MessageType r, int fileSize, String fileHash){
         this.fileName = fileName;
         this.fileSize = fileSize;
         this.requestType = r;
+        this.fileHash = fileHash;
     }
+
     public String getFileName() {
         return fileName;
     }
@@ -39,14 +42,11 @@ public class Request {
         this.requestType = requestType;
     }
 
+    public String getFileHash() {
+        return fileHash;
+    }
 
-
-
-
-
-
-
-
-
-
+    public void setFileHash(String fileHash) {
+        this.fileHash = fileHash;
+    }
 }

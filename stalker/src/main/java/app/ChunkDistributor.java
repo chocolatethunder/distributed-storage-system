@@ -5,6 +5,11 @@
 package app;
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.Random;
 import app.chunk_util.Chunk;
@@ -92,7 +97,7 @@ public class ChunkDistributor {
                 Socket harmServer = NetworkUtils.createConnection(targ.getAddress(), port);
                 //if everything went well then we can send the damn file
                 //send the packet to the harm target
-                if(commLink.sendPacket(harmServer, MessageType.UPLOAD, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.UPLOAD), true) == MessageType.ACK){
+                if(commLink.sendPacket(harmServer, MessageType.UPLOAD, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.UPLOAD, createDigest(c.getChunk_path())), true) == MessageType.ACK){
                     FileStreamer fileStreamer = new FileStreamer(harmServer);
                     fileStreamer.sendFileToSocket(c.getChunk_path());
                     harmServer.close();
@@ -125,5 +130,33 @@ public class ChunkDistributor {
     }
 
     public void debug() { debug = !debug; }
+    public static String createDigest(String uuid){
+        // Opening File
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            // shouldn't arrive here
+            e.printStackTrace();
+        }
 
+
+        try (InputStream is = Files.newInputStream(Paths.get(uuid));
+             DigestInputStream dis = new DigestInputStream(is, md)) {
+            int i;
+            while ((i = dis.read()) != -1){
+                // read through the file & update digest
+            }
+        }
+        catch (IOException e){
+            //if the file is corrupt or empty, report as corrupt
+            e.printStackTrace();
+            System.out.println(uuid + " is inaccessible.");
+
+        }
+        // Check digest
+        String hash = md.digest().toString();
+
+        return hash;
+    }
 }

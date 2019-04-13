@@ -96,7 +96,7 @@ public class DeleteServiceHandler implements Runnable {
                     Socket harmServer = NetworkUtils.createConnection(m.get(i).getAddress(), port);
                     //if everything went well then we can send the damn file
                     //send the packet to the harm target
-                    if (commsLink.sendPacket(harmServer, MessageType.DELETE, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.DELETE), true) == MessageType.ACK) {
+                    if (commsLink.sendPacket(harmServer, MessageType.DELETE, NetworkUtils.createSerializedRequest(c.getUuid(), MessageType.DELETE, ""), true) == MessageType.ACK) {
                         harmServer.close();
                     }
                 } catch (IOException ex) {
