@@ -53,8 +53,6 @@ public class QueueHandler implements  Runnable {
                 if (q.getMessageType() == MessageType.UPLOAD || q.getMessageType() == MessageType.DELETE){
                     TcpPacket t = null;
                     t = commLink.receivePacket(worker);
-                    commLink.sendResponse(worker, MessageType.ACK);
-                    NetworkUtils.closeSocket(worker);
                     sendUpdates(t);
                     Thread th = new Thread(new IndexManager(Indexer.loadFromFile(), Indexer.deserializeUpdate(t.getMessage())));
                     th.start();
@@ -62,9 +60,9 @@ public class QueueHandler implements  Runnable {
                     Debugger.log("Stalkers have been updated", null);
 
                 }
-
+                commLink.sendResponse(worker, MessageType.ACK);
                 Debugger.log( "job complete", null);
-                //worker.close();
+                worker.close();
             }
         }
         catch (InterruptedException e){
@@ -110,12 +108,12 @@ public class QueueHandler implements  Runnable {
         List<Integer> s_list = NetworkUtils.mapToSList(m);
         Socket stalker = null;
         for (Integer id : s_list){
-
             int attempts = 0;
             String stalkerip =  m.get(id);
-            Debugger.log("Sending update to " + stalkerip, null);
+
             while(attempts < 1){
                 try{
+                    Debugger.log("Sending update to: " + stalkerip + " on port: " + port, null);
                     stalker = NetworkUtils.createConnection(stalkerip, port);
 
                     if(commLink.sendPacket(stalker,MessageType.UPDATE, t.getMessage(), true) == MessageType.ACK){
