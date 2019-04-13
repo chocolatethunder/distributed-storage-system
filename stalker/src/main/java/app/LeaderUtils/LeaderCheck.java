@@ -83,6 +83,7 @@ public class LeaderCheck {
                 // create a leader packet and send it to this host
                 CommsHandler commsHandler = new CommsHandler();
                 if (commsHandler.sendPacket(socket, MessageType.DISCOVER, "", true) == MessageType.ACK){
+                    commsHandler.sendPacket(socket, MessageType.ACK, "", false);
                     TcpPacket t = commsHandler.receivePacket(socket);
                     if (t.getMessageType() == MessageType.ACK){
                        // TcpPacket t = commsHandler.receivePacket(socket);
@@ -100,7 +101,7 @@ public class LeaderCheck {
                 //Debugger.log("", e);
             }
             finally {
-                NetworkUtils.closeSocket(socket);
+                //NetworkUtils.closeSocket(socket);
             }
         }
         Debugger.log("No leader found", null);
