@@ -95,7 +95,7 @@ public class App {
             attempts++;
             anim ++;
         }
-        consoleOutput.append((stalkerList.size() -1) +  "servers available.\n");
+        consoleOutput.append((stalkerList.size() -1) +  " servers taking requests.\n");
         consoleOutput.append("Connected to server!.\n");
         Debugger.log("JCP Main: System ready to take requests!", null);
 
@@ -114,7 +114,6 @@ public class App {
                 else{
                     connected = true;
                 }
-                retrieveFiles();
                 Thread.sleep((5000));
             }
             catch (InterruptedException e){
