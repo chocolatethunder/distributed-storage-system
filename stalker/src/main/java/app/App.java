@@ -151,8 +151,10 @@ public class App {
                     }
                     break;
             }
+            wait(3000);
             LeaderCheck leaderchecker = new LeaderCheck();
             leaderchecker.election(1);
+            cfg = ConfigManager.getCurrent();
             leaderUuid = cfg.getLeader_id();
             cfg.setReelection(false);
             running = false;

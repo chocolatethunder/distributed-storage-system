@@ -120,7 +120,7 @@ public class LeaderCheck {
 
             Debugger.log("Leadercheck: Asking for leader from: " + entry + "at " + stalkerMap.get(entry) + "on port: " + port, null);
             socket = NetworkUtils.createConnection(stalkerMap.get(entry), port);
-            socket.setSoTimeout(200);
+            socket.setSoTimeout(1000);
             if (socket != null){
                 //socket.setSoTimeout(1000 * timeoutForReply);
                 Debugger.log("Leadercheck: Connection established", null);
