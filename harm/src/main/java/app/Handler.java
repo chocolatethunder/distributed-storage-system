@@ -48,7 +48,7 @@ public class Handler implements Runnable {
                 Debugger.log("Could not copy file", null);
             }
             // creating the index file to store the chunk information
-            HashIndex hashIndex = new HashIndex();
+            HashIndex hashIndex = HashIndexer.loadFromFile();
             hashIndex.add(storage_path + request.getFileName(), request.getFileHash());
             HashIndexer.saveToFile(hashIndex);
 
@@ -60,7 +60,7 @@ public class Handler implements Runnable {
         else if (requestType == MessageType.DELETE) {
             File f = new File(storage_path + request.getFileName());
             f.delete();
-            HashIndex hashIndex = new HashIndex();
+            HashIndex hashIndex = HashIndexer.loadFromFile();
             hashIndex.remove(storage_path + request.getFileName());
             HashIndexer.saveToFile(hashIndex);
             commLink.sendResponse(socket, MessageType.ACK);
