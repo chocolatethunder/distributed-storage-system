@@ -82,7 +82,7 @@ public class LeaderCheck {
                     TcpPacket t = commsHandler.receivePacket(socket);
                     if (t.getMessageType() == MessageType.ACK){
                        // TcpPacket t = commsHandler.receivePacket(socket);
-                        System.out.println("HOOOOOOOOOOOOO:     \n\n" + t.getMessage());
+                        //System.out.println("HOOOOOOOOOOOOO:     \n\n" + t.getMessage());
                         cfg.setLeader_id(entry.getKey());
                         ConfigManager.saveToFile(cfg);
                         Indexer.saveToFile(Indexer.fromString(t.getMessage()));
@@ -113,12 +113,13 @@ public class LeaderCheck {
             socket = NetworkUtils.createConnection(stalkerMap.get(entry), port);
             if (socket != null){
                 //socket.setSoTimeout(1000 * timeoutForReply);
-
+                Debugger.log("Connection established", null);
                 // create a leader packet and send it to this host
                 CommsHandler commsHandler = new CommsHandler();
                 MessageType m = null;
                 //if messagetype is ack then this is a new
                 m = commsHandler.sendPacket(socket, MessageType.LEADER, "Asking for a Leader", true);
+                Debugger.log("Ack recieved", null);
                 if (m == MessageType.ACK){
                     // listen for other people leader
                     TcpPacket tcpPacket = commsHandler.receivePacket(socket);

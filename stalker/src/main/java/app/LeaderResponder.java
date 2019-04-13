@@ -28,13 +28,12 @@ public class LeaderResponder implements Runnable {
     {
         this.socket = socket;
         Debugger.log("Request for leader vote accepted", null);
-        String stalkerList = NetworkUtils.fileToString(ConfigManager.getCurrent().getStalker_list_path());
-        this.stalkerMap = NetworkUtils.mapFromJson(stalkerList);
-        ids = NetworkUtils.mapToSList(stalkerMap);
     }
 
     public void sendLeader()
     {
+        this.stalkerMap = NetworkUtils.getStalkerMap(ConfigManager.getCurrent().getStalker_list_path());
+        ids = NetworkUtils.mapToSList(stalkerMap);
         // create a election packet and send it to this host
         CommsHandler commsHandler = new CommsHandler();
         commsHandler.sendResponse(this.socket, MessageType.ACK);
