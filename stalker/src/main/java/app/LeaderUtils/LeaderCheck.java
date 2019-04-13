@@ -82,15 +82,18 @@ public class LeaderCheck {
                 socket.setSoTimeout(200);
                 // create a leader packet and send it to this host
                 CommsHandler commsHandler = new CommsHandler();
-                commsHandler.sendPacket(socket, MessageType.DISCOVER, "", false);
-                TcpPacket t = commsHandler.receivePacket(socket);
-                if (t.getMessageType() == MessageType.ACK){
-                    cfg.setLeader_id(entry.getKey());
-                    ConfigManager.saveToFile(cfg);
-                    Indexer.saveToFile(Indexer.fromString(t.getMessage()));
-                    Debugger.log("Leader found", null);
-                    return true;
+                if (commsHandler.sendPacket(socket, MessageType.DISCOVER, "", true) == MessageType.ACK){
+                    TcpPacket t = commsHandler.receivePacket(socket);
+                    if (t.getMessageType() == MessageType.ACK){
+                       // TcpPacket t = commsHandler.receivePacket(socket);
+                        cfg.setLeader_id(entry.getKey());
+                        ConfigManager.saveToFile(cfg);
+                        Indexer.saveToFile(Indexer.fromString(t.getMessage()));
+                        Debugger.log("Leader found", null);
+                        return true;
+                    }
                 }
+
                 NetworkUtils.closeSocket(socket);
             }catch (Exception e) {
                 //Debugger.log("", e);
