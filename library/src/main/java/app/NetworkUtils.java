@@ -272,14 +272,14 @@ public class NetworkUtils {
 
     //Create a serialized request to be sent with a TCP packet
     // Overloading method to change signature to take in harm ips for corrupted chunk replace request
-    public static String createSerializedRequest(String filename, MessageType m, Set<String> harmIps) {
+    public static String createSerializedRequest(String filename, MessageType m, String fileHash, Set<String> harmIps) {
         String serialRequest = null;
         ObjectMapper mapper = new ObjectMapper();
         Request r;
         if (m == MessageType.UPLOAD) {
             File f = new File(filename);
             int fileSize = (int) f.length();
-            r = new Request(filename, m, fileSize);
+            r = new Request(filename, m, fileSize, fileHash);
         } else if( m == MessageType.REPLACE){
             r = new Request(filename, m, harmIps);
         } else{
@@ -295,8 +295,8 @@ public class NetworkUtils {
 
 
     //Create a serialized request to be sent with a TCP packet
-    public static String createSerializedRequest(String filename, MessageType m) {
-        return createSerializedRequest(filename, m, null);
+    public static String createSerializedRequest(String filename, MessageType m, String filehash) {
+        return createSerializedRequest(filename, m, filehash, null);
     }
 
 
