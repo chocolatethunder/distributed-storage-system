@@ -34,13 +34,14 @@ public class ElectionListener implements Runnable{
             Debugger.log("", e);
         }
         Debugger.log("Election responder listening on port " + serverPort, null);
-        Debugger.log("Election responder:Leader Election requests, or updates...", null);
+        Debugger.log("Election responder:Leader Election requests, or updates... " + server, null);
         // will keep on listening for requests
         while (running) {
+
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();
-                if (verbose){Debugger.log("Health Listener: Accepted connection : "  + client, null);}
+                Debugger.log("Election Listener: Accepted connection : "  + client, null);
                 // receive packet on the socket link
                 TcpPacket req = commLink.receivePacket(client);
                 //When a leader request is recieved
@@ -64,6 +65,7 @@ public class ElectionListener implements Runnable{
 
                 Debugger.log("Listener: Socket timeout", e);
             }
+            Debugger.log("Election listener: alive", null);
         }
 
     }
