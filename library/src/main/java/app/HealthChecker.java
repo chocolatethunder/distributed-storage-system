@@ -274,7 +274,7 @@ public class HealthChecker implements Runnable{
                                 for(Map.Entry<String, Set<String>> entry : addressesOfCopies.entrySet()) {
 
                                     if(commsHandler.sendPacket(socket, MessageType.REPLACE,
-                                            NetworkUtils.createSerializedRequest(entry.getKey(), MessageType.REPLACE, entry.getValue()), true) == MessageType.ACK){
+                                            NetworkUtils.createSerializedRequest(entry.getKey(), MessageType.REPLACE, null, entry.getValue()), true) == MessageType.ACK){
                                         continue;
                                     }
 
