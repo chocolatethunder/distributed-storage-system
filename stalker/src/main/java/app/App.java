@@ -250,6 +250,7 @@ public class App {
         boolean success = false;
         while (!success) {
             try {
+                Debugger.log("Stalker main: Asking leader for permission to start...", null);
                 Socket leader = NetworkUtils.createConnection(NetworkUtils.getStalkerMap(cfg.getStalker_list_path()).get(uuid), cfg.getLeader_report());
                 if (leader != null) {
                     //get confirmation from leader
@@ -273,8 +274,11 @@ public class App {
                     wait(5000);
                 }
             } catch (IOException e) {
+                Debugger.log("Stalker main: Attempt failed when connecting to leader...", null);
                 wait(5000);
-                Debugger.log("", e);
+                Debugger.log("Stalker main: Trying again...", null);
+
+
             }
 
         }
