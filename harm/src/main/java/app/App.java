@@ -57,11 +57,13 @@ public class App {
                // Handler h = new Handler(STALKER_Client, STALKER_Request, macID);
                // h.run();
 
-                executorService.submit(new Handler(STALKER_Client, STALKER_Request, macID));
-                // creating a runnable task for each request from the same socket connection
-                //probably not even necessary
-                //not working right now
-                //executorService.execute();
+               Thread t =  new Thread(new Handler(STALKER_Client, STALKER_Request, macID));
+               t.start();
+//                executorService.submit();
+//                // creating a runnable task for each request from the same socket connection
+//                //probably not even necessary
+//                //not working right now
+//                //executorService.execute();
             } catch (FileNotFoundException e) {
                 Debugger.log("", e);
             } catch (IOException e) {
