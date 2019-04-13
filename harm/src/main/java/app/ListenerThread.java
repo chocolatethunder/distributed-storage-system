@@ -79,18 +79,18 @@ public class ListenerThread implements Runnable {
                                 Module.HARM));
 
 
-                        // receive packet on the socket link for replacing corrupted chunks
-                        TcpPacket replaceReq;
-                        for(int i = 0; i < corruptList.size() ; i++) {
-
-                            replaceReq = commLink.receivePacket(client);
-                            if (replaceReq.getMessageType() == MessageType.REPLACE) {
-                                commLink.sendResponse(client, MessageType.ACK);
-                            }
-
-                            Request r = NetworkUtils.getPacketContents(replaceReq);
-                            executorService.submit(new ReplaceHandler(r.getFileName(), r.getHarmAddresses()));
-                        }
+//                        // receive packet on the socket link for replacing corrupted chunks
+//                        TcpPacket replaceReq;
+//                        for(int i = 0; i < corruptList.size() ; i++) {
+//
+//                            replaceReq = commLink.receivePacket(client);
+//                            if (replaceReq.getMessageType() == MessageType.REPLACE) {
+//                                commLink.sendResponse(client, MessageType.ACK);
+//                            }
+//
+//                            Request r = NetworkUtils.getPacketContents(replaceReq);
+//                            executorService.submit(new ReplaceHandler(r.getFileName(), r.getHarmAddresses()));
+//                        }
                     }
                 }
                 else {

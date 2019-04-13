@@ -304,7 +304,7 @@ public class HealthChecker implements Runnable{
                                     }
                                     try {
                                         Debugger.log("Health Checker: Sending replacement chunk.", null);
-                                        socket = NetworkUtils.createConnection(host, port);
+                                        socket = NetworkUtils.createConnection(host, cfg.getHarm_listen());
                                         //start the replacement process
                                         if(commsHandler.sendPacket(socket, MessageType.REPLACE,
                                                 NetworkUtils.createSerializedRequest(uuid, MessageType.REPLACE,""), true) == MessageType.ACK){
