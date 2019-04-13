@@ -30,6 +30,7 @@ public class ElectionListener implements Runnable{
         ExecutorService executorService = Executors.newFixedThreadPool(20);
         try {
             server = new ServerSocket(serverPort);
+
             //server.setReuseAddress(true);
         } catch (IOException e) {
             Debugger.log("", e);
@@ -40,6 +41,7 @@ public class ElectionListener implements Runnable{
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();
+                client.setReuseAddress(false);
                 Debugger.log("Election Listener: Accepted connection : "  + client, null);
                 // receive packet on the socket link
                 TcpPacket req = commLink.receivePacket(client);
