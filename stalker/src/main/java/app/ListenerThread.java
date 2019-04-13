@@ -19,7 +19,7 @@ public class ListenerThread implements Runnable{
 
 
     private int serverPort;
-    private boolean running = false;
+    private boolean running = true;
     private boolean verbose = true;
     private volatile IndexFile index;
 
@@ -30,7 +30,7 @@ public class ListenerThread implements Runnable{
     public void run() {
 
         serverPort = ConfigManager.getCurrent().getHealth_check_port();
-        Debugger.log("Health check thread port " + serverPort, null);
+
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
 
@@ -42,7 +42,7 @@ public class ListenerThread implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Debugger.log("Health Listener: Waiting for health check, Leader Election requests, or updates...", null);
+        Debugger.log("Health Listener: Waiting for health check on port" + serverPort +  "...", null);
         // will keep on listening for requests
         while (running) {
             try {
@@ -62,32 +62,12 @@ public class ListenerThread implements Runnable{
                             getTotalSpaceFromHarms(),
                             Module.STALKER));
                 }
-
-//                //When a leader request is recieved
-//                else if(req.getMessageType() == MessageType.LEADER){
-//                    // reply to with leader
-//                    executorService.submit(new LeaderResponder(client));
-//
-//                }
-//                else if (req.getMessageType() == MessageType.REELECT){
-//                    Debugger.log("Re-election requested...", null);
-//                    ConfigManager.getCurrent().setReelection(true);
-//                    //executorService.submit(new LeaderResponder(client));
-//                }
-//                else if(req.getMessageType() == MessageType.UPDATE){
-//                    // Update the indexfile
-//                    Debugger.log("Update received from leader", null);
-//                    //commLink.sendResponse(client, MessageType.ACK);
-//                    executorService.execute(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
-//                }
             } catch (IOException e) {
-                Debugger.log("dddddddddddddddddddddddddddd",e);
+                Debugger.log("",e);
                 //Debugger.log("Listener: Socket timeout", null);
             }
         }
-
     }
-
 
     /**
      * Adds the total space from harm list

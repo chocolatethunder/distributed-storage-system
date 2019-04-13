@@ -76,6 +76,7 @@ public class App {
             }
             attempts++;
         }
+        consoleOutput.append("Connected to server!.\n");
         Debugger.log("JCP Main: System ready to take requests!", null);
 
         requestSender = RequestSender.getInstance();

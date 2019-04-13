@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 
 public class ElectionListener implements Runnable{
     private int serverPort;
-    private boolean running = false;
+    private boolean running = true;
     private boolean verbose = true;
     private volatile IndexFile index;
 
@@ -30,16 +30,13 @@ public class ElectionListener implements Runnable{
         ExecutorService executorService = Executors.newFixedThreadPool(20);
         try {
             server = new ServerSocket(serverPort);
-            server.setReuseAddress(true);
-            server.setSoTimeout(1000);
+            //server.setReuseAddress(true);
         } catch (IOException e) {
             Debugger.log("", e);
         }
         Debugger.log("Election responder listening on port " + serverPort, null);
-        Debugger.log("Election responder:Leader Election requests, or updates... " + server, null);
         // will keep on listening for requests
         while (running) {
-
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();

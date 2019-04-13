@@ -21,8 +21,6 @@ public class LeaderCheck {
     {
         cfg = ConfigManager.getCurrent();
     }
-
-
     public void election(int mode)
     {
         stalkerMap = updateStalkerMap();
@@ -66,9 +64,7 @@ public class LeaderCheck {
         Debugger.log("Election: Leader selected: " + leaderUuid, null);
     }
 
-
     public boolean tryLeader(){
-
         stalkerMap = updateStalkerMap();
         Debugger.log("Trying to find a running leader", null);
         //try and connect to a leader
