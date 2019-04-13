@@ -34,7 +34,7 @@ public class HealthStat{
 
     // Function to be called for periodic health check
     // preferably once every 1 minute, this can get pretty intensive computational-power wise
-    public void healthCheck(hashIndex ind){
+    public void healthCheck(HashIndex ind){
         Debugger.log("Commencing Self Diagnosis", null);
         refresh();
         Map<String, String> entries = ind.getEntries();

@@ -1,5 +1,6 @@
 package app;
 
+import app.chunk_util.Chunk;
 import app.chunk_util.IndexFile;
 import app.chunk_util.Indexer;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -233,7 +234,7 @@ public class HealthChecker implements Runnable{
                     commsHandler.sendPacketWithoutAck(socket, MessageType.HEALTH_CHECK, "REQUEST");
                     //receive packet from node
                     TcpPacket tcpPacket = commsHandler.receivePacket(socket);
-
+                    NetworkUtils.closeSocket(socket);
                     if (tcpPacket != null){
                         String  content = tcpPacket.getMessage();
                         ObjectMapper mapper = new ObjectMapper();
@@ -267,15 +268,55 @@ public class HealthChecker implements Runnable{
                             }
                         } else if (status.equals("CORRUPT") && sender == Module.HARM) {
 
+                            Debugger.log("Health check: Corrupted chunk detected on HARM: " + host, null);
                             if(!corruptedList.isEmpty()){
 
                                 Map<String, Set<String>> addressesOfCopies = getAddressesOfCopies(corruptedList);
 
-                                for(Map.Entry<String, Set<String>> entry : addressesOfCopies.entrySet()) {
+                                for (String uuid : addressesOfCopies.keySet()){
 
-                                    if(commsHandler.sendPacket(socket, MessageType.REPLACE,
-                                            NetworkUtils.createSerializedRequest(entry.getKey(), MessageType.REPLACE, entry.getValue()), true) == MessageType.ACK){
-                                        continue;
+                                    Chunk c = null;
+                                    CommsHandler commLink = new CommsHandler();
+
+                                    //lets get the chunk first
+                                    Debugger.log("Health Checker: Attempting to retrieve copy of corrupted chunk", null);
+                                    for (String addr : addressesOfCopies.get(uuid)){
+
+                                        try{
+                                            Socket harmServer = NetworkUtils.createConnection(addr, ConfigManager.getCurrent().getHarm_listen());
+                                            if(commLink.sendPacket(harmServer, MessageType.DOWNLOAD, NetworkUtils.createSerializedRequest(uuid, MessageType.DOWNLOAD, ""), true) == MessageType.ACK){
+                                                FileStreamer fileStreamer = new FileStreamer(harmServer);
+                                                fileStreamer.receiveFileFromSocket(cfg.getStalker_chunk_dir() + uuid);
+                                                NetworkUtils.closeSocket(harmServer);
+                                                c = new Chunk();
+                                                c.setChunk_path(cfg.getStalker_chunk_dir() + uuid);
+                                                c.setUuid(uuid);
+                                                break;
+                                            }
+                                        }
+                                        catch (Exception e){
+                                            Debugger.log("Health check: could not get copy of chunk", null);
+                                        }
+
+                                    }
+                                    if (c == null){
+                                        throw new RuntimeException("Health check: Could not retrieve chunks");
+                                    }
+                                    try {
+                                        Debugger.log("Health Checker: Sending replacement chunk.", null);
+                                        socket = NetworkUtils.createConnection(host, port);
+                                        //start the replacement process
+                                        if(commsHandler.sendPacket(socket, MessageType.REPLACE,
+                                                NetworkUtils.createSerializedRequest(uuid, MessageType.REPLACE,""), true) == MessageType.ACK){
+                                            //send that shit
+                                            FileStreamer fileStreamer = new FileStreamer(socket);
+                                            fileStreamer.sendFileToSocket(c.getChunk_path());
+                                            NetworkUtils.closeSocket(socket);
+                                            break;
+                                        }
+                                    }
+                                    catch (Exception e){
+                                        Debugger.log("Health check: Error replacing chunk", e);
                                     }
 
                                 }
@@ -305,6 +346,10 @@ public class HealthChecker implements Runnable{
                 if(debugMode) {
                     Debugger.log("", e);
                 }
+            }
+            catch (RuntimeException  e){
+                Debugger.log("",e);
+
             }
             finally {
 

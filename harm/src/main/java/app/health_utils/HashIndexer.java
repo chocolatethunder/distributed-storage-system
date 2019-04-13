@@ -19,22 +19,22 @@ import java.util.Optional;
 // =============================================
 public class HashIndexer {
     public static final String indexPath = "index/main.index";
-    //loads the json from file and converts it to an hashIndex object
-    public static synchronized hashIndex loadFromFile(){
+    //loads the json from file and converts it to an HashIndex object
+    public static synchronized HashIndex loadFromFile(){
         ObjectMapper mapper = new ObjectMapper();
-        Optional<hashIndex> ind = Optional.empty();
+        Optional<HashIndex> ind = Optional.empty();
         try {
             File f = new File(indexPath);
             if (!f.exists()){
                 throw new FileNotFoundException("Index file not found...");
             }
-            ind = Optional.of(mapper.readValue(NetworkUtils.fileToString(indexPath), hashIndex.class));
+            ind = Optional.of(mapper.readValue(NetworkUtils.fileToString(indexPath), HashIndex.class));
         }
         catch (IOException e){
-            //if the file is corrupt or empty we create a new hashIndex
+            //if the file is corrupt or empty we create a new HashIndex
             e.printStackTrace();
             System.out.println("Creating new indexfile");
-            hashIndex temp = new hashIndex();
+            HashIndex temp = new HashIndex();
             saveToFile(temp);
             return(temp);
         }
@@ -43,7 +43,7 @@ public class HashIndexer {
     }
 
     //Save index to file
-    public static synchronized boolean saveToFile(hashIndex ind){
+    public static synchronized boolean saveToFile(HashIndex ind){
         String tempfile = "index/main";
         try{
             ObjectMapper mapper = new ObjectMapper();
@@ -90,7 +90,7 @@ public class HashIndexer {
 
 
 //    //prints the indexfile object to file
-//    public static boolean writeIndex(hashIndex ind){
+//    public static boolean writeIndex(HashIndex ind){
 //        try {
 //            ObjectMapper mapper = new ObjectMapper();
 //            //Object to JSON in String
@@ -105,7 +105,7 @@ public class HashIndexer {
 
     //add an entry to the index file
     //process thread safe
-    public static synchronized boolean addEntry(hashIndex ind, String id, String hash){
+    public static synchronized boolean addEntry(HashIndex ind, String id, String hash){
         //get consent then add
         ind.add(id,hash);
         //-----------

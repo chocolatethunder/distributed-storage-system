@@ -56,13 +56,15 @@ public class NetworkUtils {
     }
 
 
-    public static void closeSocket(Socket s){
+    public static boolean closeSocket(Socket s){
         try{
             s.close();
+            return true;
         }
         catch(Exception e){
             Debugger.log("error closing socket", null);
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -272,7 +274,7 @@ public class NetworkUtils {
 
     //Create a serialized request to be sent with a TCP packet
     // Overloading method to change signature to take in harm ips for corrupted chunk replace request
-    public static String createSerializedRequest(String filename, MessageType m, String fileHash, Set<String> harmIps) {
+    public static String createSerializedRequest(String filename, MessageType m, String fileHash) {
         String serialRequest = null;
         ObjectMapper mapper = new ObjectMapper();
         Request r;
@@ -281,7 +283,7 @@ public class NetworkUtils {
             int fileSize = (int) f.length();
             r = new Request(filename, m, fileSize, fileHash);
         } else if( m == MessageType.REPLACE){
-            r = new Request(filename, m, harmIps);
+            r = new Request(filename, m);
         } else{
             r = new Request(filename, m);
         }
@@ -294,10 +296,10 @@ public class NetworkUtils {
     }
 
 
-    //Create a serialized request to be sent with a TCP packet
-    public static String createSerializedRequest(String filename, MessageType m, String filehash) {
-        return createSerializedRequest(filename, m, filehash, null);
-    }
+//    //Create a serialized request to be sent with a TCP packet
+//    public static String createSerializedRequest(String filename, MessageType m, String filehash) {
+//        return createSerializedRequest(filename, m, filehash, null);
+//    }
 
 
     //Create a serialized request to be sent with a TCP packet

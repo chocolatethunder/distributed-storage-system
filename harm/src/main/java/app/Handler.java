@@ -1,6 +1,6 @@
 package app;
 
-import app.health_utils.hashIndex;
+import app.health_utils.HashIndex;
 import app.health_utils.HashIndexer;
 
 import java.net.Socket;
@@ -37,7 +37,7 @@ public class Handler implements Runnable {
 
 
             // creating the index file to store the chunk information
-            hashIndex hashIndex = new hashIndex();
+            HashIndex hashIndex = new HashIndex();
             hashIndex.add(request.getFileName(), request.getFileHash());
             HashIndexer.saveToFile(hashIndex);
 
@@ -49,13 +49,21 @@ public class Handler implements Runnable {
         else if (requestType == MessageType.DELETE) {
             File f = new File(storage_path + request.getFileName());
             f.delete();
-            hashIndex hashIndex = new hashIndex();
+            HashIndex hashIndex = new HashIndex();
             hashIndex.remove(request.getFileName());
             HashIndexer.saveToFile(hashIndex);
             commLink.sendResponse(socket, MessageType.ACK);
         }
-        else {
+        else if (requestType == MessageType.REPLACE) {
+            File f = new File(storage_path + request.getFileName());
+            f.delete();
+            commLink.sendResponse(socket, MessageType.ACK);
+            streamer.receiveFileFromSocket(storage_path + request.getFileName());
             //delete logic here
+            Debugger.log("Chunk replaced without fail!", null);
+        }
+        else{
+            Debugger.log("invalid request", null);
         }
     }
 
