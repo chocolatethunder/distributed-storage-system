@@ -45,7 +45,7 @@ public class App {
         ind = Indexer.loadFromFile();
 
         //starting listener thread for health check and leader election
-        Thread listenerForHealth = new Thread( new ListenerThread(ind));
+        Thread listenerForHealth = new Thread( new HealthListener(ind));
         listenerForHealth.start();
         Thread elecListen = new Thread(new ElectionListener());
         elecListen.start();

@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 /**
  * This is the listener thread for STALKER, excepting health check requests from JCP and other stalkers
  */
-public class ListenerThread implements Runnable{
+public class HealthListener implements Runnable{
 
 
     private int serverPort;
@@ -23,8 +23,8 @@ public class ListenerThread implements Runnable{
     private boolean verbose = true;
     private volatile IndexFile index;
 
-    public ListenerThread(){}
-    public ListenerThread(IndexFile ind){index = ind;}
+    public HealthListener(){}
+    public HealthListener(IndexFile ind){index = ind;}
 
     @Override
     public void run() {
