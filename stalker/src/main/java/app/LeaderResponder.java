@@ -27,6 +27,7 @@ public class LeaderResponder implements Runnable {
     public LeaderResponder (Socket socket)
     {
         this.socket = socket;
+        Debugger.log("leader responder activated", null);
         String stalkerList = NetworkUtils.fileToString(ConfigManager.getCurrent().getStalker_list_path());
         this.stalkerMap = NetworkUtils.mapFromJson(stalkerList);
         ids = NetworkUtils.mapToSList(stalkerMap);

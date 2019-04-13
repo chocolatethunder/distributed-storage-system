@@ -113,6 +113,7 @@ public class LeaderCheck {
         int timeoutForReply = 4;
         Socket socket = null;
         try {
+            Debugger.log("Asking for leader from: " + entry + "at " + stalkerMap.get(entry) + "on port: " + port, null);
             socket = NetworkUtils.createConnection(stalkerMap.get(entry), port);
             if (socket != null){
                 //socket.setSoTimeout(1000 * timeoutForReply);
@@ -144,6 +145,7 @@ public class LeaderCheck {
             // ask another stalker for the leader if fails to establish connection with one of the stalker
             Debugger.log("", e);
         }catch(Exception e) {
+            Debugger.log("", e);
         }
         NetworkUtils.closeSocket(socket);
         return(leaderUuid);
