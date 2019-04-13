@@ -56,6 +56,15 @@ public class NetworkUtils {
     }
 
 
+    public static void closeSocket(Socket s){
+        try{
+            s.close();
+        }
+        catch(Exception e){
+            Debugger.log("error closing socket", null);
+            e.printStackTrace();
+        }
+    }
 
     //gets ports based on target and origin
     public static int[] getPortTargets(String origin, String target) {

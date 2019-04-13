@@ -4,10 +4,10 @@
 package app;
 
 import app.LeaderUtils.CRUDQueue;
+import app.LeaderUtils.LeaderCheck;
 import app.LeaderUtils.RequestAdministrator;
 import app.chunk_utils.Indexer;
 import app.chunk_utils.IndexFile;
-import sun.nio.ch.Net;
 
 import java.io.*;
 import java.net.Socket;
@@ -82,15 +82,16 @@ public class App {
                 else{
                     Debugger.log("Stalker Main: No HARM targets detected...", null);
                 }
-
+                LeaderCheck leaderchecker = new LeaderCheck();
+                if(leaderchecker.tryLeader()){
+                    connected = true;
+                    running = true;
+                    cfg = ConfigManager.getCurrent();
+                    Debugger.log("Leader uuid = " + cfg.getLeader_id(), null);
+                }
                 if (stalkerList != null && stalkerList.size() >= cfg.getElection_threshold_s()){
-                    LeaderCheck leaderchecker = new LeaderCheck();
-                    if(leaderchecker.tryLeader()){
-                        connected = true;
-                        running = true;
-                        cfg = ConfigManager.getCurrent();
-                        Debugger.log("Leader uuid = " + cfg.getLeader_id(), null);
-                    }
+
+
 
                     if(stalkerList.size() >= cfg.getElection_threshold_s()){
                         connected = true;

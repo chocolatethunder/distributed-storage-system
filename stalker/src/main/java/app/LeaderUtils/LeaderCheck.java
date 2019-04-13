@@ -1,12 +1,11 @@
-package app;
+package app.LeaderUtils;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import app.*;
+import app.chunk_utils.Indexer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
-import java.rmi.server.ExportException;
 import java.util.*;
 
 
@@ -83,20 +82,21 @@ public class LeaderCheck {
                 socket.setSoTimeout(200);
                 // create a leader packet and send it to this host
                 CommsHandler commsHandler = new CommsHandler();
-                if (commsHandler.sendPacket(socket, MessageType.DISCOVER, "", true) == MessageType.ACK){
+                commsHandler.sendPacket(socket, MessageType.DISCOVER, "", false);
+                TcpPacket t = commsHandler.receivePacket(socket);
+                if (t.getMessageType() == MessageType.ACK){
                     cfg.setLeader_id(entry.getKey());
                     ConfigManager.saveToFile(cfg);
+                    Indexer.saveToFile(Indexer.fromString(t.getMessage()));
                     Debugger.log("Leader found", null);
-
                     return true;
                 }
+                NetworkUtils.closeSocket(socket);
             }catch (Exception e) {
                 //Debugger.log("", e);
             }
-            try {
-                socket.close();
-            }
-            catch (Exception e){
+            finally {
+                NetworkUtils.closeSocket(socket);
             }
         }
         Debugger.log("No leader found", null);
@@ -141,20 +141,12 @@ public class LeaderCheck {
             Debugger.log("", e);
         }catch(Exception e) {
         }
-        closeSocket(socket);
+        NetworkUtils.closeSocket(socket);
         return(leaderUuid);
 
     }
 
-    public void closeSocket(Socket s){
-        try{
-            if(s != null) {
-                s.close();
-            }
-        } catch (Exception e) {
-            Debugger.log("", e);
-        }
-    }
+
 
     public static HashMap<Integer, String> updateStalkerMap() {
         return NetworkUtils.getStalkerMap(cfg.getStalker_list_path());

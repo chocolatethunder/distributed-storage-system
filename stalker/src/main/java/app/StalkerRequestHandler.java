@@ -59,7 +59,10 @@ public class StalkerRequestHandler implements Runnable {
                 }
                 else if (m == MessageType.DISCOVER){
                     indexFile = Indexer.loadFromFile();
-                    commLink.sendPacket(client, MessageType.ACK, NetworkUtils.serializeObject(indexFile), false);
+                    if(commLink.sendPacket(client, MessageType.ACK, "", true) == MessageType.ACK){
+                        commLink.sendPacket(client, MessageType.ACK, NetworkUtils.serializeObject(indexFile), false);
+                    }
+
                 }
                 else if (m == MessageType.UPLOAD || m == MessageType.DOWNLOAD || m == MessageType.DELETE){
                     //the socket can be closed client side
