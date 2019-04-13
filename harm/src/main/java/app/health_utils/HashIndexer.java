@@ -17,24 +17,24 @@ import java.util.Optional;
 // =============================================
 // Re-used Stalker units' indexfile logics
 // =============================================
-public class Indexer {
+public class HashIndexer {
     public static final String indexPath = "index/main.index";
-    //loads the json from file and converts it to an IndexFile object
-    public static IndexFile loadFromFile(){
+    //loads the json from file and converts it to an hashIndex object
+    public static hashIndex loadFromFile(){
         ObjectMapper mapper = new ObjectMapper();
-        Optional<IndexFile> ind = Optional.empty();
+        Optional<hashIndex> ind = Optional.empty();
         try {
             File f = new File(indexPath);
             if (!f.exists()){
                 throw new FileNotFoundException("Index file not found...");
             }
-            ind = Optional.of(mapper.readValue(NetworkUtils.fileToString(indexPath), IndexFile.class));
+            ind = Optional.of(mapper.readValue(NetworkUtils.fileToString(indexPath), hashIndex.class));
         }
         catch (IOException e){
-            //if the file is corrupt or empty we create a new IndexFile
+            //if the file is corrupt or empty we create a new hashIndex
             e.printStackTrace();
             System.out.println("Creating new indexfile");
-            IndexFile temp = new IndexFile();
+            hashIndex temp = new hashIndex();
             saveToFile(temp);
             return(temp);
         }
@@ -43,7 +43,7 @@ public class Indexer {
     }
 
     //Save index to file
-    public static boolean saveToFile(IndexFile ind){
+    public static boolean saveToFile(hashIndex ind){
         String tempfile = "index/main";
         try{
             ObjectMapper mapper = new ObjectMapper();
@@ -90,7 +90,7 @@ public class Indexer {
 
 
 //    //prints the indexfile object to file
-//    public static boolean writeIndex(IndexFile ind){
+//    public static boolean writeIndex(hashIndex ind){
 //        try {
 //            ObjectMapper mapper = new ObjectMapper();
 //            //Object to JSON in String
@@ -105,7 +105,7 @@ public class Indexer {
 
     //add an entry to the index file
     //process thread safe
-    public static boolean addEntry(IndexFile ind, String id, String hash){
+    public static boolean addEntry(hashIndex ind, String id, String hash){
         //get consent then add
         ind.add(id,hash);
         //-----------

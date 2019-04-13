@@ -4,18 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.FileStore;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.NumberFormat;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import app.ConfigManager;
+
 import app.health_utils.HealthStat;
-import app.health_utils.Indexer;
 
 /**
  *This listener thread is dedicated to listening for HEALTH check requests

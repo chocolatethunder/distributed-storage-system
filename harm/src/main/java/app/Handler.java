@@ -1,7 +1,7 @@
 package app;
 
-import app.health_utils.IndexFile;
-import app.health_utils.Indexer;
+import app.health_utils.hashIndex;
+import app.health_utils.HashIndexer;
 
 import java.net.Socket;
 import java.io.File;
@@ -37,9 +37,9 @@ public class Handler implements Runnable {
 
 
             // creating the index file to store the chunk information
-            IndexFile indexFile = new IndexFile();
-            indexFile.add(request.getFileName(), request.getFileHash());
-            Indexer.saveToFile(indexFile);
+            hashIndex hashIndex = new hashIndex();
+            hashIndex.add(request.getFileName(), request.getFileHash());
+            HashIndexer.saveToFile(hashIndex);
 
 
         } else if (requestType == MessageType.DOWNLOAD) {

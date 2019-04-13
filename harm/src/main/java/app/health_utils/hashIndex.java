@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 // =============================================
-// Modified Stalker Unit's IndexFile logics
+// Modified Stalker Unit's hashIndex logics
 // Format of indexfile:
 //  {
 //      "GUID_1" : "Hash",
@@ -14,11 +14,11 @@ import java.util.Map;
 //      . . .
 //  }
 // =============================================
-public class IndexFile {
+public class hashIndex {
 
     // { ChunkName(GUIDs), Hash }
     private Map<String,String> entries;
-    public IndexFile(){
+    public hashIndex(){
         entries = new HashMap<>();
     }
 

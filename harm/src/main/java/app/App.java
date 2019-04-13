@@ -5,7 +5,7 @@ package app;
 
 
 import app.health_utils.HealthStat;
-import app.health_utils.Indexer;
+import app.health_utils.HashIndexer;
 
 import java.io.*;
 import java.net.*;
@@ -42,7 +42,7 @@ public class App {
             public void run(){
                 // tell the guards to patrol
                 Debugger.log("Commencing periodic self diagnosis.",null);
-                HealthStat.getInstance().healthCheck(Indexer.loadFromFile());
+                HealthStat.getInstance().healthCheck(HashIndexer.loadFromFile());
                 // tell them to write reports
                 Debugger.log("Health status post check:", null);
                 Debugger.log(HealthStat.getInstance().status(),null);
