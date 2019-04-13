@@ -108,7 +108,7 @@ public class App {
                         Debugger.log("", e);
                     }
                     break;
-                case 1:
+                default:
                     Debugger.log("<<<<<<<-----Worker Online----->>>>>>>\n\n", null);
                     Thread jcpReq = new Thread(new JcpRequestHandler(ind));
                     jcpReq.start();
@@ -129,27 +129,27 @@ public class App {
                         Debugger.log("", e);
                     }
                     break;
-                case 2:
-                    Debugger.log("<<<<<<<-----Vice Leader Online----->>>>>>>\n\n", null);
-                    Thread vice = new Thread(new JcpRequestHandler(ind));
-                    vice.start();
-                    //while no reelection called
-                    while(!ConfigManager.getCurrent().isReelection()){
-                        //wait 10 seconds
-                        wait(1000);
-                    }
-                    try {
-                        //interrupt vice leader
-                        vice.interrupt();
-                        Debugger.log("Worker Interrupted", null);
-                        healthChecker.interrupt();
-                        healthChecker.join();
-                        vice.join();
-                    }
-                    catch(InterruptedException e){
-                        Debugger.log("", e);
-                    }
-                    break;
+//                case 2:
+//                    Debugger.log("<<<<<<<-----Worker Online----->>>>>>>\n\n", null);
+//                    Thread vice = new Thread(new JcpRequestHandler(ind));
+//                    vice.start();
+//                    //while no reelection called
+//                    while(!ConfigManager.getCurrent().isReelection()){
+//                        //wait 10 seconds
+//                        wait(1000);
+//                    }
+//                    try {
+//                        //interrupt vice leader
+//                        vice.interrupt();
+//                        Debugger.log("Worker Interrupted", null);
+//                        healthChecker.interrupt();
+//                        healthChecker.join();
+//                        vice.join();
+//                    }
+//                    catch(InterruptedException e){
+//                        Debugger.log("", e);
+//                    }
+//                    break;
             }
             wait(3000);
             LeaderCheck leaderchecker = new LeaderCheck();
