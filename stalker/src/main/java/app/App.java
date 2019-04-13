@@ -55,12 +55,13 @@ public class App {
         healthListener.start();
         elecListen.start();
         Debugger.log("Stalker Main: This Stalker's macID: " + NetworkUtils.getMacID() + "\n\n", null);
-        Debugger.log("Stalker Main: Discovering nodes on network...", null);
 
         //try and connect to the servers
         connectToServers();
-        Debugger.log("Stalker Main: System discovery complete!", null);
-
+        if (!running){
+            LeaderCheck l = new LeaderCheck();
+            l.election(0);
+        }
 
         while (true){
             //reelect
@@ -165,6 +166,7 @@ public class App {
 
 
     public static void connectToServers(){
+        Debugger.log("Stalker Main: Discovering nodes on network...", null);
         List<Integer> stalkerList = null;
         Map<Integer, NodeAttribute> harmlist = null;
         int attempts = 0;
@@ -216,6 +218,7 @@ public class App {
 
             attempts++;
         }
+        Debugger.log("Stalker Main: System discovery complete!", null);
     }
 
 
