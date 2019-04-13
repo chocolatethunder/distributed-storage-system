@@ -43,7 +43,16 @@ public class LeaderCheck {
         for(Integer entry : stalkerMap.keySet()) {
             Debugger.log("Trying: " + entry + " " + stalkerMap.get(entry), null);
             try{
-                voteCount.put(entry, askForLeader(entry));
+
+                int vote = askForLeader(entry);
+
+                if (voteCount.containsKey(vote)){
+                    voteCount.put(vote, voteCount.get(vote) + 1);
+                }
+                else{
+                    voteCount.put(vote, 1);
+                }
+
             }
             catch (NullPointerException e){
                 Debugger.log("RUOH", null);
@@ -57,18 +66,18 @@ public class LeaderCheck {
             {
                 max = voteCount.get(i);
                 leaderUuid = i;
-                if(!voteCount.containsKey(leaderUuid))
-                {
-                    voteCount.put(leaderUuid,1);
-                }else
-                {
-                    int newCount = voteCount.get(leaderUuid) + 1;
-                    voteCount.put(leaderUuid,newCount);
-                }
+//                if(!voteCount.containsKey(leaderUuid))
+//                {
+//                    voteCount.put(leaderUuid,1);
+//                }else
+//                {
+//                    int newCount = voteCount.get(leaderUuid) + 1;
+//                    voteCount.put(leaderUuid,newCount);
+//                }
             }
         }
         ConfigManager.getCurrent().setLeader_id(leaderUuid);
-        Debugger.log("Election: Leader selected: " + leaderUuid, null);
+        Debugger.log("Election: Leader selected: " + leaderUuid + "with " + max + "votes", null);
     }
 
     public boolean tryLeader(){
