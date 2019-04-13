@@ -66,6 +66,7 @@ public class ReplaceHandler implements Runnable {
 
                     if(move != null){
                         // success
+                       // Debugger.log("File copied successfully");
                     }else{
                         //failure
                     }

@@ -334,19 +334,16 @@ public class HealthChecker implements Runnable{
 
             for (String corruptedChunkId : corruptedList) {
                 Set<Integer> macIds = chunkIndex.get(corruptedChunkId).stream()
-                        .filter(macId -> macId != this.uuid)  // filering out the current harm
+                        .filter(macId -> macId != this.uuid)  // filtering out the current harm
                         .collect(Collectors.toSet());
 
                 Set<String> addresses = new HashSet<>();
-//                for (Map.Entry<Integer, String> harmTarget : harmList.entrySet()) {
-//
-//                    if (macIds.contains(harmTarget.getKey())) {
-//                        addresses.add(harmTarget.getValue());
-//                    }
-//                }
 
                 for (int macId : macIds){
-                    addresses.add(harmList.get(macId).getAddress());
+                    NodeAttribute harmNode = harmList.get(macId);
+                    if(harmNode.isAlive()) {
+                        addresses.add(harmNode.getAddress());
+                    }
                 }
 
                 harmIps.put(corruptedChunkId, addresses);
