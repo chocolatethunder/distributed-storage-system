@@ -1,5 +1,6 @@
 package app;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -8,6 +9,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.NumberFormat;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -73,7 +75,7 @@ public class ListenerThread implements Runnable {
                         executorService.submit(new HealthCheckResponder(client,
                                 "SUCCESS",
                                 getAvailableDiskSpace(),
-                                null,
+                                new HashSet<>(), // sending empty set
                                 Module.HARM));
                     }else{
                         executorService.submit(new HealthCheckResponder(client,
@@ -81,6 +83,10 @@ public class ListenerThread implements Runnable {
                                 getAvailableDiskSpace(),
                                 corruptList.keySet(),
                                 Module.HARM));
+
+
+                        // receive packet on the socket link for replacing corrupted chunks
+                        TcpPacket replaceReq = commLink.receivePacket(client);
                     }
                 }
                 else {
@@ -99,23 +105,25 @@ public class ListenerThread implements Runnable {
      * @return
      */
     public long getAvailableDiskSpace() {
-        NumberFormat nf = NumberFormat.getNumberInstance();
-        long total = 1000000;
-        for (Path root : FileSystems.getDefault().getRootDirectories()) {
-            Debugger.log(root + ": ", null);
-            try {
-                FileStore store = Files.getFileStore(root);
-                total += store.getUsableSpace();
-                if(debugMode) {
-                    Debugger.log("DiscManager: available=" + nf.format(store.getUsableSpace())
-                            + ", total=" + nf.format(store.getTotalSpace()), null);
-                }
-            } catch (IOException e) {
-                if(debugMode) {
-                    Debugger.log("DiscManager: Harm server: error querying space:  + e.toString()", e);
-                }
-            }
-        }
+//        NumberFormat nf = NumberFormat.getNumberInstance();
+//        long total = 1000000;
+//        for (Path root : FileSystems.getDefault().getRootDirectories()) {
+//            Debugger.log(root + ": ", null);
+//            try {
+//                FileStore store = Files.getFileStore(root);
+//                total += store.getUsableSpace();
+//                if(debugMode) {
+//                    Debugger.log("DiscManager: available=" + nf.format(store.getUsableSpace())
+//                            + ", total=" + nf.format(store.getTotalSpace()), null);
+//                }
+//            } catch (IOException e) {
+//                if(debugMode) {
+//                    Debugger.log("DiscManager: Harm server: error querying space:  + e.toString()", e);
+//                }
+//            }
+//        }
+
+        long total = new File("/").getUsableSpace();
 
         return total;
     }

@@ -1,6 +1,10 @@
 package app.handlers;
 
 import app.*;
+import app.chunk_util.IndexEntry;
+import app.chunk_util.IndexFile;
+import app.chunk_util.IndexUpdate;
+import app.chunk_util.Indexer;
 import app.chunk_utils.*;
 import java.util.HashMap;
 import java.util.List;

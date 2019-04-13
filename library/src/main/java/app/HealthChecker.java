@@ -1,5 +1,7 @@
 package app;
 
+import app.chunk_util.IndexFile;
+import app.chunk_util.Indexer;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,6 +12,8 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+
 import app.*;
 import com.fasterxml.jackson.databind.ObjectReader;
 
@@ -249,20 +253,27 @@ public class HealthChecker implements Runnable{
 
 
                         if(status.equals("SUCCESS")){
-                            if(target == Module.STALKER && this.spaceToUpdate != null) {
+                            if (target == Module.STALKER && this.spaceToUpdate != null) {
                                 this.spaceToUpdate.set(availableSpace);
-                                if(debugMode) {
+                                if (debugMode) {
                                     Debugger.log("Health Checker: Status was success for health check and disk space available "
                                             + this.spaceToUpdate.get(), null);
                                 }
-                            }else if(target == Module.HARM){
+                            } else if (target == Module.HARM) {
                                 // need to add the space for all HARMS in config file
                                 NetworkUtils.updateHarmList(String.valueOf(this.uuid),
                                         availableSpace,
                                         true);
                             }
-                        }else if(status.equals("CORRUPT") && sender == Module.HARM){
+                        } else if (status.equals("CORRUPT") && sender == Module.HARM) {
 
+                            if(!corruptedList.isEmpty()){
+
+                                Set<String> addressesOfCopies = getAddressesOfCopies(corruptedList);
+
+
+
+                            }
                             // do something with the corrupted chunks
                             deleteChunks(corruptedList);
 
@@ -304,6 +315,33 @@ public class HealthChecker implements Runnable{
             } catch (Exception e) {
                 Debugger.log("", e);
             }
+        }
+
+
+        private Set<String> getAddressesOfCopies(Set<String> corruptedList) {
+            Set<String> harmIps = new HashSet<>();
+
+            IndexFile indexFile = Indexer.loadFromFile();
+            Map<String, List<Integer>> chunkIndex = indexFile.getChunkIndex();
+
+
+            for (String corruptedChunkId : corruptedList) {
+                Set<Integer> macIds = chunkIndex.get(corruptedChunkId).stream()
+                        .filter(macId -> macId != this.uuid)  // filering out the current harm
+                        .collect(Collectors.toSet());
+
+                Map<Integer, String> harmList = NetworkUtils.mapFromJson(NetworkUtils
+                        .fileToString(cfg.getHarm_list_path()));
+
+                for (Map.Entry<Integer, String> harmTarget : harmList.entrySet()) {
+
+                    if (macIds.contains(harmTarget.getKey())) {
+                        harmIps.add(harmTarget.getValue());
+                    }
+                }
+            }
+
+            return harmIps;
         }
 
 

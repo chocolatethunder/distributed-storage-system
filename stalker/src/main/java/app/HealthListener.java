@@ -1,8 +1,6 @@
 package app;
 
-import app.LeaderUtils.IndexManager;
-import app.chunk_utils.IndexFile;
-import app.chunk_utils.Indexer;
+import app.chunk_util.IndexFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;

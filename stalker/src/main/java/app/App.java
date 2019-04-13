@@ -6,8 +6,8 @@ package app;
 import app.LeaderUtils.CRUDQueue;
 import app.LeaderUtils.LeaderCheck;
 import app.LeaderUtils.RequestAdministrator;
-import app.chunk_utils.Indexer;
-import app.chunk_utils.IndexFile;
+import app.chunk_util.Indexer;
+import app.chunk_util.IndexFile;
 
 import java.io.*;
 import java.net.Socket;

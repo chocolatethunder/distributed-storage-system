@@ -25,6 +25,7 @@ public enum MessageType {
         LEADER,
         UPDATE,
         CONFIRM,
-        REELECT
+        REELECT,
+        REPLACE
 
 }

@@ -4,7 +4,7 @@ import app.MessageType;
 import app.Request;
 import app.NetworkUtils;
 import app.TcpPacket;
-import app.chunk_utils.IndexFile;
+import app.chunk_util.IndexFile;
 
 import java.net.Socket;
 

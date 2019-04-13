@@ -7,8 +7,8 @@ package app;
 import java.io.*;
 import java.net.Socket;
 import java.util.Map;
-import app.chunk_utils.Chunk;
-import app.chunk_utils.IndexEntry;
+import app.chunk_util.Chunk;
+import app.chunk_util.IndexEntry;
 
 public class ChunkRetriever {
     private boolean debug = false;

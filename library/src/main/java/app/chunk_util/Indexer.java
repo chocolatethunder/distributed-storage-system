@@ -1,6 +1,8 @@
-package app.chunk_utils;
+package app.chunk_util;
 
 import app.Debugger;
+import app.chunk_util.IndexEntry;
+import app.chunk_util.IndexFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.FileNotFoundException;
 import java.io.IOException;

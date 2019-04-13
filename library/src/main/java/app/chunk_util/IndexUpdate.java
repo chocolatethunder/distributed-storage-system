@@ -1,5 +1,6 @@
-package app.chunk_utils;
+package app.chunk_util;
 import app.MessageType;
+import app.chunk_util.IndexEntry;
 
 public class IndexUpdate {
 

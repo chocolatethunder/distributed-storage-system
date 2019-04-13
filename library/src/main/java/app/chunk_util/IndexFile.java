@@ -1,4 +1,4 @@
-package app.chunk_utils;
+package app.chunk_util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

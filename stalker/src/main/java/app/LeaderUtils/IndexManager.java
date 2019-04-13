@@ -1,8 +1,7 @@
 package app.LeaderUtils;
-import app.TcpPacket;
-import app.chunk_utils.IndexFile;
-import app.chunk_utils.IndexUpdate;
-import app.chunk_utils.Indexer;
+import app.chunk_util.IndexFile;
+import app.chunk_util.IndexUpdate;
+import app.chunk_util.Indexer;
 
 public class IndexManager implements Runnable {
 

@@ -3,13 +3,12 @@ package app;
 import app.LeaderUtils.CRUDQueue;
 import app.LeaderUtils.QueueEntry;
 import app.LeaderUtils.QueueHandler;
-import app.chunk_utils.IndexFile;
-import app.chunk_utils.Indexer;
+import app.chunk_util.IndexFile;
+import app.chunk_util.Indexer;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.PriorityQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

@@ -5,6 +5,8 @@
  */
 package app.chunk_utils;
 import app.Debugger;
+import app.chunk_util.Chunk;
+import app.chunk_util.IndexEntry;
 
 import java.io.*;
 import java.nio.file.Paths;

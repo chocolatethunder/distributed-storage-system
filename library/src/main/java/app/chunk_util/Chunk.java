@@ -1,7 +1,7 @@
 /*
  * Holds the chunk metadata for each chunk
  */
-package app.chunk_utils;
+package app.chunk_util;
 import java.io.*;
 import java.util.*;
 

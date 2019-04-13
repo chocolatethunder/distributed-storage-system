@@ -7,8 +7,8 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 import java.util.Random;
-import app.chunk_utils.Chunk;
-import app.chunk_utils.IndexEntry;
+import app.chunk_util.Chunk;
+import app.chunk_util.IndexEntry;
 
 public class ChunkDistributor {
     private boolean debug = false;

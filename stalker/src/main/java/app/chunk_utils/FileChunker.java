@@ -7,6 +7,8 @@ import java.io.*;
 import java.util.*;
 
 import app.Debugger;
+import app.chunk_util.Chunk;
+import app.chunk_util.IndexEntry;
 import org.apache.commons.io.*;
 
 public class FileChunker {

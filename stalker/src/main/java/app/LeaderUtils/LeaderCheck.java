@@ -1,7 +1,7 @@
 package app.LeaderUtils;
 
 import app.*;
-import app.chunk_utils.Indexer;
+import app.chunk_util.Indexer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.Socket;

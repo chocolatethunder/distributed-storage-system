@@ -1,11 +1,10 @@
 package app.handlers;
 
 import app.CommsHandler;
-import app.ConfigManager;
 import app.Debugger;
 import app.MessageType;
-import app.chunk_utils.IndexFile;
-import app.chunk_utils.Indexer;
+import app.chunk_util.IndexFile;
+import app.chunk_util.Indexer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.Socket;

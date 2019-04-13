@@ -1,8 +1,8 @@
 package app;
 
 import app.LeaderUtils.IndexManager;
-import app.chunk_utils.IndexFile;
-import app.chunk_utils.Indexer;
+import app.chunk_util.IndexFile;
+import app.chunk_util.Indexer;
 
 import java.io.IOException;
 import java.net.ServerSocket;

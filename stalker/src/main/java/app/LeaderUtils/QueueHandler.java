@@ -1,9 +1,7 @@
 package app.LeaderUtils;
 
 import app.*;
-import app.chunk_utils.IndexFile;
-import app.chunk_utils.IndexUpdate;
-import app.chunk_utils.Indexer;
+import app.chunk_util.Indexer;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;

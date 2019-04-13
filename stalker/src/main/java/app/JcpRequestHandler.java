@@ -1,6 +1,6 @@
 package app;
 
-import app.chunk_utils.IndexFile;
+import app.chunk_util.IndexFile;
 import app.handlers.ServiceHandlerFactory;
 
 import java.io.*;
