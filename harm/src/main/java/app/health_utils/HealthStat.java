@@ -65,7 +65,7 @@ public class HealthStat{
 //            }
             // Check digest
 
-            File file = new File(entry.getValue());
+            File file = new File(entry.getKey());
             long check = 0;
             try{
                 check =  FileUtils.checksumCRC32(file);
