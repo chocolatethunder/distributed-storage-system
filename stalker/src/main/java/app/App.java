@@ -248,11 +248,14 @@ public class App {
     //will block worker from doing anythin until the leader is confirmed
     public static boolean getConfirmation(int uuid) {
         CommsHandler commLink = new CommsHandler();
+        Map<Integer, String> stalkerMap = NetworkUtils.getStalkerMap(ConfigManager.getCurrent().getStalker_list_path());
         boolean success = false;
         while (!success) {
             try {
                 Debugger.log("Stalker main: Asking leader for permission to start...", null);
-                Socket leader = NetworkUtils.createConnection(NetworkUtils.getStalkerMap(cfg.getStalker_list_path()).get(uuid), cfg.getLeader_report());
+                Debugger.log("leader: " + cfg.getLeader_id(), null);
+                Socket leader = NetworkUtils.createConnection(stalkerMap.get(cfg.getLeader_id()), cfg.getLeader_report());
+
                 if (leader != null) {
                     //get confirmation from leader
                     if (commLink.sendPacket(leader, MessageType.CONFIRM, "", true) == MessageType.CONFIRM) {
@@ -278,8 +281,6 @@ public class App {
                 Debugger.log("Stalker main: Attempt failed when connecting to leader...", e);
                 wait(5000);
                 Debugger.log("Stalker main: Trying again...", null);
-
-
             }
 
         }
