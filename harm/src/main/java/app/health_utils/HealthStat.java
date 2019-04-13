@@ -58,12 +58,14 @@ public class HealthStat{
             }
             catch (IOException e){
                 //if the file is corrupt or empty, report as corrupt
-                e.printStackTrace();
-                Debugger.log(entry.getKey() + " is inaccessible.",null);
+                Debugger.log(entry.getKey() + " is inaccessible.",e);
 
             }
             // Check digest
             String hash = md.digest().toString();
+            Debugger.log("File:" + entry.getKey(),null);
+            Debugger.log("Calculated Hash" + hash, null);
+            Debugger.log("Saved Hash: "+ entry.getValue(),null);
             if(hash == entry.getValue()){
                 // eq, good  hash do nothing (?)
             }else{

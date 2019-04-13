@@ -50,6 +50,7 @@ public class ChunkDistributor {
                 Integer target_path = harm_list.get(token);
                 //String target_ip = "127.0.0.1";
                 c.setHash(createDigest(c.getChunk_path()));
+                Debugger.log(c.getHash(), null);
                 if(sendChunk(c, target_path)) {
                     //add the address to the replica list if OK
                     //for now the port number is the identifier
