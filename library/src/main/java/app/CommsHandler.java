@@ -32,7 +32,7 @@ public class CommsHandler {
                 try {
                     // receiving packet back from STALKER
                     String received = in.readUTF();
-                    Debugger.log("Comm Link: received packet " + received, null);
+                    //Debugger.log("Comm Link: received packet " + received, null);
                     receivedPacket = mapper.readValue(received, TcpPacket.class);
                     response = receivedPacket.getMessageType();
                 } catch (EOFException e) {
@@ -77,7 +77,7 @@ public class CommsHandler {
         String jsonInString;
         try {
             jsonInString = mapper.writeValueAsString(sendAvail);
-            Debugger.log("Comm Link: response: " + jsonInString, null);
+            //Debugger.log("Comm Link: response: " + jsonInString, null);
             //write packet to port
             new DataOutputStream(socket.getOutputStream()).writeUTF(jsonInString);
         } catch (IOException e) {
