@@ -124,8 +124,8 @@ public class App {
             cfg.setLeader_id(leaderUuid);
             ConfigManager.saveToFile(cfg);
         }
-        Thread elecListen2 = new Thread(new ElectionListener());
-        elecListen2.start();
+//        Thread elecListen2 = new Thread(new ElectionListener());
+//        elecListen2.start();
         while (true){
             //reelect
             //starting task for health checks on STALKERS and HARM targets

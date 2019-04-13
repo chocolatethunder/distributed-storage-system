@@ -86,6 +86,7 @@ public class LeaderCheck {
                     TcpPacket t = commsHandler.receivePacket(socket);
                     if (t.getMessageType() == MessageType.ACK){
                        // TcpPacket t = commsHandler.receivePacket(socket);
+                        System.out.println("HOOOOOOOOOOOOO:     \n\n" + t.getMessage());
                         cfg.setLeader_id(entry.getKey());
                         ConfigManager.saveToFile(cfg);
                         Indexer.saveToFile(Indexer.fromString(t.getMessage()));
