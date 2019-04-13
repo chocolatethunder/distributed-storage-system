@@ -76,7 +76,15 @@ public class StalkerRequestHandler implements Runnable {
                 Debugger.log("", e);
             }
         }
+        try{
+            server.close();
+            Debugger.log("Server closed", null);
+        }
+        catch (Exception e){
+            Debugger.log("Error closing server", null);
+        }
 
     }
+
 
 }

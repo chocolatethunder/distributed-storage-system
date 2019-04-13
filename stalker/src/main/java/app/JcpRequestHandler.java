@@ -68,9 +68,10 @@ public class JcpRequestHandler implements Runnable {
         }
         try{
             server.close();
+            Debugger.log("Server closed", null);
         }
         catch (Exception e){
-
+            Debugger.log("Error closing server", null);
         }
 
 

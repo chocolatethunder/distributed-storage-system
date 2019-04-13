@@ -66,18 +66,10 @@ public class LeaderCheck {
             {
                 max = voteCount.get(i);
                 leaderUuid = i;
-//                if(!voteCount.containsKey(leaderUuid))
-//                {
-//                    voteCount.put(leaderUuid,1);
-//                }else
-//                {
-//                    int newCount = voteCount.get(leaderUuid) + 1;
-//                    voteCount.put(leaderUuid,newCount);
-//                }
             }
         }
         ConfigManager.getCurrent().setLeader_id(leaderUuid);
-        Debugger.log("Election: Leader selected: " + leaderUuid + "with " + max + "votes", null);
+        Debugger.log("Election: Leader selected: " + leaderUuid + "with " + max + " votes!", null);
     }
 
     public boolean tryLeader(){
@@ -150,7 +142,7 @@ public class LeaderCheck {
 
                     leaderUuid = Integer.valueOf(ep.get().getUuid());
                     leaderIP = ep.get().getIp();
-                    Debugger.log("Leadercheck: Vote recieved" + leaderUuid, null);
+                    Debugger.log("Leadercheck: Vote recieved " + leaderUuid, null);
                     //System.out.println("Election vote: " + leaderUuid + ", " + leaderIP);
                 }
                 Debugger.log("Leadercheck: connection closed", null);
