@@ -446,6 +446,7 @@ public class HealthChecker implements Runnable{
                     if(stalkerMap.containsKey(uuid)){
                         stalkerMap.remove(uuid);
                     }
+                    NetworkUtils.toFile(cfg.getStalker_list_path(),stalkerMap);
                     Debugger.log("Leader has died", null);
                     //send update signal
                     // kill and the threads

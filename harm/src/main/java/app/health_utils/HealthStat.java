@@ -37,6 +37,7 @@ public class HealthStat{
     public void healthCheck(HashIndex ind){
         Debugger.log("Commencing Self Diagnosis", null);
         refresh();
+
         Map<String, String> entries = ind.getEntries();
         // Looping through the entries and checking the files
         for (Map.Entry<String, String> entry : entries.entrySet()){
