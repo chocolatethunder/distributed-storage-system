@@ -17,7 +17,7 @@ public class HealthChecker implements Runnable{
 
 
     // every 30 seconds for now
-    private long interval = 1000 * 30;
+    private long interval = 1000 * 2;
 
     //delay between each timerTask, considering net discovery already occured
     private long intialDelay = 1000 *10;
