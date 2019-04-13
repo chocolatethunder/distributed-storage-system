@@ -319,7 +319,7 @@ public class HealthChecker implements Runnable{
                                 // create a leader packet and send it to this host
                                 CommsHandler commsHandler = new CommsHandler();
                                 commsHandler.sendPacketWithoutAck(socket, MessageType.REELECT, "");
-                                //socket.close();
+                                NetworkUtils.closeSocket(socket);
                             }
                         }catch (IOException e) {
                             Debugger.log("", e);
