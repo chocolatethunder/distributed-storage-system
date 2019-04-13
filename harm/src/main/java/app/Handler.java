@@ -49,7 +49,9 @@ public class Handler implements Runnable {
         else if (requestType == MessageType.DELETE) {
             File f = new File(storage_path + request.getFileName());
             f.delete();
-
+            hashIndex hashIndex = new hashIndex();
+            hashIndex.remove(request.getFileName());
+            HashIndexer.saveToFile(hashIndex);
             commLink.sendResponse(socket, MessageType.ACK);
         }
         else {

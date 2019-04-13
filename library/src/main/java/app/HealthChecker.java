@@ -271,8 +271,6 @@ public class HealthChecker implements Runnable{
 
                                 Set<String> addressesOfCopies = getAddressesOfCopies(corruptedList);
 
-
-
                             }
                             // do something with the corrupted chunks
                             deleteChunks(corruptedList);

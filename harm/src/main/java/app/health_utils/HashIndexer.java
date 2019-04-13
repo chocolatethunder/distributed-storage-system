@@ -20,7 +20,7 @@ import java.util.Optional;
 public class HashIndexer {
     public static final String indexPath = "index/main.index";
     //loads the json from file and converts it to an hashIndex object
-    public static hashIndex loadFromFile(){
+    public static synchronized hashIndex loadFromFile(){
         ObjectMapper mapper = new ObjectMapper();
         Optional<hashIndex> ind = Optional.empty();
         try {
@@ -43,7 +43,7 @@ public class HashIndexer {
     }
 
     //Save index to file
-    public static boolean saveToFile(hashIndex ind){
+    public static synchronized boolean saveToFile(hashIndex ind){
         String tempfile = "index/main";
         try{
             ObjectMapper mapper = new ObjectMapper();
@@ -105,7 +105,7 @@ public class HashIndexer {
 
     //add an entry to the index file
     //process thread safe
-    public static boolean addEntry(hashIndex ind, String id, String hash){
+    public static synchronized boolean addEntry(hashIndex ind, String id, String hash){
         //get consent then add
         ind.add(id,hash);
         //-----------
