@@ -33,16 +33,16 @@ public class ConfigFile {
     private int STK_STK_R = 11002;
 
 
-    private int jcp_req_port = 11111;
-    private int leader_report = 11112;
+    private int jcp_req_port = 50000;
+    private int leader_report = 50001;
 
-    private int leader_admin_port = 11113;
-    private int election_port = 11114;
-    private int health_check_port = 11115;
-    private int harm_listen_port = 11116;
+    private int leader_admin_port = 50002;
+    private int election_port = 50003;
+    private int health_check_port = 50004;
+    private int harm_listen_port = 50005;
 
     //the port for requests
-    private int harm_listen = 22222;
+    private int harm_listen = 50006;
 
     private int debug_mode = 3;
 

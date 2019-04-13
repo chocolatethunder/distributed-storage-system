@@ -54,8 +54,10 @@ public class App {
                 Debugger.log("Harm Main: Accepted connection : ", null);
                 //get packet from the link and handle it
                 TcpPacket STALKER_Request = commLink.receivePacket(STALKER_Client);
-                Handler h = new Handler(STALKER_Client, STALKER_Request, macID);
-                h.run();
+               // Handler h = new Handler(STALKER_Client, STALKER_Request, macID);
+               // h.run();
+
+                executorService.submit(new Handler(STALKER_Client, STALKER_Request, macID));
                 // creating a runnable task for each request from the same socket connection
                 //probably not even necessary
                 //not working right now
