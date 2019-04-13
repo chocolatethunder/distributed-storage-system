@@ -87,8 +87,9 @@ public class ListenerThread implements Runnable {
 
                         // receive packet on the socket link for replacing corrupted chunks
                         TcpPacket replaceReq;
-                        while((replaceReq = commLink.receivePacket(client)) != null) {
+                        for(int i = 0; i < corruptList.size() ; i++) {
 
+                            replaceReq = commLink.receivePacket(client);
                             if (replaceReq.getMessageType() == MessageType.REPLACE) {
                                 commLink.sendResponse(client, MessageType.ACK);
                             }
