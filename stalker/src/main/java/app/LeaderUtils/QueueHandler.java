@@ -110,10 +110,9 @@ public class QueueHandler implements  Runnable {
         for (Integer id : s_list){
 
             int attempts = 0;
-
             String stalkerip =  m.get(id);
             Debugger.log("Sending update to " + stalkerip, null);
-            while(attempts < 20){
+            while(attempts < 1){
                 try{
                     stalker = NetworkUtils.createConnection(stalkerip, port);
 
