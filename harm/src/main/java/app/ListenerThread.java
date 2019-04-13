@@ -30,7 +30,7 @@ public class ListenerThread implements Runnable {
 
     @Override
     public void run() {
-        serverPort = ConfigManager.getCurrent().getHarm_listen_port();
+        serverPort = ConfigManager.getCurrent().getHealth_check_port();
         ServerSocket server = null;
         CommsHandler commLink = new CommsHandler();
 
