@@ -87,6 +87,7 @@ public class App {
                     connected = true;
                     running = true;
                     cfg = ConfigManager.getCurrent();
+                    ind = Indexer.loadFromFile();
                     Debugger.log("Leader uuid = " + cfg.getLeader_id(), null);
                 }
                 if (stalkerList != null && stalkerList.size() >= cfg.getElection_threshold_s()){
