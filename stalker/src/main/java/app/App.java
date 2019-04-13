@@ -130,7 +130,7 @@ public class App {
                     }
                     break;
 //                case 2:
-//                    Debugger.log("<<<<<<<-----Worker Online----->>>>>>>\n\n", null);
+//                    Debugger.log("<<<<<<<-----Vice Online----->>>>>>>\n\n", null);
 //                    Thread vice = new Thread(new JcpRequestHandler(ind));
 //                    vice.start();
 //                    //while no reelection called
@@ -151,7 +151,6 @@ public class App {
 //                    }
 //                    break;
             }
-            wait(3000);
             LeaderCheck leaderchecker = new LeaderCheck();
             leaderchecker.election(1);
             cfg = ConfigManager.getCurrent();

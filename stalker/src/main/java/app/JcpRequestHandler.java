@@ -36,6 +36,7 @@ public class JcpRequestHandler implements Runnable {
         try {
             server = new ServerSocket(serverPort);
             server.setSoTimeout(1000);
+            server.setReuseAddress(true);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,6 +66,14 @@ public class JcpRequestHandler implements Runnable {
             catch (Exception e) {
             }
         }
+        try{
+            server.close();
+        }
+        catch (Exception e){
+
+        }
+
+
         Debugger.log("JCP Req: Service interrupted", null);
         executorService.shutdownNow();
     }
