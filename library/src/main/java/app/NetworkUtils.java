@@ -63,7 +63,6 @@ public class NetworkUtils {
         }
         catch(Exception e){
             Debugger.log("error closing socket", null);
-            e.printStackTrace();
             return false;
         }
     }
