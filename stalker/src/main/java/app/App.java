@@ -281,7 +281,7 @@ public class App {
                     wait(5000);
                 }
             } catch (IOException e) {
-                Debugger.log("Stalker main: Attempt failed when connecting to leader...", e);
+                Debugger.log("Stalker main: Attempt failed when connecting to leader...", null);
                 wait(5000);
                 Debugger.log("Stalker main: Trying again...", null);
             }

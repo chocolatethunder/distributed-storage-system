@@ -33,10 +33,7 @@ public class CommsHandler {
             if (ack) {
                 try {
                     // receiving packet back from STALKER
-                    Debugger.log("before " + socket, null);
                     String received = in.readUTF();
-                    Debugger.log("after " + socket, null);
-
                     //Debugger.log("Comm Link: received packet " + received, null);
                     receivedPacket = mapper.readValue(received, TcpPacket.class);
                     response = receivedPacket.getMessageType();

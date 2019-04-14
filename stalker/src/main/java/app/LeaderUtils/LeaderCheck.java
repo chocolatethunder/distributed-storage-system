@@ -37,7 +37,6 @@ public class LeaderCheck {
             //regular election initial conditions
             Debugger.log("Election: Voting has started...", null);
         }
-
         // ask for leader
         Map<Integer, Integer> voteCount = new HashMap<>();
         for(Integer entry : stalkerMap.keySet()) {
@@ -52,12 +51,10 @@ public class LeaderCheck {
                 else{
                     voteCount.put(vote, 1);
                 }
-
             }
             catch (NullPointerException e){
                 Debugger.log("RUOH", null);
             }
-
         }
         int max = Integer.MIN_VALUE;
         for(Integer i: voteCount.keySet())
@@ -71,7 +68,6 @@ public class LeaderCheck {
         ConfigManager.getCurrent().setLeader_id(leaderUuid);
         Debugger.log("Election: Leader selected: " + leaderUuid + "with " + max + " votes!", null);
     }
-
     public boolean tryLeader(){
         stalkerMap = updateStalkerMap();
         Debugger.log("Trying to find a running leader", null);
@@ -99,7 +95,6 @@ public class LeaderCheck {
                         return true;
                     }
                 }
-
             }catch (Exception e) {
                 //Debugger.log("", e);
             }
@@ -127,7 +122,6 @@ public class LeaderCheck {
                 socket.setSoTimeout(1000);
                 if (socket != null){
                     //socket.setSoTimeout(1000 * timeoutForReply);
-                    Debugger.log("Leadercheck: Connection established", null);
                     // create a leader packet and send it to this host
                     CommsHandler commsHandler = new CommsHandler();
                     MessageType m = null;
@@ -136,7 +130,6 @@ public class LeaderCheck {
                     //Debugger.log("Message from ack: " + m.toString() , null);
 
                     if (m == MessageType.ACK){
-                        Debugger.log("Ack recieved from: " + stalkerMap.get(entry), null);
                         // listen for other people leader
                         TcpPacket tcpPacket = commsHandler.receivePacket(socket);
                         String  content = tcpPacket.getMessage();
@@ -153,7 +146,6 @@ public class LeaderCheck {
                     }
                     Debugger.log("Leadercheck: connection to : " + stalkerMap.get(entry) + " closed", null);
                     NetworkUtils.closeSocket(socket);
-
                 }
             } catch (SocketException e) {
                 // ask another stalker for the leader if fails to establish connection with one of the stalker
@@ -169,9 +161,6 @@ public class LeaderCheck {
             NetworkUtils.wait(1000);
             attempts++;
         }
-
-
-
         return(leaderUuid);
 
     }

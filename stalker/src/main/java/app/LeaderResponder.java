@@ -36,13 +36,9 @@ public class LeaderResponder implements Runnable {
         ids = NetworkUtils.mapToSList(stalkerMap);
         // create a election packet and send it to this host
         CommsHandler commsHandler = new CommsHandler();
-        Debugger.log("debug 1", null);
         commsHandler.sendResponse(this.socket, MessageType.ACK);
-        Debugger.log("debug 2", null);
         commsHandler.sendPacketWithoutAck(this.socket, MessageType.ELECTION, electionPacket());
-        Debugger.log("debug 3", null);
         NetworkUtils.closeSocket(socket);
-        Debugger.log("debug 4", null);
     }
 
     // Response Packet not using rn because assuming everyone knows everyone
