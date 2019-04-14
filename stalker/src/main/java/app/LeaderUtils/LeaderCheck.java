@@ -130,12 +130,12 @@ public class LeaderCheck {
                 MessageType m = null;
                 //if messagetype is ack then this is a new
                 m = commsHandler.sendPacket(socket, MessageType.LEADER, "Asking for a Leader", true);
-                Debugger.log("Message from ack: " + m.toString() , null);
-                Debugger.log("1- debug", null);
+                //Debugger.log("Message from ack: " + m.toString() , null);
+
                 if (m == MessageType.ACK){
+                    Debugger.log("Ack recieved from: " + stalkerMap.get(entry), null);
                     // listen for other people leader
                     TcpPacket tcpPacket = commsHandler.receivePacket(socket);
-                    Debugger.log("2- debug", null);
                     String  content = tcpPacket.getMessage();
                     //get the result of the vote
                     ObjectMapper mapper = new ObjectMapper();
@@ -147,9 +147,8 @@ public class LeaderCheck {
                     Debugger.log("Leadercheck: Vote recieved " + leaderUuid, null);
                     //System.out.println("Election vote: " + leaderUuid + ", " + leaderIP);
                 }
-                Debugger.log("Leadercheck: connection closed", null);
+                Debugger.log("Leadercheck: connection to : " + stalkerMap.get(entry) + " closed", null);
                 NetworkUtils.closeSocket(socket);
-                Debugger.log("3- debug", null);
 
             }
         } catch (SocketException e) {

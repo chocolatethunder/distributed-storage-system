@@ -55,6 +55,7 @@ public class App {
         healthListener.start();
         elecListen.start();
         Debugger.log("Stalker Main: This Stalker's macID: " + NetworkUtils.getMacID() + "\n\n", null);
+        Debugger.log("Stalker Main: This IP: " + NetworkUtils.getIP() + "\n\n", null);
 
         //try and connect to the servers
         connectToServers();

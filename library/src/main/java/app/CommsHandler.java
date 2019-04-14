@@ -28,11 +28,16 @@ public class CommsHandler {
             //Object to JSON in String
             String jsonInString = mapper.writeValueAsString(initialPacket);
             out.writeUTF(jsonInString);
+            Debugger.log(jsonInString, null);
+
             if (ack) {
                 try {
                     // receiving packet back from STALKER
                     Thread.sleep(2000);
+                    Debugger.log("before " + socket, null);
                     String received = in.readUTF();
+                    Debugger.log("after " + socket, null);
+
                     //Debugger.log("Comm Link: received packet " + received, null);
                     receivedPacket = mapper.readValue(received, TcpPacket.class);
                     response = receivedPacket.getMessageType();
