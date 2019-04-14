@@ -37,11 +37,12 @@ public class App {
         initJCP();
         ConfigManager.loadFromFile("config/config.cfg", "default", true);
         cfg = ConfigManager.getCurrent();
+
         NetworkUtils.loadConfig(cfg);
         Debugger.setMode(cfg.getDebug_mode());
         initJFrame();
         int discoveryTimeout = cfg.getJcp_update_freq();
-
+        cfg.setRandom(false);
         // to capture total disk space in the system and will be updated with each health check
         // AtomicLong is already synchronized
         // value in bytes
@@ -109,9 +110,9 @@ public class App {
         while(true){
             try{
 
-                if (toprint){
+                if (cfg.isRandom()){
                     retrieveFiles();
-                    toprint= false;
+                    cfg.setRandom(false);
                 }
 
                 //make sure there are still servers
@@ -207,7 +208,7 @@ public class App {
         }
 //        wait(1000);
 ////        retrieveFiles();
-        toprint =true;
+
 
 
 
