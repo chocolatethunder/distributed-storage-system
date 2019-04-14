@@ -26,6 +26,7 @@ public class App {
     static RequestSender requestSender;
     static boolean connected;
     static ConfigFile cfg;
+    static boolean toprint = false;
 
     //jcp main
     public static void main(String[] args) {
@@ -107,6 +108,12 @@ public class App {
         //ip of stalker we'll just use the one at index 1 for now
         while(true){
             try{
+
+                if (toprint){
+                    retrieveFiles();
+                    toprint= false;
+                }
+
                 //make sure there are still servers
                 stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
                 if (stalkerList.size() -1 == 0){
@@ -198,8 +205,9 @@ public class App {
         else{
             consoleOutput.append("Connecting to server, please wait.\n");
         }
-        wait(1000);
-        retrieveFiles();
+//        wait(1000);
+////        retrieveFiles();
+        toprint =true;
 
 
 
