@@ -117,50 +117,61 @@ public class LeaderCheck {
         int port = cfg.getElection_port();
         int timeoutForReply = 4;
         Socket socket = null;
-        try {
+        int attempts = 0;
 
-            Debugger.log("Leadercheck: Asking for leader from: " + entry + "at " + stalkerMap.get(entry) + "on port: " + port, null);
-            socket = NetworkUtils.createConnection(stalkerMap.get(entry), port);
-            //socket.setSoTimeout(1000);
-            if (socket != null){
-                //socket.setSoTimeout(1000 * timeoutForReply);
-                Debugger.log("Leadercheck: Connection established", null);
-                // create a leader packet and send it to this host
-                CommsHandler commsHandler = new CommsHandler();
-                MessageType m = null;
-                //if messagetype is ack then this is a new
-                m = commsHandler.sendPacket(socket, MessageType.LEADER, "Asking for a Leader", true);
-                //Debugger.log("Message from ack: " + m.toString() , null);
 
-                if (m == MessageType.ACK){
-                    Debugger.log("Ack recieved from: " + stalkerMap.get(entry), null);
-                    // listen for other people leader
-                    TcpPacket tcpPacket = commsHandler.receivePacket(socket);
-                    String  content = tcpPacket.getMessage();
-                    //get the result of the vote
-                    ObjectMapper mapper = new ObjectMapper();
-                    Optional<ElectionPacket> ep = null;
-                    ep = Optional.of(mapper.readValue(content, ElectionPacket.class));
+        while (attempts < 4){
+            try {
+                Debugger.log("Leadercheck: Asking for leader from: " + entry + "at " + stalkerMap.get(entry) + "on port: " + port, null);
+                socket = NetworkUtils.createConnection(stalkerMap.get(entry), port);
+                socket.setSoTimeout(1000);
+                if (socket != null){
+                    //socket.setSoTimeout(1000 * timeoutForReply);
+                    Debugger.log("Leadercheck: Connection established", null);
+                    // create a leader packet and send it to this host
+                    CommsHandler commsHandler = new CommsHandler();
+                    MessageType m = null;
+                    //if messagetype is ack then this is a new
+                    m = commsHandler.sendPacket(socket, MessageType.LEADER, "Asking for a Leader", true);
+                    //Debugger.log("Message from ack: " + m.toString() , null);
 
-                    leaderUuid = Integer.valueOf(ep.get().getUuid());
-                    leaderIP = ep.get().getIp();
-                    Debugger.log("Leadercheck: Vote recieved " + leaderUuid, null);
-                    //System.out.println("Election vote: " + leaderUuid + ", " + leaderIP);
+                    if (m == MessageType.ACK){
+                        Debugger.log("Ack recieved from: " + stalkerMap.get(entry), null);
+                        // listen for other people leader
+                        TcpPacket tcpPacket = commsHandler.receivePacket(socket);
+                        String  content = tcpPacket.getMessage();
+                        //get the result of the vote
+                        ObjectMapper mapper = new ObjectMapper();
+                        Optional<ElectionPacket> ep = null;
+                        ep = Optional.of(mapper.readValue(content, ElectionPacket.class));
+
+                        leaderUuid = Integer.valueOf(ep.get().getUuid());
+                        leaderIP = ep.get().getIp();
+                        Debugger.log("Leadercheck: Vote recieved " + leaderUuid, null);
+                        break;
+                        //System.out.println("Election vote: " + leaderUuid + ", " + leaderIP);
+                    }
+                    Debugger.log("Leadercheck: connection to : " + stalkerMap.get(entry) + " closed", null);
+                    NetworkUtils.closeSocket(socket);
+
                 }
-                Debugger.log("Leadercheck: connection to : " + stalkerMap.get(entry) + " closed", null);
-                NetworkUtils.closeSocket(socket);
-
+            } catch (SocketException e) {
+                // ask another stalker for the leader if fails to establish connection with one of the stalker
+                Debugger.log("", e);
+            } catch (IOException e) {
+                // ask another stalker for the leader if fails to establish connection with one of the stalker
+                Debugger.log("", e);
+            }catch(Exception e) {
+                Debugger.log("", e);
             }
-        } catch (SocketException e) {
-            // ask another stalker for the leader if fails to establish connection with one of the stalker
-            Debugger.log("", e);
-        } catch (IOException e) {
-            // ask another stalker for the leader if fails to establish connection with one of the stalker
-            Debugger.log("", e);
-        }catch(Exception e) {
-            Debugger.log("", e);
+            NetworkUtils.closeSocket(socket);
+
+            NetworkUtils.wait(1000);
+            attempts++;
         }
-        NetworkUtils.closeSocket(socket);
+
+
+
         return(leaderUuid);
 
     }

@@ -271,6 +271,17 @@ public class NetworkUtils {
         return r.get();
     }
 
+
+    public static void wait(int millis){
+        try{
+            //wait for a bit
+            Thread.sleep((long)((millis)));
+        }
+        catch (InterruptedException ex){
+            Debugger.log("", ex);
+        }
+    }
+
     //Create a serialized request to be sent with a TCP packet
     // Overloading method to change signature to take in harm ips for corrupted chunk replace request
     public static String createSerializedRequest(String filename, MessageType m, String fileHash) {
