@@ -188,7 +188,7 @@ public class App {
                 //uncomment this:
                 requestSender.sendFile(name);
                 consoleOutput.append("Uploaded " + selectedFile + "\n");
-                retrieveFiles();
+
                 Debugger.log("JCP Main: Uploaded " + selectedFile, null);
             }
             try{ connection.close();}
@@ -198,6 +198,7 @@ public class App {
         else{
             consoleOutput.append("Connecting to server, please wait.\n");
         }
+        retrieveFiles();
 
 
 
@@ -215,7 +216,7 @@ public class App {
             //uncomment this:
             requestSender.deleteFile(selectedFilename.toString());
             consoleOutput.append("Deleted " + selectedFilename.toString() + "\n");
-            retrieveFiles();
+
             Debugger.log("JCP Main: Deleted " + selectedFilename.toString(), null);
             try{ connection.close();}
             catch(IOException e){ Debugger.log("", e);}
@@ -224,6 +225,7 @@ public class App {
         else{
             consoleOutput.append("Connecting to server, please wait.\n");
         }
+        retrieveFiles();
 
 
     }
