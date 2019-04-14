@@ -207,19 +207,7 @@ public class App {
         else{
             consoleOutput.append("Connecting to server, please wait.\n");
         }
-        listModel.clear();
-        List<String> fileList = new ArrayList<>();
-        fileList.add(f);
-        for (int i=0; i < fileList.size(); i++) {
-            listModel.addElement(fileList.get(i));
-        }
-        //remove this:
-        listOfFiles.setModel(listModel);
-
-
-
-
-
+        retrieveFiles();
     }
 
     public static void deleteFile() {
