@@ -312,7 +312,7 @@ public class HealthChecker implements Runnable{
                                         Debugger.log("Health check: File replaced", null);
                                     }
                                     catch (Exception e){
-                                        Debugger.log("Health check: Error replacing chunk", e);
+                                        Debugger.log("Health check: Error replacing chunk", null);
                                     }
 
                                 }
@@ -330,7 +330,7 @@ public class HealthChecker implements Runnable{
                 Debugger.log("Module at : " + host  + "has died!", null);
                 updateConfigAndEndTask();
                 if(debugMode) {
-                    Debugger.log("", e);
+                    Debugger.log("", null);
                 }
 
             } catch (IOException e) {
@@ -338,12 +338,11 @@ public class HealthChecker implements Runnable{
                 Debugger.log("Module at : " + host  + "has died!", null);
                 updateConfigAndEndTask();
                 if(debugMode) {
-                    Debugger.log("", e);
+                    Debugger.log("", null);
                 }
             }
             catch (RuntimeException  e){
-                Debugger.log("",e);
-
+                Debugger.log("Health check failed when recieveing chunks",null);
             }
             finally {
 
@@ -457,7 +456,7 @@ public class HealthChecker implements Runnable{
                                 NetworkUtils.closeSocket(socket);
                             }
                         }catch (IOException e) {
-                            Debugger.log("", e);
+                            Debugger.log("Oh der.. somying wong", null);
                         }
                     }
                     interrupted = true;

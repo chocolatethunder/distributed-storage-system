@@ -30,6 +30,7 @@ public class ElectionListener implements Runnable{
         ExecutorService executorService = Executors.newFixedThreadPool(1);
         try {
             server = new ServerSocket(serverPort);
+            server.setReuseAddress(true);
 
             //server.setReuseAddress(true);
         } catch (IOException e) {
