@@ -62,7 +62,7 @@ public class ElectionListener implements Runnable{
                     Debugger.log("Update received from leader", null);
                     commLink.sendResponse(client, MessageType.ACK);
                     executorService.submit(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
-                    ConfigManager.getCurrent().setRandom(true);
+
                 }
             } catch (IOException e) {
 

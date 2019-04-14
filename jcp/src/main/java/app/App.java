@@ -123,7 +123,6 @@ public class App {
                 else{
                     connected = true;
                 }
-
                 Thread.sleep((5000));
             }
             catch (InterruptedException e){
@@ -182,6 +181,7 @@ public class App {
     }
 
     public static void chooseFile() {
+        String f = null;
         if (connected){
             Socket connection = connectToStalker();
             JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
@@ -198,6 +198,7 @@ public class App {
                 consoleOutput.append("Uploaded " + selectedFile + "\n");
 
                 Debugger.log("JCP Main: Uploaded " + selectedFile, null);
+                f = selectedFile.getName();
             }
             try{ connection.close();}
             catch(IOException e){ Debugger.log("", e);}
@@ -206,8 +207,15 @@ public class App {
         else{
             consoleOutput.append("Connecting to server, please wait.\n");
         }
-//        wait(1000);
-////        retrieveFiles();
+        listModel.clear();
+        List<String> fileList = new ArrayList<>();
+        fileList.add(f);
+        for (int i=0; i < fileList.size(); i++) {
+            listModel.addElement(fileList.get(i));
+        }
+        //remove this:
+        listOfFiles.setModel(listModel);
+
 
 
 
@@ -279,7 +287,7 @@ public class App {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         //set up the gui
 		JButton uploadButton = new JButton("Upload");
-		JButton listButton = new JButton("List Files");
+		JButton listButton = new JButton("Refresh");
 		JButton downloadButton = new JButton("Download");
 		JButton deleteButton = new JButton("Delete");
 		JScrollPane scrollableList = new JScrollPane(listOfFiles);
