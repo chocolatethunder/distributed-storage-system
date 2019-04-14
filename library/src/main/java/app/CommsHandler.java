@@ -33,7 +33,6 @@ public class CommsHandler {
             if (ack) {
                 try {
                     // receiving packet back from STALKER
-                    Thread.sleep(2000);
                     Debugger.log("before " + socket, null);
                     String received = in.readUTF();
                     Debugger.log("after " + socket, null);
@@ -44,9 +43,6 @@ public class CommsHandler {
                 } catch (EOFException e) {
                     Debugger.log("", e);
                     // do nothing end of packet
-                }
-                catch (InterruptedException e){
-
                 }
 
             }

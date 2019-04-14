@@ -27,7 +27,7 @@ public class ElectionListener implements Runnable{
         CommsHandler commLink = new CommsHandler();
 
         // we can change this later to increase or decrease
-        ExecutorService executorService = Executors.newFixedThreadPool(20);
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
         try {
             server = new ServerSocket(serverPort);
 
