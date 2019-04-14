@@ -33,7 +33,7 @@ public class FileListServiceHandler implements Runnable {
     @Override
     public void run(){
         List<String> l = Indexer.loadFromFile().fileList();
-        Debugger.log("index List" + l.toString(), null);
+        //Debugger.log("index List" + l.toString(), null);
         ObjectMapper mapper = new ObjectMapper();
         String message = "";
         try{

@@ -121,7 +121,7 @@ public class NetDiscovery implements Runnable{
                 receiverSocket.setSoTimeout(discovery_timeout);
                 receiverSocket.receive(packet);
                 String received = new String(packet.getData(), 0, packet.getLength());
-                if (verbose) { Debugger.log("NetDiscovery: A target has responded: " + received, null);}
+                //if (verbose) { Debugger.log("NetDiscovery: A target has responded: " + received, null);}
 
                 // parse the packet content
                 JsonNode discoverReply = mapper.readTree(received);
