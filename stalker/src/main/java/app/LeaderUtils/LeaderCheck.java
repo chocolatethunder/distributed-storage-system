@@ -130,6 +130,7 @@ public class LeaderCheck {
                 MessageType m = null;
                 //if messagetype is ack then this is a new
                 m = commsHandler.sendPacket(socket, MessageType.LEADER, "Asking for a Leader", true);
+                Debugger.log("Message from ack: " + m.toString() , null);
                 Debugger.log("1- debug", null);
                 if (m == MessageType.ACK){
                     // listen for other people leader
