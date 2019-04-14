@@ -184,7 +184,6 @@ public class App {
             catch (Exception e){
                 //Debugger.log("", null);
             }
-            Debugger.log("Debug 1", null);
             try{
                 if (harmlist != null && !harmlist.isEmpty()){
                     Debugger.log("Populating harm list...", null);

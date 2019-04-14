@@ -149,12 +149,12 @@ public class LeaderCheck {
                 }
             } catch (SocketException e) {
                 // ask another stalker for the leader if fails to establish connection with one of the stalker
-                Debugger.log("", e);
+                Debugger.log("Socket timeout", null);
             } catch (IOException e) {
                 // ask another stalker for the leader if fails to establish connection with one of the stalker
-                Debugger.log("", e);
+                Debugger.log("File error", null);
             }catch(Exception e) {
-                Debugger.log("", e);
+                Debugger.log("", null);
             }
             NetworkUtils.closeSocket(socket);
 

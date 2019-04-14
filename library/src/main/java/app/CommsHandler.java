@@ -29,7 +29,6 @@ public class CommsHandler {
             String jsonInString = mapper.writeValueAsString(initialPacket);
             out.writeUTF(jsonInString);
             Debugger.log(jsonInString, null);
-
             if (ack) {
                 try {
                     // receiving packet back from STALKER
@@ -41,7 +40,6 @@ public class CommsHandler {
                     Debugger.log("", e);
                     // do nothing end of packet
                 }
-
             }
 
         } catch (IOException e) {
