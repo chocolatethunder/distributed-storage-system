@@ -37,13 +37,13 @@ public class CommsHandler {
                     receivedPacket = mapper.readValue(received, TcpPacket.class);
                     response = receivedPacket.getMessageType();
                 } catch (EOFException e) {
-                    Debugger.log("", e);
+                    Debugger.log("EOF", null);
                     // do nothing end of packet
                 }
             }
 
         } catch (IOException e) {
-            Debugger.log("", e);
+            Debugger.log("socket timed out", null);
         }
         return response;
     }
