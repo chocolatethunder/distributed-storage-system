@@ -198,6 +198,7 @@ public class App {
         else{
             consoleOutput.append("Connecting to server, please wait.\n");
         }
+        wait(1000);
         retrieveFiles();
 
 
