@@ -60,7 +60,7 @@ public class ElectionListener implements Runnable{
                     // Update the indexfile
                     Debugger.log("Update received from leader", null);
                     commLink.sendResponse(client, MessageType.ACK);
-                    executorService.execute(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
+                    executorService.submit(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
                 }
             } catch (IOException e) {
 

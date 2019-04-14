@@ -121,7 +121,7 @@ public class LeaderCheck {
 
             Debugger.log("Leadercheck: Asking for leader from: " + entry + "at " + stalkerMap.get(entry) + "on port: " + port, null);
             socket = NetworkUtils.createConnection(stalkerMap.get(entry), port);
-            socket.setSoTimeout(1000);
+            //socket.setSoTimeout(1000);
             if (socket != null){
                 //socket.setSoTimeout(1000 * timeoutForReply);
                 Debugger.log("Leadercheck: Connection established", null);
@@ -130,10 +130,11 @@ public class LeaderCheck {
                 MessageType m = null;
                 //if messagetype is ack then this is a new
                 m = commsHandler.sendPacket(socket, MessageType.LEADER, "Asking for a Leader", true);
-
+                Debugger.log("1- debug", null);
                 if (m == MessageType.ACK){
                     // listen for other people leader
                     TcpPacket tcpPacket = commsHandler.receivePacket(socket);
+                    Debugger.log("2- debug", null);
                     String  content = tcpPacket.getMessage();
                     //get the result of the vote
                     ObjectMapper mapper = new ObjectMapper();
@@ -147,6 +148,7 @@ public class LeaderCheck {
                 }
                 Debugger.log("Leadercheck: connection closed", null);
                 NetworkUtils.closeSocket(socket);
+                Debugger.log("3- debug", null);
 
             }
         } catch (SocketException e) {
