@@ -31,6 +31,7 @@ public class CommsHandler {
             if (ack) {
                 try {
                     // receiving packet back from STALKER
+                    Thread.sleep(2000);
                     String received = in.readUTF();
                     //Debugger.log("Comm Link: received packet " + received, null);
                     receivedPacket = mapper.readValue(received, TcpPacket.class);
@@ -39,6 +40,10 @@ public class CommsHandler {
                     Debugger.log("", e);
                     // do nothing end of packet
                 }
+                catch (InterruptedException e){
+
+                }
+
             }
 
         } catch (IOException e) {
