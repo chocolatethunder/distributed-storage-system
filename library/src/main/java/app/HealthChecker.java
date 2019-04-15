@@ -149,6 +149,14 @@ public class HealthChecker implements Runnable{
                                 //put the entry in the list if we haven't seen it before
                                 harmHistory.put(entry.getKey(), entry.getValue());
                             }
+                            else {
+                                //if the address changed we have to update it
+                                if (!(harmHistory.get(entry.getKey()).getAddress()).equals(entry.getValue().getAddress())){
+                                    harmHistory.get(entry.getKey()).setAddress(entry.getValue().getAddress());
+                                }
+                                //set as alive
+                                harmHistory.get(entry.getKey()).setAlive(true);
+                            }
 
                             if (interrupted){
                                 break;
