@@ -37,14 +37,14 @@ public class ElectionListener implements Runnable{
         } catch (IOException e) {
             Debugger.log("", e);
         }
-        Debugger.log("Election responder listening on port " + serverPort, null);
+        Debugger.log("Election responder listening on port " + serverPort + ".", null);
         // will keep on listening for requests
         while (!Thread.currentThread().isInterrupted() && !NetworkUtils.shouldShutDown()) {
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();
                 if (client != null){
-                    Debugger.log("Election Listener: Accepted connection : "  + client, null);
+                    Debugger.log("Election Listener: Accepted connection : "  + client + ".", null);
                     // receive packet on the socket link
                     TcpPacket req = commLink.receivePacket(client);
                     //When a leader request is recieved
@@ -60,7 +60,7 @@ public class ElectionListener implements Runnable{
                     }
                     else if(req.getMessageType() == MessageType.UPDATE){
                         // Update the indexfile
-                        Debugger.log("Update received from leader", null);
+                        Debugger.log("Update received from leader " + ".", null);
                         commLink.sendResponse(client, MessageType.ACK);
                         executorService.submit(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
                     }

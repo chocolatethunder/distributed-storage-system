@@ -104,8 +104,9 @@ public class HealthChecker implements Runnable{
                 if(!this.stalkerList.equals(newStalkers)){
                     for(Map.Entry<Integer, String> entry : newStalkers.entrySet()){
                         if(!this.stalkerList.containsKey(entry.getKey())){
+                            Debugger.log("Health Checker: Stalker at" + entry.getValue() + " is now being tracked.", null);
                             if(debugMode) {
-                                Debugger.log("Health Checker: New node detected" + entry.getValue(), null);
+                                Debugger.log("Health Checker: New stalker detected" + entry.getValue(), null);
                             }
                             addTimerTask(timer,
                                     entry.getKey(),
@@ -125,10 +126,12 @@ public class HealthChecker implements Runnable{
                 if(this.requestSender == Module.STALKER){
                     Map<Integer, NodeAttribute> newHarms =  NetworkUtils.getNodeMap(cfg.getHarm_list_path());
                     if(!this.harmList.equals(newHarms)) {
+
                         ObjectMapper mapper = new ObjectMapper();
                         for (Map.Entry<Integer, NodeAttribute> entry : newHarms.entrySet()) {
                             if(!this.harmList.containsKey(entry.getKey())) {
                                 addTimerTaskForHarm(timer, mapper, entry);
+                                Debugger.log("Health Checker: Harm at" + entry.getValue().getAddress() + " is now being tracked.", null);
                             }
                             if (interrupted){
                                 break;
@@ -257,7 +260,7 @@ public class HealthChecker implements Runnable{
                             if (target == Module.STALKER && this.spaceToUpdate != null) {
                                 this.spaceToUpdate.set(availableSpace);
                                 if (debugMode) {
-                                    Debugger.log("Health Checker: Status was success for health check and disk space available "
+                                    Debugger.log("Health Checker: Status was success for health check and disk space available. "
                                             + this.spaceToUpdate.get(), null);
                                 }
                             } else if (target == Module.HARM) {
@@ -278,7 +281,7 @@ public class HealthChecker implements Runnable{
             catch (SocketException e) {
                 //(socket);
                 // server has not replied within expected timeoutTime
-                Debugger.log("Module at : " + host  + "has died!", null);
+                Debugger.log("Module of type " + target.toString() + " at " + host  + " has died!", null);
                 updateConfigAndEndTask();
                 if(debugMode) {
                     Debugger.log("", null);
@@ -286,14 +289,14 @@ public class HealthChecker implements Runnable{
 
             } catch (IOException e) {
                 // any other IO exception, also stop the task and assume the node is dead
-                Debugger.log("Module at : " + host  + "has died!", null);
+                Debugger.log("Module of type " + target.toString() + " at " + host  + " has died!", null);
                 updateConfigAndEndTask();
                 if(debugMode) {
                     Debugger.log("", null);
                 }
             }
             catch (RuntimeException  e){
-                Debugger.log("Health check failed when recieveing chunks",null);
+                Debugger.log("Health check failed when recieveing chunks.",null);
             }
             finally {
 
@@ -314,7 +317,7 @@ public class HealthChecker implements Runnable{
 
 
         private boolean replaceChunk(Socket socket, CommsHandler commsHandler, Set<String> corruptedList){
-            Debugger.log("Health check: Corrupted chunk detected on HARM: " + host, null);
+            Debugger.log("Health check: Corrupted chunk detected on HARM: " + host + ".", null);
             if(!corruptedList.isEmpty()){
                 Map<String, Set<String>> addressesOfCopies = getAddressesOfCopies(corruptedList);
 
@@ -323,7 +326,7 @@ public class HealthChecker implements Runnable{
                     Chunk c = null;
                     CommsHandler commLink = new CommsHandler();
                     //lets get the chunk first
-                    Debugger.log("Health Checker: Attempting to retrieve copy of corrupted chunk", null);
+                    Debugger.log("Health Checker: Attempting to retrieve copy of corrupted chunk.", null);
                     for (String addr : addressesOfCopies.get(uuid)){
 
                         try{
@@ -339,11 +342,11 @@ public class HealthChecker implements Runnable{
                             }
                         }
                         catch (Exception e){
-                            Debugger.log("Health check: could not get copy of chunk", null);
+                            Debugger.log("Health check: could not get copy of chunk.", null);
                         }
                     }
                     if (c == null){
-                        throw new RuntimeException("Health check: Could not retrieve chunks");
+                        throw new RuntimeException("Health check: Could not retrieve chunks.");
                     }
                     try {
 
@@ -358,10 +361,10 @@ public class HealthChecker implements Runnable{
                             NetworkUtils.closeSocket(socket);
                             break;
                         }
-                        Debugger.log("Health check: File replaced", null);
+                        Debugger.log("Health check: File replaced.", null);
                     }
                     catch (Exception e){
-                        Debugger.log("Health check: Error replacing chunk", null);
+                        Debugger.log("Health check: Error replacing chunk.", null);
                     }
 
                 }
@@ -448,7 +451,7 @@ public class HealthChecker implements Runnable{
                         stalkerMap.remove(uuid);
                     }
                     NetworkUtils.toFile(cfg.getStalker_list_path(),stalkerMap);
-                    Debugger.log("Leader has died", null);
+                    Debugger.log("Leader has died.", null);
                     //send update signal
                     // kill and the threads
                     for(Map.Entry<Integer, String> entry : stalkerMap.entrySet())
@@ -464,20 +467,20 @@ public class HealthChecker implements Runnable{
                                 NetworkUtils.closeSocket(socket);
                             }
                         }catch (IOException e) {
-                            Debugger.log("Oh der.. somying wong", null);
+                            Debugger.log("Oh dear.. somefing wong.", null);
                         }
                     }
                     interrupted = true;
                 }
                 else{
-                    Debugger.log("A worker has died", null);
+                    Debugger.log("A worker has died.", null);
                 }
             }else {
                 // don't remove but mark as dead in HARM list
                 NetworkUtils.updateHarmList(String.valueOf(this.uuid), -1, false );
             }
             //cancel task
-            Debugger.log("Health Checker: Error Occurred Cancelling scheduled task for " + this.host, null);
+            Debugger.log("Health Checker: Error Occurred Cancelling scheduled task for " + this.host + ".", null);
             cancel();
         }
     }

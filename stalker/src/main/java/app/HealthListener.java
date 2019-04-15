@@ -49,14 +49,14 @@ public class HealthListener implements Runnable{
                 Socket client = server.accept();
 
                 if (client != null) {
-                    if (verbose){Debugger.log("Health Listener: Accepted connection : "  + client, null);}
+                    if (verbose){Debugger.log("Health Listener: Accepted connection : "  + client + ".", null);}
                     // receive packet on the socket link
                     TcpPacket req = commLink.receivePacket(client);
 
                     //checking for request type if health check
                     if (req.getMessageType() == MessageType.HEALTH_CHECK){
                         if (verbose){
-                            Debugger.log("Health Listener: Received health Check request : ", null);}
+                            Debugger.log("Health Listener: Received health Check request.", null);}
                         executorService.submit(new HealthCheckResponder(client,
                                 "SUCCESS",
                                 getTotalSpaceFromHarms(),

@@ -63,10 +63,10 @@ public class RequestSender {
                 fileStreamer.sendFileToSocket(filePath);
 
                 if (getCompletion()){
-                    Debugger.log("No problems during upload", null);
+                    Debugger.log("No problems during upload.", null);
                 }
                 else{
-                    Debugger.log("Problems during upload", null);
+                    Debugger.log("Problems during upload.", null);
                 }
                 NetworkUtils.closeSocket(socket);
                 return(true);
