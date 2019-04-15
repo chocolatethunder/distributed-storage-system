@@ -470,7 +470,7 @@ public class HealthChecker implements Runnable{
             }else {
 
                 harmHistory.get(this.uuid).setAlive(false);
-                Debugger.log("THE HARM IS DEAD " + harmHistory.get(this.uuid).isAlive(),null);
+//                Debugger.log("THE HARM IS DEAD " + harmHistory.get(this.uuid).isAlive(),null);
                 // don't remove but mark as dead in HARM list and save to file
                 NetworkUtils.toFile(cfg.getHarm_hist_path(), harmHistory);
             }

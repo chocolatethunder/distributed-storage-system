@@ -74,7 +74,7 @@ public class QueueHandler implements  Runnable {
                 }
 
                 Debugger.log( "job complete", null);
-                worker.close();
+                //worker.close();
             }
         }
         catch (InterruptedException e){
