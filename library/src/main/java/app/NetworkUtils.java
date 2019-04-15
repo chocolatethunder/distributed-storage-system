@@ -68,7 +68,7 @@ public class NetworkUtils {
             return true;
         }
         catch(Exception e){
-            Debugger.log("error closing socket", null);
+            //Debugger.log("error closing socket", null);
             return false;
         }
     }
