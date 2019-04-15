@@ -31,8 +31,8 @@ public class HealthChecker implements Runnable{
     private final long intialDelay = 1000 * 10;
 
     private Map<Integer, String> stalkerList;
-    private Map<Integer, NodeAttribute> harmList;
-    private Map<Integer, NodeAttribute> harmHistory;
+    private HashMap<Integer, NodeAttribute> harmList;
+    private HashMap<Integer, NodeAttribute> harmHistory;
     //private Map<Integer, String> harmList;
     private Module requestSender;
     private AtomicLong spaceAvailableSoFar;
