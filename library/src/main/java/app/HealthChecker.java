@@ -25,10 +25,10 @@ public class HealthChecker implements Runnable{
 
 
     // every 30 seconds for now
-    private final long interval = 1000 * 2;
+    private final long interval = 1000;
 
     //delay between each timerTask, considering net discovery already occured
-    private final long intialDelay = 1000 * 10;
+    private final long intialDelay = 1000 * 5;
 
     private Map<Integer, String> stalkerList;
     private HashMap<Integer, NodeAttribute> harmList;
@@ -327,7 +327,7 @@ public class HealthChecker implements Runnable{
                 socket = NetworkUtils.createConnection(host, port);
                 if (socket != null){
                     //if server does not reply within specified timeout, then SocketException will be thrown
-                    socket.setSoTimeout(timeoutForReply);
+                    //socket.setSoTimeout(timeoutForReply);
                     CommsHandler commsHandler = new CommsHandler();
                     //sending the health check request
                     commsHandler.sendPacketWithoutAck(socket, MessageType.HEALTH_CHECK, "REQUEST");
