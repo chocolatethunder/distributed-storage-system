@@ -3,6 +3,7 @@
  */
 package app;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.swing.*;
@@ -106,6 +107,7 @@ public class App {
         if (!NetworkUtils.shouldShutDown()){
             consoleOutput.append((stalkerList.size() -1) +  " servers taking requests.\n");
             consoleOutput.append("Connected to server!.\n");
+            consoleOutput.append("Maximum file size is 250Mb \n");
             Debugger.log("JCP Main: System ready to take requests!", null);
 
             requestSender = RequestSender.getInstance();
@@ -197,7 +199,6 @@ public class App {
     }
 
     public static void chooseFile() {
-        String f = null;
         if (connected){
             if(connectToStalker()){
                 JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
@@ -210,14 +211,29 @@ public class App {
                     //remove this:
                     listModel.addElement(selectedFile.getName());
                     //uncomment this:
-                    if (requestSender.sendFile(name)){
-                        consoleOutput.append("Uploaded " + selectedFile + "\n");
-                        Debugger.log("JCP Main: Uploaded " + selectedFile, null);
+
+                    File f = new File(name);
+                    if (f.exists()){
+                        //max size is 250mb
+                        if (FileUtils.sizeOf(f) < 262144000){
+                            if (requestSender.sendFile(name)){
+                                consoleOutput.append("Uploaded " + selectedFile + "\n");
+                                Debugger.log("JCP Main: Uploaded " + selectedFile, null);
+                            }
+                            else{
+                                consoleOutput.append("Connection error uploading file. Please make sure HARM targets are still connected... " + selectedFile + "\n");
+                                Debugger.log("Connection error uploading file. Please make sure HARM targets are still connected... " + selectedFile, null);
+                            }
+                        }
+                        else{
+                            consoleOutput.append("Maximum file size is 250Mb \n");
+                            Debugger.log("Maximum file size is 250Mb \n", null);
+                        }
                     }
-                    else{
-                        consoleOutput.append("Connection error uploading file. Please make sure HARM targets are still connected... " + selectedFile + "\n");
-                        Debugger.log("Connection error uploading file. Please make sure HARM targets are still connected... " + selectedFile, null);
-                    }
+
+
+
+
                 }
             }
             else{
