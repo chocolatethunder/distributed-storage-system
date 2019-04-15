@@ -36,6 +36,7 @@ public class ListenerThread implements Runnable {
         ExecutorService executorService = Executors.newFixedThreadPool(20);
         try {
             server = new ServerSocket(serverPort);
+            server.setSoTimeout(5000);
 
         } catch (IOException e) {
             Debugger.log("", e);
@@ -50,32 +51,35 @@ public class ListenerThread implements Runnable {
                    // Debugger.log("DiscManager: Harm server: Accepted connection from stalker : " + client, null);
 
                 }
-                // receive packet on the socket link
-                TcpPacket req = commLink.receivePacket(client);
+                if (client !=  null){
+                    // receive packet on the socket link
+                    TcpPacket req = commLink.receivePacket(client);
 
-                //checking for request type if health check
-                if (req.getMessageType() == MessageType.HEALTH_CHECK) {
-                    if(debugMode) {
-                        //Debugger.log("DiscManager: Harm server: Received health Check request", null);
-                    }
-                    //check for corrupted chunks here
-                    // I fixed it with my ingeniousness
-                    Map<String, String> corruptList = HealthStat.getInstance().getCorruptList();
-                    if(corruptList.isEmpty()) {
+                    //checking for request type if health check
+                    if (req.getMessageType() == MessageType.HEALTH_CHECK) {
+                        if(debugMode) {
+                            //Debugger.log("DiscManager: Harm server: Received health Check request", null);
+                        }
+                        //check for corrupted chunks here
+                        // I fixed it with my ingeniousness
+                        Map<String, String> corruptList = HealthStat.getInstance().getCorruptList();
+                        if(corruptList.isEmpty()) {
 
-                        executorService.submit(new HealthCheckResponder(client,
-                                "SUCCESS",
-                                getAvailableDiskSpace(),
-                                new HashSet<>(), // sending empty set
-                                Module.HARM));
-                    }else{
-                        executorService.submit(new HealthCheckResponder(client,
-                                "CORRUPT",
-                                getAvailableDiskSpace(),
-                                corruptList.keySet(),
-                                Module.HARM));
+                            executorService.submit(new HealthCheckResponder(client,
+                                    "SUCCESS",
+                                    getAvailableDiskSpace(),
+                                    new HashSet<>(), // sending empty set
+                                    Module.HARM));
+                        }else{
+                            executorService.submit(new HealthCheckResponder(client,
+                                    "CORRUPT",
+                                    getAvailableDiskSpace(),
+                                    corruptList.keySet(),
+                                    Module.HARM));
 
-                    }
+                        }
+                }
+
                 }
                 else {
                     running = false;

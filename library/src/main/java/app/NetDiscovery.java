@@ -36,7 +36,7 @@ public class NetDiscovery implements Runnable{
         catch (SocketException e){
         }
         int counter = 1;
-        while (!Thread.interrupted() && !NetworkUtils.shouldShutDown()){
+        while (!Thread.currentThread().isInterrupted() && !NetworkUtils.shouldShutDown()){
             try {
                 listOfAddrs = serverSearch(MessageType.DISCOVER, ports);
                 if (listOfAddrs != null){
@@ -65,6 +65,7 @@ public class NetDiscovery implements Runnable{
             }
             try{Thread.sleep(discovery_timeout * 1000);}catch (Exception e){};
         }
+        Debugger.log("NetDiscovery: Shutdown OK!", null);
 
     }
 

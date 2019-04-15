@@ -67,6 +67,7 @@ public class App {
         try {
             //initializing harm server
             HARM_server = new ServerSocket(cfg.getHarm_listen());
+            HARM_server.setSoTimeout(5000);
         } catch (IOException e) {
             Debugger.log("", e);
         }
@@ -78,19 +79,24 @@ public class App {
         while (!NetworkUtils.shouldShutDown()) {
             try {
                 STALKER_Client = HARM_server.accept();
-                Debugger.log("Harm Main: Accepted connection : ", null);
-                //get packet from the link and handle it
-                TcpPacket STALKER_Request = commLink.receivePacket(STALKER_Client);
-               // Handler h = new Handler(STALKER_Client, STALKER_Request, macID);
-               // h.run();
 
-               Thread t =  new Thread(new Handler(STALKER_Client, STALKER_Request, macID));
-               t.start();
+                if (STALKER_Client != null)
+                {
+                    Debugger.log("Harm Main: Accepted connection : ", null);
+                    //get packet from the link and handle it
+                    TcpPacket STALKER_Request = commLink.receivePacket(STALKER_Client);
+                    // Handler h = new Handler(STALKER_Client, STALKER_Request, macID);
+                    // h.run();
+
+                    Thread t =  new Thread(new Handler(STALKER_Client, STALKER_Request, macID));
+                    t.start();
 //                executorService.submit();
 //                // creating a runnable task for each request from the same socket connection
 //                //probably not even necessary
 //                //not working right now
 //                //executorService.execute();
+                }
+
             } catch (FileNotFoundException e) {
                 Debugger.log("", e);
             } catch (IOException e) {
@@ -98,7 +104,6 @@ public class App {
             } finally {
                 try {
                     // waiting until all thread tasks are done before closing the resources
-
                     awaitTerminationAfterShutdown(executorService);
                 } catch (Exception i) {
                     Debugger.log("", i);

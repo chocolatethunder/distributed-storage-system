@@ -26,19 +26,25 @@ public class DiscoveryManager implements Runnable{
     public void run(){
         //run forever
     while(!Thread.currentThread().isInterrupted() && !NetworkUtils.shouldShutDown()){
-        switch (mType){
-            case STALKER:
-                STALKERDiscovery();
-                break;
-            case HARM:
-                HARMDiscovery();
-                break;
-            case JCP:
-                JCPDiscovery();
-                break;
-            default:
-                return;
+        try{
+            switch (mType){
+                case STALKER:
+                    STALKERDiscovery();
+                    break;
+                case HARM:
+                    HARMDiscovery();
+                    break;
+                case JCP:
+                    JCPDiscovery();
+                    break;
+                default:
+                    return;
+            }
         }
+        catch (Exception e){
+            break;
+        }
+
     }
     Debugger.log("interrupted", null);
 
@@ -74,7 +80,7 @@ public class DiscoveryManager implements Runnable{
             threads.get(3).start();
 
             //The threads will never stop so we must stop them when this thread is interrupted
-            while (!halt && !NetworkUtils.shouldShutDown()){
+            while (!Thread.currentThread().isInterrupted() && !NetworkUtils.shouldShutDown()){
                 try{Thread.sleep(1000);}catch (Exception e){Debugger.log("", e);};
             }
             threads.forEach(t -> t.interrupt());

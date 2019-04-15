@@ -43,7 +43,7 @@ public class DiscoveryReply implements Runnable {
                 Debugger.log("", e);
             }
         }
-        while(!Thread.interrupted() && !NetworkUtils.shouldShutDown()){
+        while(!Thread.currentThread().isInterrupted() && !NetworkUtils.shouldShutDown()){
             listenServer();
         }
         Debugger.log("Discovery reply shutdown safely!", null);
