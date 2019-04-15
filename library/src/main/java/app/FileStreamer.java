@@ -37,7 +37,7 @@ public class FileStreamer {
             } finally {
                 try {
                   bufferedInputStream.close();
-                  //out.close();
+                  out.close();
                   //For debugging
                  // System.out.println(socket.isClosed());
 

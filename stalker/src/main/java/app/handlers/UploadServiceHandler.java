@@ -104,7 +104,7 @@ public class UploadServiceHandler implements Runnable {
             return;
         }
         //send final completion ack to JCP
-        commsLink.sendResponse(socket, MessageType.ACK);
+        //commsLink.sendResponse(socket, MessageType.ACK);
 
     }
 

@@ -62,12 +62,12 @@ public class RequestSender {
                 FileStreamer fileStreamer = new FileStreamer(socket);
                 fileStreamer.sendFileToSocket(filePath);
 
-                if (getCompletion()){
-                    Debugger.log("No problems during upload.", null);
-                }
-                else{
-                    Debugger.log("Problems during upload.", null);
-                }
+//                if (getCompletion()){
+//                    Debugger.log("No problems during upload.", null);
+//                }
+//                else{
+//                    Debugger.log("Problems during upload.", null);
+//                }
                 NetworkUtils.closeSocket(socket);
                 return(true);
             }else{
@@ -112,12 +112,12 @@ public class RequestSender {
         if(commLink.sendPacket(socket, m, NetworkUtils.createSerializedRequest(fileName, m, ""), true) == MessageType.ACK) {
             FileStreamer fileStreamer = new FileStreamer(socket);
             fileStreamer.receiveFileFromSocket(filePath);
-            if (getCompletion()){
-                Debugger.log("No problems during download", null);
-            }
-            else{
-                Debugger.log("Error during download", null);
-            }
+//            if (getCompletion()){
+//                Debugger.log("No problems during download", null);
+//            }
+//            else{
+//                Debugger.log("Error during download", null);
+//            }
 
             NetworkUtils.closeSocket(socket);
             return(true);
