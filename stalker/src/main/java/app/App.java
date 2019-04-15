@@ -45,7 +45,7 @@ public class App {
         cfg = ConfigManager.getCurrent();
         loadConfig(cfg);
         ind = Indexer.loadFromFile();
-
+        makeHarmHist();
         List<Thread> tohandle = new ArrayList<>();
         //start the election listener
         tohandle.add(new Thread(new ElectionListener()));
@@ -248,8 +248,21 @@ public class App {
         Debugger.log("Stalker Main: System discovery complete!", null);
     }
 
+    public static void makeHarmHist(){
+        File f = new File(cfg.getHarm_hist_path());
+        if (!f.exists()){
+            try{
+                HashMap<Integer, NodeAttribute> n = new HashMap<>();
+                f.createNewFile();
+                NetworkUtils.toFile(cfg.getHarm_hist_path(), n);
+            }
+            catch (IOException e){
+            }
+        }
+    }
 
     public static void loadConfig(ConfigFile cfg){
+
         disc_timeout = cfg.getStalker_update_freq();
         debug_mode = cfg.getDebug_mode();
         harm_path = cfg.getHarm_list_path();
@@ -271,16 +284,7 @@ public class App {
         directories.add(new File("temp/toChunk"));
         directories.add(new File("temp/reassembled"));
         NetworkUtils.initDirs(directories, true, 5);
-        File f = new File(cfg.getHarm_hist_path());
-        if (!f.exists()){
-            try{
-                HashMap<Integer, NodeAttribute> n = new HashMap<>();
-                f.createNewFile();
-                NetworkUtils.toFile(cfg.getHarm_hist_path(), n);
-            }
-            catch (IOException e){
-            }
-        }
+
     }
     //will block worker from doing anythin until the leader is confirmed
     public static boolean getConfirmation(int uuid) {

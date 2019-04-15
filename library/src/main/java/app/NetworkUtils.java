@@ -539,7 +539,7 @@ public class NetworkUtils {
                 File[] folder_contents = directories.get(i).listFiles();
                 if(folder_contents != null) {
                     for (File f : folder_contents) {
-                        if (!f.getName().equals(ConfigManager.getCurrent().getHarm_hist_path())){
+                        if (!f.getName().equals("harm_hist.list")){
                             f.delete();
                         }
 
