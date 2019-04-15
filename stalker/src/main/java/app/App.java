@@ -259,6 +259,16 @@ public class App {
     }
 
     public static void initStalker(){
+        File f = new File(cfg.getHarm_hist_path());
+        if (!f.exists()){
+            try{
+                HashMap<Integer, NodeAttribute> n = new HashMap<>();
+                f.createNewFile();
+                NetworkUtils.toFile(cfg.getHarm_hist_path(), n);
+            }
+            catch (IOException e){
+            }
+        }
         List<File> directories = new ArrayList<>();
         directories.add(new File("temp"));
         directories.add(new File("logs"));
