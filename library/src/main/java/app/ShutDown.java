@@ -14,6 +14,13 @@ public class ShutDown {
      public void stop(){
          for(Thread t : threads){
              t.interrupt();
+             try{
+                 t.join();
+             }
+             catch (Exception e){
+
+             }
+
          }
      }
 

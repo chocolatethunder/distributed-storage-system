@@ -107,7 +107,6 @@ public class App {
         }
         Debugger.log("Harm Exited safely.", null);
         NetworkUtils.wait(10000);
-        System.exit(0);
     }
 
     public static void initHarm(){

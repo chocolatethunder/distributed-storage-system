@@ -130,7 +130,6 @@ public class App {
         }
         Debugger.log("JCP Main: Exited safely...", null);
         NetworkUtils.wait(10000);
-        System.exit(0);
     }
 
     public static void initJCP(){
