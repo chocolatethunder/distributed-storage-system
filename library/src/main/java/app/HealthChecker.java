@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
@@ -61,7 +62,37 @@ public class HealthChecker implements Runnable{
 
             //this is the history of harms that have been on the system
             //we need to keep a consistent map of these or there will be errors when trying to get files from downed harms
-            harmHistory =  NetworkUtils.getNodeMap(cfg.getHarm_hist_path());
+            try{
+                harmHistory =  NetworkUtils.getNodeMap(cfg.getHarm_hist_path());
+                if (harmHistory == null){
+                    throw new IOException("HarmHist corrupted");
+                }
+            }
+            catch (Exception e){
+                    Debugger.log("HarmHist corrupted", null);
+                    File f = new File(cfg.getHarm_hist_path());
+                    if (!f.exists()){
+                        try{
+                            HashMap<Integer, NodeAttribute> n = new HashMap<>();
+                            f.createNewFile();
+                            NetworkUtils.toFile(cfg.getHarm_hist_path(), n);
+                        }
+                        catch (IOException ex){
+                        }
+                    }
+                    else {
+                        try{
+                            f.delete();
+                            HashMap<Integer, NodeAttribute> n = new HashMap<>();
+                            f.createNewFile();
+                            NetworkUtils.toFile(cfg.getHarm_hist_path(), n);
+                        }
+                        catch (IOException ex){
+
+                        }
+                    }
+            }
+
 
         }
         this.spaceAvailableSoFar = spaceAvailableSoFar;
