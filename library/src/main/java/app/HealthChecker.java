@@ -25,10 +25,10 @@ public class HealthChecker implements Runnable{
 
 
     // every 30 seconds for now
-    private final long interval = 1000 * 2;
+    private final long interval = 1000;
 
     //delay between each timerTask, considering net discovery already occured
-    private final long intialDelay = 1000 * 10;
+    private final long intialDelay = 1000 * 5;
 
     private Map<Integer, String> stalkerList;
     private HashMap<Integer, NodeAttribute> harmList;
@@ -112,76 +112,13 @@ public class HealthChecker implements Runnable{
 
                 //checking if new stalker list contains any new node
                 if(!this.stalkerList.equals(newStalkers)){
-                    if (newStalkers.size() >= stalkerList.size()){
-                        for(HashMap.Entry<Integer, String> entry : newStalkers.entrySet()){
-                            if(!this.stalkerList.containsKey(entry.getKey())){
-                                Debugger.log("Health Checker: Stalker at " + entry.getValue() + " is now being tracked.", null);
-                                if(debugMode) {
-                                    Debugger.log("Health Checker: New stalker detected" + entry.getValue(), null);
-                                }
-                                addTimerTask(timer,
-                                        entry.getKey(),
-                                        entry.getValue(),
-                                        spaceAvailableSoFar,
-                                        Module.STALKER);
-                            }
-                            if (Thread.currentThread().isInterrupted()){
-                                break;
-                            }
-                        }
-                        this.stalkerList = new HashMap<>();
-                        this.stalkerList.putAll(newStalkers);
-                    }
-                    else{
-
-                    }
-
+                    addNewStalkers(timer);
+                    //removeMissingStalkers();
                 }
                 //checking if harm list contains any new harm node
                 if(this.requestSender == Module.STALKER && !Thread.currentThread().isInterrupted()){
-                    Map<Integer, NodeAttribute> newHarms =  NetworkUtils.getNodeMap(cfg.getHarm_list_path());
-                    if(!this.harmList.equals(newHarms)) {
-
-                        ObjectMapper mapper = new ObjectMapper();
-                        for (HashMap.Entry<Integer, NodeAttribute> entry : newHarms.entrySet()) {
-                            if(!this.harmList.containsKey(entry.getKey())) {
-                                addTimerTaskForHarm(timer, mapper, entry);
-                                Debugger.log("Health Checker: Harm at " + entry.getValue().getAddress() + " is now being tracked.", null);
-
-                            }
-                            //check if we've seen the node before
-                            if (!harmHistory.containsKey(entry.getKey())){
-                                //put the entry in the list if we haven't seen it before
-                                harmHistory.put(entry.getKey(), entry.getValue());
-                            }
-                            else {
-                                //if the address changed we have to update it
-                                if (!(harmHistory.get(entry.getKey()).getAddress()).equals(entry.getValue().getAddress())){
-                                    harmHistory.get(entry.getKey()).setAddress(entry.getValue().getAddress());
-                                }
-                                //set as alive
-                                harmHistory.get(entry.getKey()).setAlive(true);
-                            }
-
-                            if (Thread.currentThread().isInterrupted()){
-                                break;
-                            }
-                        }
-                        for (HashMap.Entry<Integer, NodeAttribute> entry : harmList.entrySet()){
-                            if(!newHarms.containsKey(entry.getKey())) {
-                                addTimerTaskForHarm(timer, mapper, entry);
-                                Debugger.log("Health Checker: Harm at " + entry.getValue().getAddress() + " is no longer being tracked.", null);
-                            }
-                        }
-
-
-                        if (!Thread.currentThread().isInterrupted()){
-                            this.harmList = new HashMap<>();
-                            this.harmList.putAll(newHarms);
-                            NetworkUtils.toFile(cfg.getHarm_hist_path(), harmHistory);
-                        }
-
-                    }
+                    addNewHarms(timer);
+                    removeMissingHarms();
                 }
 
 
@@ -200,53 +137,108 @@ public class HealthChecker implements Runnable{
 
     public void done(){interrupted = true;}
 
-//    //add any new stalkers
-//    public void addNewStalkers(){
-//        Map<Integer, String> newStalkers =  NetworkUtils.mapFromJson(NetworkUtils
-//                .fileToString(cfg.getStalker_list_path()));
-//        Timer timer = new Timer();
-//        //for all new stalkers add the stalkers
-//        for(HashMap.Entry<Integer, String> entry : newStalkers.entrySet()){
-//            if(!this.stalkerList.containsKey(entry.getKey())){
-//                Debugger.log("Health Checker: Stalker at " + entry.getValue() + " is now being tracked.", null);
-//                if(debugMode) {
-//                    Debugger.log("Health Checker: New stalker detected" + entry.getValue(), null);
-//                }
-//                addTimerTask(timer,
-//                        entry.getKey(),
-//                        entry.getValue(),
-//                        spaceAvailableSoFar,
-//                        Module.STALKER);
-//            }
-//            if (Thread.currentThread().isInterrupted()){
-//                break;
-//            }
-//        }
-//        this.stalkerList = new HashMap<>();
-//        this.stalkerList.putAll(newStalkers);
-//
-//    }
-//    public void removeMissingStalkers(){
-//        Map<Integer, String> newStalkers =  NetworkUtils.mapFromJson(NetworkUtils
-//                .fileToString(cfg.getStalker_list_path()));
-//        Timer timer = new Timer();
-//        //for all new stalkers add the stalkers
-//        for(HashMap.Entry<Integer, String> entry : stalkerList.entrySet()){
-//            if(!newStalkers.containsKey(entry.getKey())){
-//                Debugger.log("Health Checker: Stalker at " + entry.getValue() + " is now being tracked.", null);
-//                if(debugMode) {
-//                    Debugger.log("Health Checker: New stalker detected" + entry.getValue(), null);
-//                }
-//
-//            }
-//            if (Thread.currentThread().isInterrupted()){
-//                break;
-//            }
-//        }
-//        this.stalkerList = new HashMap<>();
-//        this.stalkerList.putAll(newStalkers);
-//
-//    }
+    public void removeMissingHarms() {
+        Map<Integer, NodeAttribute> newHarms = NetworkUtils.getNodeMap(cfg.getHarm_list_path());
+        if (!this.harmList.equals(newHarms)) {
+
+            ObjectMapper mapper = new ObjectMapper();
+            for (HashMap.Entry<Integer, NodeAttribute> entry : harmList.entrySet()) {
+                if (!newHarms.containsKey(entry.getKey())) {
+                    Debugger.log("Health Checker: Harm at " + entry.getValue().getAddress() + " no longer available.", null);
+                }
+            }
+        }
+        harmList = new HashMap<>();
+        harmList.putAll(newHarms);
+    }
+
+
+    public void addNewHarms(Timer timer){
+        Map<Integer, NodeAttribute> newHarms =  NetworkUtils.getNodeMap(cfg.getHarm_list_path());
+        if(!this.harmList.equals(newHarms)) {
+
+            ObjectMapper mapper = new ObjectMapper();
+            for (HashMap.Entry<Integer, NodeAttribute> entry : newHarms.entrySet()) {
+                if(!this.harmList.containsKey(entry.getKey())) {
+                    addTimerTaskForHarm(timer, mapper, entry);
+                    Debugger.log("Health Checker: Harm at " + entry.getValue().getAddress() + " is now being tracked.", null);
+
+                }
+                //check if we've seen the node before
+                if (!harmHistory.containsKey(entry.getKey())){
+                    //put the entry in the list if we haven't seen it before
+                    harmHistory.put(entry.getKey(), entry.getValue());
+                }
+                else {
+                    //we've seen it before
+                    //if the address changed we have to update it
+                    if (!(harmHistory.get(entry.getKey()).getAddress()).equals(entry.getValue().getAddress())){
+                        harmHistory.get(entry.getKey()).setAddress(entry.getValue().getAddress());
+                    }
+                    //set as alive
+                    harmHistory.get(entry.getKey()).setAlive(true);
+                }
+
+                if (Thread.currentThread().isInterrupted()){
+                    break;
+                }
+            }
+            if (!Thread.currentThread().isInterrupted()){
+                //this.harmList = new HashMap<>();
+                this.harmList.putAll(newHarms);
+                NetworkUtils.toFile(cfg.getHarm_hist_path(), harmHistory);
+            }
+
+        }
+    }
+
+
+    //add any new stalkers
+    public void addNewStalkers(Timer timer){
+        Map<Integer, String> newStalkers =  NetworkUtils.mapFromJson(NetworkUtils
+                .fileToString(cfg.getStalker_list_path()));
+
+        //for all new stalkers add the stalkers
+        for(HashMap.Entry<Integer, String> entry : newStalkers.entrySet()){
+            if(!this.stalkerList.containsKey(entry.getKey())){
+                Debugger.log("Health Checker: Stalker at " + entry.getValue() + " is now being tracked.", null);
+                if(debugMode) {
+                    Debugger.log("Health Checker: New stalker detected" + entry.getValue(), null);
+                }
+                addTimerTask(timer,
+                        entry.getKey(),
+                        entry.getValue(),
+                        spaceAvailableSoFar,
+                        Module.STALKER);
+            }
+            if (Thread.currentThread().isInterrupted()){
+                break;
+            }
+        }
+        this.stalkerList = new HashMap<>();
+        this.stalkerList.putAll(newStalkers);
+
+    }
+    public void removeMissingStalkers(){
+        Map<Integer, String> newStalkers =  NetworkUtils.mapFromJson(NetworkUtils
+                .fileToString(cfg.getStalker_list_path()));
+        //for all new stalkers add the stalkers
+        for(HashMap.Entry<Integer, String> entry : stalkerList.entrySet()){
+            if(!newStalkers.containsKey(entry.getKey())){
+                stalkerList.remove(entry.getKey());
+                Debugger.log("Health Checker: Stalker at " + entry.getValue() + " is now being tracked.", null);
+                if(debugMode) {
+                    Debugger.log("Health Checker: New stalker detected" + entry.getValue(), null);
+                }
+            }
+            if (Thread.currentThread().isInterrupted()){
+                break;
+            }
+        }
+        this.stalkerList = new HashMap<>();
+        this.stalkerList.putAll(newStalkers);
+
+    }
 
 
     /**
@@ -336,7 +328,7 @@ public class HealthChecker implements Runnable{
                 socket = NetworkUtils.createConnection(host, port);
                 if (socket != null){
                     //if server does not reply within specified timeout, then SocketException will be thrown
-                    socket.setSoTimeout(timeoutForReply);
+                    //socket.setSoTimeout(timeoutForReply);
                     CommsHandler commsHandler = new CommsHandler();
                     //sending the health check request
                     commsHandler.sendPacketWithoutAck(socket, MessageType.HEALTH_CHECK, "REQUEST");
