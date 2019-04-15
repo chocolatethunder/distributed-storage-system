@@ -46,7 +46,7 @@ public class DiscoveryManager implements Runnable{
         }
 
     }
-    Debugger.log("interrupted", null);
+    Debugger.log("Discovery manager Shutdown", null);
 
     }
     public void close(){halt = !halt;}
@@ -105,7 +105,7 @@ public class DiscoveryManager implements Runnable{
             listener = new Thread(new DiscoveryReply(Module.HARM, Module.STALKER, timeout, verbose));
             listener.start();
 
-            while(!checkInterrupted());
+            while(!Thread.currentThread().isInterrupted() && !NetworkUtils.shouldShutDown());
             listener.interrupt();
             listener.join();
         }
@@ -120,7 +120,7 @@ public class DiscoveryManager implements Runnable{
         try {
             broadcaster = new Thread(new NetDiscovery(Module.STALKER, Module.JCP,timeout, verbose));
             broadcaster.start();
-            while(!checkInterrupted());
+            while(!Thread.currentThread().isInterrupted() && !NetworkUtils.shouldShutDown());
             broadcaster.interrupt();
             broadcaster.join();
         } catch (Exception e) {

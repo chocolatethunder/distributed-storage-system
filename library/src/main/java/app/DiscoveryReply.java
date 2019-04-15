@@ -38,6 +38,7 @@ public class DiscoveryReply implements Runnable {
                 receiverSocket = new DatagramSocket(ports[0]);
                 socket = new DatagramSocket();
                 receiverSocket.setSoTimeout(listening_timeout * 1000);
+                socket.setSoTimeout(5000);
                 bound = true;
             } catch (Exception e) {
                 Debugger.log("", e);
@@ -63,12 +64,14 @@ public class DiscoveryReply implements Runnable {
         String req_target = null;
         try {
             receiverSocket.receive(packet);
-            // parse the packet
-            String received = new String(packet.getData(), 0, packet.getLength());
-            if(verbose){Debugger.log("DiscReply: A discovery probe was received: " + received, null);}
-            JsonNode request = null;
-            request = mapper.readTree(received);
-            req_target = request.get("target").textValue();
+            if (packet != null){
+                // parse the packet
+                String received = new String(packet.getData(), 0, packet.getLength());
+                if(verbose){Debugger.log("DiscReply: A discovery probe was received: " + received, null);}
+                JsonNode request = null;
+                request = mapper.readTree(received);
+                req_target = request.get("target").textValue();
+            }
 
         }catch (SocketTimeoutException e)
         {

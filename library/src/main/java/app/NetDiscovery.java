@@ -32,6 +32,7 @@ public class NetDiscovery implements Runnable{
             //only bind your ports once!!!
             receiverSocket = new DatagramSocket(ports[1]);
             socket = new DatagramSocket();
+            socket.setSoTimeout(5000);
         }
         catch (SocketException e){
         }
