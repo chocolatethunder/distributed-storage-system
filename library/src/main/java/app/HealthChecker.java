@@ -283,9 +283,12 @@ public class HealthChecker implements Runnable{
                                 }
                             } else if (target == Module.HARM) {
                                 // need to add the space for all HARMS in config file
-                                NetworkUtils.updateHarmList(String.valueOf(this.uuid),
-                                        availableSpace,
-                                        true);
+
+                                harmHistory.get(this.uuid).setSpace(availableSpace);
+                                NetworkUtils.toFile(cfg.getHarm_hist_path(), harmHistory);
+//                                NetworkUtils.updateHarmList(String.valueOf(this.uuid),
+//                                        availableSpace,
+//                                        true);
                             }
                         }
                         else if (status.equals("CORRUPT") && sender == Module.HARM) {
@@ -459,7 +462,6 @@ public class HealthChecker implements Runnable{
             }else {
 
                 harmHistory.get(this.uuid).setAlive(false);
-
                 Debugger.log("THE HARM IS DEAD " + harmHistory.get(this.uuid).isAlive(),null);
                 // don't remove but mark as dead in HARM list and save to file
                 NetworkUtils.toFile(cfg.getHarm_hist_path(), harmHistory);

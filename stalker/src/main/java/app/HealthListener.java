@@ -79,17 +79,11 @@ public class HealthListener implements Runnable{
     public long getTotalSpaceFromHarms(){
         long total = 0;
 
-        Map<Integer, String> harms = NetworkUtils.mapFromJson(NetworkUtils.fileToString(ConfigManager.getCurrent().getHarm_list_path()));
+        Map<Integer, NodeAttribute> harms = NetworkUtils.getNodeMap(ConfigManager.getCurrent().getHarm_hist_path());
         ObjectMapper mapper = new ObjectMapper();
-        for (Map.Entry<Integer, String> entry : harms.entrySet()) {
-            NodeAttribute attributes = null;
-            try {
-                attributes = mapper.readValue(entry.getValue(), NodeAttribute.class);
-                total += attributes.getSpace();
-            } catch (IOException e) {
-                Debugger.log("", e);
-            }
-
+        for (Map.Entry<Integer, NodeAttribute> entry : harms.entrySet()) {
+            NodeAttribute attributes = entry.getValue();
+            total += attributes.getSpace();
         }
         return total;
     }
