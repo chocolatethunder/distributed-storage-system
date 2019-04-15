@@ -478,6 +478,7 @@ public class HealthChecker implements Runnable{
             //cancel task
             Debugger.log("Health Checker: Error Occurred Cancelling scheduled task for " + this.host + ".", null);
             cancel();
+            Debugger.log("task cancelled...", null);
         }
     }
 }
