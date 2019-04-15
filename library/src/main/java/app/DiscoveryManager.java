@@ -93,7 +93,7 @@ public class DiscoveryManager implements Runnable{
             }
 
         } catch (Exception e) {
-            Debugger.log("", e);
+            Debugger.log("", null);
         }
         Debugger.log("Discovery Manager shutdown safely!", null);
     }
@@ -110,7 +110,7 @@ public class DiscoveryManager implements Runnable{
             listener.join();
         }
         catch (Exception e){
-            Debugger.log("", e);
+            Debugger.log("", null);
         }
     }
 
@@ -124,7 +124,7 @@ public class DiscoveryManager implements Runnable{
             broadcaster.interrupt();
             broadcaster.join();
         } catch (Exception e) {
-            Debugger.log("", e);
+            Debugger.log("", null);
         }
     }
 

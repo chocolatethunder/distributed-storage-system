@@ -15,7 +15,7 @@ public class ShutdownHandler extends Thread {
         NetworkUtils.toggleShutdown(true);
         s.stop();
         Debugger.log("Please wait...", null);
-        NetworkUtils.wait(10000);
+        NetworkUtils.wait(5000);
         Debugger.log("Shutdown complete", null);
 
     }

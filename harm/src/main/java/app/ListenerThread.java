@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -85,7 +86,12 @@ public class ListenerThread implements Runnable {
                     running = false;
                     //client.close();
                 }
-            } catch (IOException e) {
+
+            }
+            catch (SocketTimeoutException e){
+
+            }
+            catch (IOException e) {
                 Debugger.log("", e);
             }
 

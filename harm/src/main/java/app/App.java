@@ -97,7 +97,10 @@ public class App {
 //                //executorService.execute();
                 }
 
-            } catch (FileNotFoundException e) {
+            }
+            catch (SocketTimeoutException e){
+            }
+            catch (FileNotFoundException e) {
                 Debugger.log("", e);
             } catch (IOException e) {
                 Debugger.log("", e);
@@ -112,7 +115,7 @@ public class App {
         }
         exec.shutdownNow();
         Debugger.log("Harm Exited safely.", null);
-        NetworkUtils.wait(10000);
+        NetworkUtils.wait(3000);
     }
 
     public static void initHarm(){
