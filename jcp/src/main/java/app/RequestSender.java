@@ -135,7 +135,7 @@ public class RequestSender {
 
     public boolean getCompletion(){
 
-        try{socket.setSoTimeout(10000);}catch (SocketException  e){}
+        //try{socket.setSoTimeout(10000);}catch (SocketException  e){}
         MessageType m = commLink.receivePacket(socket).getMessageType();
         if (m == MessageType.ACK){
             return(true);
