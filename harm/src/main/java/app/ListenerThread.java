@@ -21,7 +21,7 @@ public class ListenerThread implements Runnable {
     private int serverPort;
     private boolean running = true;
     private boolean debugMode = true;
-
+    private boolean halt = false;
 
     public ListenerThread(boolean debugMode){
         this.debugMode = debugMode;
@@ -42,7 +42,7 @@ public class ListenerThread implements Runnable {
         }
         Debugger.log("Listener: Harm server: Waiting for health check requests from stalkers..", null);
         // will keep on listening for requests
-        while (!NetworkUtils.shouldShutDown()) {
+        while (!Thread.currentThread().isInterrupted() && !NetworkUtils.shouldShutDown()) {
             try {
                 //accept connection from a STALKER
                 Socket client = server.accept();
@@ -84,10 +84,12 @@ public class ListenerThread implements Runnable {
             } catch (IOException e) {
                 Debugger.log("", e);
             }
+
         }
         Debugger.log("Harm Listener shutdown safely!", null);
 
     }
+    public void stop(){halt = !halt;}
 
     /**
      * This method returns total space available in root directory and all subdirectories

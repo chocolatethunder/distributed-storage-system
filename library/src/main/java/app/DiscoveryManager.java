@@ -8,6 +8,8 @@ public class DiscoveryManager implements Runnable{
     private int timeout = 20;
     private boolean verbose = false;
     private boolean exit = false;
+    private boolean halt = false;
+
     public DiscoveryManager(Module m){
         mType = m;
     }
@@ -23,7 +25,7 @@ public class DiscoveryManager implements Runnable{
     @Override
     public void run(){
         //run forever
-    while(!Thread.interrupted() && !NetworkUtils.shouldShutDown()){
+    while(!Thread.currentThread().isInterrupted() && !NetworkUtils.shouldShutDown()){
         switch (mType){
             case STALKER:
                 STALKERDiscovery();
@@ -41,11 +43,8 @@ public class DiscoveryManager implements Runnable{
     Debugger.log("interrupted", null);
 
     }
+    public void close(){halt = !halt;}
 
-
-    public void close(){
-        exit = true;
-    }
 
     //will search for harm targets and stalkers on the network
     public void STALKERDiscovery(){
@@ -75,7 +74,7 @@ public class DiscoveryManager implements Runnable{
             threads.get(3).start();
 
             //The threads will never stop so we must stop them when this thread is interrupted
-            while (!Thread.interrupted() && !NetworkUtils.shouldShutDown()){
+            while (!halt && !NetworkUtils.shouldShutDown()){
                 try{Thread.sleep(1000);}catch (Exception e){Debugger.log("", e);};
             }
             threads.forEach(t -> t.interrupt());

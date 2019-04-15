@@ -12,9 +12,9 @@ public class ShutdownHandler extends Thread {
     }
     public void run(){
         Debugger.log("SHUTTING DOWN ALL THREADS", null);
+        NetworkUtils.toggleShutdown(true);
         s.stop();
         Debugger.log("Please wait...", null);
-        NetworkUtils.toggleShutdown(true);
         NetworkUtils.wait(10000);
         Debugger.log("Shutdown complete", null);
 

@@ -15,7 +15,7 @@ public class ElectionListener implements Runnable{
     private boolean running = true;
     private boolean verbose = true;
     private volatile IndexFile index;
-
+    private boolean halt = false;
     public ElectionListener(){}
     public ElectionListener(IndexFile ind){index = ind;}
 
@@ -38,7 +38,7 @@ public class ElectionListener implements Runnable{
         }
         Debugger.log("Election responder listening on port " + serverPort, null);
         // will keep on listening for requests
-        while (running) {
+        while (!halt) {
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();
@@ -71,6 +71,8 @@ public class ElectionListener implements Runnable{
         }
 
     }
+    public void stop(){halt = !halt;}
+
 
 
 }

@@ -105,6 +105,7 @@ public class App {
                 }
             }
         }
+        exec.shutdownNow();
         Debugger.log("Harm Exited safely.", null);
         NetworkUtils.wait(10000);
     }
