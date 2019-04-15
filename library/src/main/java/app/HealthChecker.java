@@ -275,7 +275,7 @@ public class HealthChecker implements Runnable{
                 socket = NetworkUtils.createConnection(host, port);
                 if (socket != null){
                     //if server does not reply within specified timeout, then SocketException will be thrown
-                    socket.setSoTimeout(timeoutForReply);
+                    //socket.setSoTimeout(timeoutForReply);
                     CommsHandler commsHandler = new CommsHandler();
                     //sending the health check request
                     commsHandler.sendPacketWithoutAck(socket, MessageType.HEALTH_CHECK, "REQUEST");
