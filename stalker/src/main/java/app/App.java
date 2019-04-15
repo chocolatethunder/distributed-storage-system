@@ -159,6 +159,7 @@ public class App {
             }
 
             if (!NetworkUtils.shouldShutDown()){
+                Debugger.log("Entered reelection!", null);
                 wait(3000);
                 LeaderCheck leaderchecker = new LeaderCheck();
                 leaderchecker.election(1);

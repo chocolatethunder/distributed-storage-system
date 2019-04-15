@@ -70,6 +70,7 @@ public class ElectionListener implements Runnable{
                 //Debugger.log("Listener: Socket timeout", null);
             }
         }
+        Debugger.log("Election responder shutdown... " + serverPort + ".", null);
 
     }
     public void stop(){halt = !halt;}
