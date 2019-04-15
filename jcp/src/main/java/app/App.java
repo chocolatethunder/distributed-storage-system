@@ -184,7 +184,7 @@ public class App {
                 }
             }
             else{
-                consoleOutput.append("Unable to connect to a STALKER, please make sure the units are on and connected to the network");
+                consoleOutput.append("Unable to connect to a STALKER, please make sure the units are on and connected to the network \n");
             }
         }
         else{
@@ -221,8 +221,8 @@ public class App {
                                 Debugger.log("JCP Main: Uploaded " + selectedFile, null);
                             }
                             else{
-                                consoleOutput.append("Connection error uploading file. Please make sure HARM targets are still connected... " + selectedFile + "\n");
-                                Debugger.log("Connection error uploading file. Please make sure HARM targets are still connected... " + selectedFile, null);
+                                consoleOutput.append("Connection error uploading file. Please make sure HARM targets are still connected... " + "\n");
+                                Debugger.log("Connection error uploading file. Please make sure HARM targets are still connected... ", null);
                             }
                         }
                         else{
@@ -237,7 +237,7 @@ public class App {
                 }
             }
             else{
-                consoleOutput.append("Unable to connect to a STALKER, please make sure the units are on and connected to the network");
+                consoleOutput.append("Unable to connect to a STALKER, please make sure the units are on and connected to the network \n");
             }
 
 
@@ -263,12 +263,12 @@ public class App {
                     Debugger.log("JCP Main: Deleted " + selectedFilename.toString(), null);
                 }
                 else{
-                    consoleOutput.append("Connection error uploading file. Please make sure HARM targets are still connected... ");
-                    Debugger.log("Connection error deleting file. Please make sure HARM targets are still connected... ", null);
+                    consoleOutput.append("Connection error uploading file. Please make sure HARM targets are still connected... \n");
+                    Debugger.log("Connection error deleting file. Please make sure HARM targets are still connected...", null);
                 }
             }
             else{
-                consoleOutput.append("Unable to connect to a STALKER, please make sure the units are on and connected to the network");
+                consoleOutput.append("Unable to connect to a STALKER, please make sure the units are on and connected to the network \n");
             }
         }
         else{
@@ -296,13 +296,13 @@ public class App {
                         Debugger.log("JCP Main: Downloaded " + selectedFilename + " to " + selectedFile, null);
                     }
                     else{
-                        consoleOutput.append("Connection error downloading file. Please make sure HARM targets are still connected... ");
+                        consoleOutput.append("Connection error downloading file. Please make sure HARM targets are still connected... \n");
                         Debugger.log("Connection error downloading file. Please make sure HARM targets are still connected... ", null);
                     }
                 }
             }
             else{
-                consoleOutput.append("Unable to connect to a STALKER, please make sure the units are on and connected to the network");
+                consoleOutput.append("Unable to connect to a STALKER, please make sure the units are on and connected to the network \n");
             }
         }
         else{

@@ -162,7 +162,14 @@ public class HealthChecker implements Runnable{
                                 break;
                             }
                         }
-                        if (!Thread.currentThread().isInterrupted()){
+                        for (HashMap.Entry<Integer, NodeAttribute> entry : harmList.entrySet()){
+                            if(newHarms.containsKey(entry.getKey())){
+                                Debugger.log("Health Checker: Harm at " + entry.getValue().getAddress() + " no longer being tracked.", null);
+
+                            }
+                        }
+
+                            if (!Thread.currentThread().isInterrupted()){
                             this.harmList = new HashMap<>();
                             this.harmList.putAll(newHarms);
                             NetworkUtils.toFile(cfg.getHarm_hist_path(), harmHistory);
