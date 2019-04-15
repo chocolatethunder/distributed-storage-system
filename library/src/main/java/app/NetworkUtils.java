@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import javax.xml.soap.Node;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -425,21 +426,38 @@ public class NetworkUtils {
     }
 
 
-    public static synchronized Map<Integer, NodeAttribute> getNodeMap(String harmFile) {
-        Map<Integer, String> raw_map = mapFromJson(NetworkUtils.fileToString(harmFile));
-        Map<Integer, NodeAttribute> nodeMap = new HashMap<>();
+    //load a config (stalker ip) from file while we get network discovery working
+    public static HashMap<Integer, NodeAttribute> getNodeMap(String s) {
         ObjectMapper mapper = new ObjectMapper();
-        for (Integer i : raw_map.keySet()) {
-            try {
-                nodeMap.put(i, mapper.readValue(raw_map.get(i), NodeAttribute.class));
-            } catch (Exception e) {
-                Debugger.log("", e);
-                return null;
-            }
-
+        //Optional<List<String>> list = Optional.empty();
+        HashMap<Integer, NodeAttribute> list = new HashMap<>();
+        try {
+            TypeReference<HashMap<Integer, Object>> typeRef = new TypeReference<HashMap<Integer, Object>>() {
+            };
+            list = mapper.readValue(s, typeRef);
+        } catch (IOException e) {
+            Debugger.log("", e);
+            return null;
         }
-        return nodeMap;
+        return list;
     }
+
+
+//    public static synchronized Map<Integer, NodeAttribute> getNodeMap(String harmFile) {
+//        Map<Integer, String> raw_map = mapFromJson(NetworkUtils.fileToString(harmFile));
+//        Map<Integer, NodeAttribute> nodeMap = new HashMap<>();
+//        ObjectMapper mapper = new ObjectMapper();
+//        for (Integer i : raw_map.keySet()) {
+//            try {
+//                nodeMap.put(i, mapper.readValue(raw_map.get(i), NodeAttribute.class));
+//            } catch (Exception e) {
+//                Debugger.log("", e);
+//                return null;
+//            }
+//
+//        }
+//        return nodeMap;
+//    }
 
     /**
      * This method is used for updating harm.list
