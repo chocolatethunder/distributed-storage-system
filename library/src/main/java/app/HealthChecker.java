@@ -113,7 +113,7 @@ public class HealthChecker implements Runnable{
                 //checking if new stalker list contains any new node
                 if(!this.stalkerList.equals(newStalkers)){
                     addNewStalkers(timer);
-                    //removeMissingStalkers();
+                    removeMissingStalkers();
                 }
                 //checking if harm list contains any new harm node
                 if(this.requestSender == Module.STALKER && !Thread.currentThread().isInterrupted()){
@@ -145,11 +145,10 @@ public class HealthChecker implements Runnable{
             for (HashMap.Entry<Integer, NodeAttribute> entry : harmList.entrySet()) {
                 if (!newHarms.containsKey(entry.getKey())) {
                     Debugger.log("Health Checker: Harm at " + entry.getValue().getAddress() + " no longer available.", null);
+                    harmList.remove(entry.getKey());
                 }
             }
         }
-        harmList = new HashMap<>();
-        harmList.putAll(newHarms);
     }
 
 
