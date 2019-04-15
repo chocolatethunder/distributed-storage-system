@@ -163,7 +163,7 @@ public class HealthChecker implements Runnable{
                             }
                         }
                         for (HashMap.Entry<Integer, NodeAttribute> entry : harmList.entrySet()){
-                            if(newHarms.containsKey(entry.getKey())){
+                            if(!newHarms.containsKey(entry.getKey())){
                                 Debugger.log("Health Checker: Harm at " + entry.getValue().getAddress() + " no longer being tracked.", null);
 
                             }
