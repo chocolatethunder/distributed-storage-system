@@ -57,7 +57,7 @@ public class JcpRequestHandler implements Runnable {
                     executorService.submit(ServiceHandlerFactory.getServiceHandler(req, client, index));
                 }
 
-                if (NetworkUtils.getNodeMap(ConfigManager.getCurrent().getHarm_list_path()).size() > 1){
+                if (NetworkUtils.getNodeMap(ConfigManager.getCurrent().getHarm_list_path()).size() > 1 && req.getMessageType() != MessageType.LIST){
                     if (req.getMessageType() != MessageType.KILL){
                         executorService.submit(ServiceHandlerFactory.getServiceHandler(req, client, index));
                     }
