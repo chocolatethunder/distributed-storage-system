@@ -145,7 +145,7 @@ public class NetDiscovery implements Runnable{
                 // during health check, the space and alive will be updated
                 if(this.target.equals(Module.HARM.name())){
                     NodeAttribute attributes = new NodeAttribute(replyAddress.getHostAddress(), 0, true);
-                    String stringAttributes = mapper.writeValueAsString(attributes);
+                    String stringAttributes = mapper.writeValueAsString(attributes.getAddress());
                     stalkerMap.put(Integer.valueOf(uuid), stringAttributes);
                 }else {
                     stalkerMap.put(Integer.valueOf(uuid), replyAddress.getHostAddress());
