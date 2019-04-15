@@ -26,13 +26,14 @@ public class HashIndexer {
         try {
             File f = new File(indexPath);
             if (!f.exists()){
-                throw new FileNotFoundException("Index file not found...");
+                //throw new FileNotFoundException("Index file not found...");
+                f.createNewFile();
             }
             ind = Optional.of(mapper.readValue(NetworkUtils.fileToString(indexPath), HashIndex.class));
         }
         catch (IOException e){
             //if the file is corrupt or empty we create a new HashIndex
-            e.printStackTrace();
+           // e.printStackTrace();
             System.out.println("Creating new indexfile");
             HashIndex temp = new HashIndex();
             saveToFile(temp);
