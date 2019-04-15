@@ -91,6 +91,7 @@ public class HealthChecker implements Runnable{
 
                         }
                     }
+                harmHistory =  NetworkUtils.getNodeMap(cfg.getHarm_hist_path());
             }
 
 
