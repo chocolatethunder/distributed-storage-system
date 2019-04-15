@@ -126,10 +126,6 @@ public class App {
                     //interrupt any workers
                     jcpReq.interrupt();
                     healthChecker.interrupt();
-                    wait(1000);
-                    healthChecker.interrupt();
-                    wait(1000);
-                    healthChecker.interrupt();
                     Debugger.log("Worker Interrupted", null);
                     try {
                         healthChecker.join();
