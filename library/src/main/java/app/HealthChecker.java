@@ -250,7 +250,7 @@ public class HealthChecker implements Runnable{
         private int port;
 
         //will wait 30 seconds for reply, if not then it will be considered dead
-        private final int timeoutForReply = 10000;
+        private final int timeoutForReply = 1000;
 
         private AtomicLong spaceToUpdate;
         private Module target;
