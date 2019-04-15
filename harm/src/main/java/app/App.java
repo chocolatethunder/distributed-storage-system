@@ -87,14 +87,10 @@ public class App {
                     TcpPacket STALKER_Request = commLink.receivePacket(STALKER_Client);
                     // Handler h = new Handler(STALKER_Client, STALKER_Request, macID);
                     // h.run();
-
-                    Thread t =  new Thread(new Handler(STALKER_Client, STALKER_Request, macID));
-                    t.start();
-//                executorService.submit();
-//                // creating a runnable task for each request from the same socket connection
-//                //probably not even necessary
-//                //not working right now
-//                //executorService.execute();
+                    if (STALKER_Request.getMessageType() != MessageType.BUSY){
+                        Thread t =  new Thread(new Handler(STALKER_Client, STALKER_Request, macID));
+                        t.start();
+                    }
                 }
 
             }

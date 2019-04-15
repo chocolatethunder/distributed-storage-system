@@ -79,7 +79,7 @@ public class ListenerThread implements Runnable {
                                     Module.HARM));
 
                         }
-                }
+                    }
 
                 }
                 else {

@@ -117,6 +117,7 @@ public class App {
                 //make sure there are still servers
                 stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
                 if (stalkerList.size() -1 == 0){
+                    consoleOutput.append("Lost connection servers please wait....\n");
                     connected = false;
                 }
                 else{
@@ -142,7 +143,7 @@ public class App {
     }
 
     //round robin through the stalkers and try to get a connection
-    public static Socket connectToStalker(){
+    public static boolean connectToStalker(){
         int port = cfg.getJcp_req_port();
         HashMap<Integer, String> m =  NetworkUtils.mapFromJson(NetworkUtils.fileToString(cfg.getStalker_list_path()));
         List<Integer> s_list = NetworkUtils.mapToSList(m);
@@ -151,29 +152,34 @@ public class App {
             String stalkerip =  m.get(id);
             stalker = requestSender.connect(stalkerip, port);
             if (stalker != null){
-                break;
+                return(true);
             }
         }
-        return(stalker);
+        return(false);
     }
 //
 //    //load a config (stalker ip) from file while we get network discovery working
     public static void retrieveFiles() {
 
         if (connected){
-            Socket connection = connectToStalker();
-            //uncomment this:
-            listModel.clear();
-            List<String> fileList = requestSender.getFileList();
-            for (int i=0; i < fileList.size(); i++) {
-                listModel.addElement(fileList.get(i));
+            List<String> fileList = null;
+            if(connectToStalker()){
+                //uncomment this:
+                listModel.clear();
+                fileList = requestSender.getFileList();
+                if (fileList != null){
+                    for (int i=0; i < fileList.size(); i++) {
+                        listModel.addElement(fileList.get(i));
+                    }
+                    //remove this:
+                    listOfFiles.setModel(listModel);
+                    //consoleOutput.append("Listed files.\n");
+                    Debugger.log("JCP Main: File list operation complete", null);
+                }
             }
-            //remove this:
-            listOfFiles.setModel(listModel);
-            //consoleOutput.append("Listed files.\n");
-            Debugger.log("JCP Main: File list operation complete", null);
-            try{ connection.close();}
-            catch(IOException e){ Debugger.log("", e);;}
+            else{
+                consoleOutput.append("Unable to connect to a STALKER, please make sure the units are on and connected to the network");
+            }
         }
         else{
             consoleOutput.append("JCP Main: Connecting to server, please wait.\n");
@@ -184,25 +190,31 @@ public class App {
     public static void chooseFile() {
         String f = null;
         if (connected){
-            Socket connection = connectToStalker();
-            JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-            int returnValue = jfc.showOpenDialog(null);
-            if (returnValue == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = jfc.getSelectedFile();
+            if(connectToStalker()){
+                JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+                int returnValue = jfc.showOpenDialog(null);
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = jfc.getSelectedFile();
 
-                String name = FilenameUtils.separatorsToUnix(selectedFile.getAbsolutePath());
-                System.out.println(name);
-                //remove this:
-                listModel.addElement(selectedFile.getName());
-                //uncomment this:
-                requestSender.sendFile(name);
-                consoleOutput.append("Uploaded " + selectedFile + "\n");
-
-                Debugger.log("JCP Main: Uploaded " + selectedFile, null);
-                f = selectedFile.getName();
+                    String name = FilenameUtils.separatorsToUnix(selectedFile.getAbsolutePath());
+                    System.out.println(name);
+                    //remove this:
+                    listModel.addElement(selectedFile.getName());
+                    //uncomment this:
+                    if (requestSender.sendFile(name)){
+                        consoleOutput.append("Uploaded " + selectedFile + "\n");
+                        Debugger.log("JCP Main: Uploaded " + selectedFile, null);
+                    }
+                    else{
+                        consoleOutput.append("Connection error uploading file. Please make sure HARM targets are still connected... " + selectedFile + "\n");
+                        Debugger.log("Connection error uploading file. Please make sure HARM targets are still connected... " + selectedFile, null);
+                    }
+                }
             }
-            try{ connection.close();}
-            catch(IOException e){ Debugger.log("", e);}
+            else{
+                consoleOutput.append("Unable to connect to a STALKER, please make sure the units are on and connected to the network");
+            }
+
 
         }
         else{
@@ -213,21 +225,26 @@ public class App {
 
     public static void deleteFile() {
         if (connected){
-            Socket connection = connectToStalker();
-            int index = listOfFiles.getSelectedIndex();
-            Object selectedFilename = listOfFiles.getSelectedValue();
-            //remove this:
-            listModel.removeElement(selectedFilename);
-            //remove this:
-            listOfFiles.setModel(listModel);
-            //uncomment this:
-            requestSender.deleteFile(selectedFilename.toString());
-            consoleOutput.append("Deleted " + selectedFilename.toString() + "\n");
-
-            Debugger.log("JCP Main: Deleted " + selectedFilename.toString(), null);
-            try{ connection.close();}
-            catch(IOException e){ Debugger.log("", e);}
-
+            if(connectToStalker()){
+                int index = listOfFiles.getSelectedIndex();
+                Object selectedFilename = listOfFiles.getSelectedValue();
+                //remove this:
+                listModel.removeElement(selectedFilename);
+                //remove this:
+                listOfFiles.setModel(listModel);
+                //uncomment this:
+                if(requestSender.deleteFile(selectedFilename.toString())){
+                    consoleOutput.append("Deleted " + selectedFilename.toString() + "\n");
+                    Debugger.log("JCP Main: Deleted " + selectedFilename.toString(), null);
+                }
+                else{
+                    consoleOutput.append("Connection error uploading file. Please make sure HARM targets are still connected... ");
+                    Debugger.log("Connection error deleting file. Please make sure HARM targets are still connected... ", null);
+                }
+            }
+            else{
+                consoleOutput.append("Unable to connect to a STALKER, please make sure the units are on and connected to the network");
+            }
         }
         else{
             consoleOutput.append("Connecting to server, please wait.\n");
@@ -239,22 +256,29 @@ public class App {
 
     public static void downloadFile() {
         if (connected){
-            Socket connection = connectToStalker();
-            String selectedFilename = listOfFiles.getSelectedValue().toString();
-            //remove this?:
-            JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            int returnValue = jfc.showOpenDialog(null);
-            //
-            if (returnValue == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = jfc.getSelectedFile();
-                //uncomment this:
-                requestSender.getFile(selectedFile + "/" + selectedFilename);
-                consoleOutput.append("Downloaded " + selectedFilename + " to " + selectedFile + "\n");
-                Debugger.log("JCP Main: Downloaded " + selectedFilename + " to " + selectedFile, null);
+            if(connectToStalker()){
+                String selectedFilename = listOfFiles.getSelectedValue().toString();
+                //remove this?:
+                JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+                jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                int returnValue = jfc.showOpenDialog(null);
+                //
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = jfc.getSelectedFile();
+                    //uncomment this:
+                    if(requestSender.getFile(selectedFile + "/" + selectedFilename)){
+                        consoleOutput.append("Downloaded " + selectedFilename + " to " + selectedFile + "\n");
+                        Debugger.log("JCP Main: Downloaded " + selectedFilename + " to " + selectedFile, null);
+                    }
+                    else{
+                        consoleOutput.append("Connection error downloading file. Please make sure HARM targets are still connected... ");
+                        Debugger.log("Connection error downloading file. Please make sure HARM targets are still connected... ", null);
+                    }
+                }
             }
-            try{ connection.close();}
-            catch(IOException e){Debugger.log("", e);}
+            else{
+                consoleOutput.append("Unable to connect to a STALKER, please make sure the units are on and connected to the network");
+            }
         }
         else{
             consoleOutput.append("Connecting to server, please wait.\n");

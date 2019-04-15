@@ -50,7 +50,7 @@ public class CommsHandler {
 
     //function for recieving a TCP packet once a connection has been established
     public TcpPacket receivePacket(Socket socket) {
-        TcpPacket recieved = null;
+        TcpPacket recieved = new TcpPacket(MessageType.BUSY, "");;
         ObjectMapper mapper = new ObjectMapper();
         Optional<TcpPacket> receivedPacket = Optional.empty();
 

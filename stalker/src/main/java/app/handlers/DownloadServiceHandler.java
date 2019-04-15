@@ -87,13 +87,21 @@ public class DownloadServiceHandler implements Runnable {
                 //we are done with the connection to the leader
                 leader.close();
             }
+            else{
+                leader.close();
+                throw new RuntimeException(NetworkUtils.timeStamp(1) + "Leader encountered problems when downloading files");
+            }
+            commsLink.sendResponse(socket, MessageType.ACK);
         }
         catch (RuntimeException ex){
+            commsLink.sendResponse(socket, MessageType.BUSY);
             Debugger.log("", ex);
         }
         catch (IOException err){
+            commsLink.sendResponse(socket, MessageType.BUSY);
             Debugger.log("", err);
         }
+
 
     }
 

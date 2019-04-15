@@ -183,7 +183,7 @@ public class App {
         List<Integer> stalkerList = null;
         Map<Integer, NodeAttribute> harmlist = null;
         int attempts = 0;
-        boolean found = false;
+        boolean found[] = {false, false};
         //wait for at least 2 connections
         while (!connected && !NetworkUtils.shouldShutDown()){
             //we will wait for network discovery to do its thing
@@ -197,7 +197,11 @@ public class App {
             }
             try{
                 if (harmlist != null && !harmlist.isEmpty()){
-                    Debugger.log("Populating harm list...", null);
+                    if (!found[1]){
+                        Debugger.log("Harms discovered on network!...", null);
+                        found[1] = true;
+                    }
+
                 }
                 else{
                     Debugger.log("Stalker Main: No HARM targets detected...", null);
@@ -205,8 +209,8 @@ public class App {
                 LeaderCheck leaderchecker = new LeaderCheck();
                 if (stalkerList != null && stalkerList.size() > 0){
 
-                    if (!found){
-                        found = true;
+                    if (!found[0]){
+                        found[0] = true;
                         Debugger.log("Stalker Main: Stalkers have been discovered on the network!", null);
                         Debugger.log("Stalker Main: Waiting for a leader or election threshold to be met...", null);
 

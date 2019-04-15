@@ -39,6 +39,7 @@ public class QueueHandler implements  Runnable {
     public boolean processJob(){
         CommsHandler commLink = new CommsHandler();
         Socket worker = null;
+        boolean updated = false;
         try{
             System.out.println(NetworkUtils.timeStamp(1) + " Processing job...");
             worker = NetworkUtils.createConnection(q.getInetAddr().getHostAddress(), ConfigManager.getCurrent().getLeader_admin_port());
@@ -59,6 +60,11 @@ public class QueueHandler implements  Runnable {
                         }
                         NetworkUtils.wait(1000);
                     }
+                    if (!updated){
+
+                    }
+
+
 
                     Thread th = new Thread(new IndexManager(Indexer.loadFromFile(), Indexer.deserializeUpdate(t.getMessage())));
                     th.start();
@@ -66,30 +72,26 @@ public class QueueHandler implements  Runnable {
                     Debugger.log("Stalkers have been updated", null);
 
                 }
-                commLink.sendResponse(worker, MessageType.ACK);
+
                 Debugger.log( "job complete", null);
                 worker.close();
             }
         }
         catch (InterruptedException e){
-            Debugger.log("", e);
+            Debugger.log("LEADER PROBLEM \n\n", e);
         }
         catch (IOException e){
 
-            e.printStackTrace();
+            Debugger.log("LEADER PROBLEM \n\n", e);
+            commLink.sendResponse(worker, MessageType.BUSY);
+            NetworkUtils.closeSocket(worker);
             return(false);
         }
         catch (Exception e){
-            Debugger.log("", e);
+            Debugger.log("LEADER PROBLEM \n\n", e);
         }
-        try{
-            worker.close();
-        }
-        catch (Exception e){
-
-        }
-
-
+        commLink.sendResponse(worker, MessageType.ACK);
+        NetworkUtils.closeSocket(worker);
         return true;
     }
     //put an entry into the queue

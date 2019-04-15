@@ -85,22 +85,27 @@ public class UploadServiceHandler implements Runnable {
                     Debugger.log("Upload Service: Upload complete!", null);
                     leader.close();
                 }
+                else{
+                    Debugger.log("There was a problem updating stalkers :(", null);
+                    leader.close();
+                    throw new RuntimeException(NetworkUtils.timeStamp(1) + "Upload Service: Error when Updating STALKERS.");
+                }
             }
             catch(IOException e){
                 Debugger.log("", e);
             }
+
         }
         catch(RuntimeException e){
-            try{ socket.close();}
-            catch(IOException ex){ Debugger.log("", ex); }
+            commsLink.sendResponse(socket, MessageType.BUSY);
+//            try{ socket.close();}
+//            catch(IOException ex){ Debugger.log("", ex); }
             Debugger.log("", e);
             return;
         }
+        //send final completion ack to JCP
+        commsLink.sendResponse(socket, MessageType.ACK);
 
-        //       3. confirm completion
-        /////////////////////////
-        /////////////////////////
-        // UPDATE REMAINING STALKERS
     }
 
 
