@@ -129,6 +129,7 @@ public class App {
                     try {
                         healthChecker.interrupt();
                         healthChecker.join();
+
                         jcpReq.join();
                     }
                     catch(InterruptedException e){

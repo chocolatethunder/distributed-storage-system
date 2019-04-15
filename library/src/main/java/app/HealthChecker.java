@@ -124,7 +124,7 @@ public class HealthChecker implements Runnable{
                                     spaceAvailableSoFar,
                                     Module.STALKER);
                         }
-                        if (interrupted){
+                        if (Thread.currentThread().isInterrupted()){
                             break;
                         }
                     }
@@ -158,13 +158,16 @@ public class HealthChecker implements Runnable{
                                 harmHistory.get(entry.getKey()).setAlive(true);
                             }
 
-                            if (interrupted){
+                            if (Thread.currentThread().isInterrupted()){
                                 break;
                             }
                         }
-                        this.harmList = new HashMap<>();
-                        this.harmList.putAll(newHarms);
-                        NetworkUtils.toFile(cfg.getHarm_hist_path(), harmHistory);
+                        if (!Thread.currentThread().isInterrupted()){
+                            this.harmList = new HashMap<>();
+                            this.harmList.putAll(newHarms);
+                            NetworkUtils.toFile(cfg.getHarm_hist_path(), harmHistory);
+                        }
+
                     }
                 }
 
@@ -188,18 +191,21 @@ public class HealthChecker implements Runnable{
      * @param entry
      */
     private void addTimerTaskForHarm(Timer timer, ObjectMapper mapper, HashMap.Entry<Integer, NodeAttribute> entry) {
-        NodeAttribute attributes = null;
+        if (!Thread.currentThread().isInterrupted()){
+            NodeAttribute attributes = null;
 //        try {
 //            attributes = mapper.readValue(entry.getValue(), NodeAttribute.class);
 //        } catch (IOException e) {
 //            Debugger.log("", e);
 //        }
-        attributes = entry.getValue();
-        //Debugger.log("Health Checker: Starting scheduled health task for harm node: " + attributes.getAddress(), null);
-        addTimerTask(timer, entry.getKey(),
-                attributes.getAddress(),
-                null,
-                Module.HARM);
+            attributes = entry.getValue();
+            //Debugger.log("Health Checker: Starting scheduled health task for harm node: " + attributes.getAddress(), null);
+            addTimerTask(timer, entry.getKey(),
+                    attributes.getAddress(),
+                    null,
+                    Module.HARM);
+        }
+
     }
 
 
@@ -216,12 +222,16 @@ public class HealthChecker implements Runnable{
                               String host,
                               AtomicLong spaceAvailableSoFar,
                               Module stalker) {
-        timer.scheduleAtFixedRate(new HealthCheckerTask(uuid,
-                        host,
-                        spaceAvailableSoFar,
-                        stalker),
-                intialDelay,
-                interval);
+
+
+        if (!Thread.currentThread().isInterrupted()){
+            timer.scheduleAtFixedRate(new HealthCheckerTask(uuid,
+                            host,
+                            spaceAvailableSoFar,
+                            stalker),
+                    intialDelay,
+                    interval);
+        }
     }
 
 
