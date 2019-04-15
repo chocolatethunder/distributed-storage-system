@@ -259,16 +259,7 @@ public class App {
     }
 
     public static void initStalker(){
-        File f = new File(cfg.getHarm_hist_path());
-        if (!f.exists()){
-            try{
-                HashMap<Integer, NodeAttribute> n = new HashMap<>();
-                f.createNewFile();
-                NetworkUtils.toFile(cfg.getHarm_hist_path(), n);
-            }
-            catch (IOException e){
-            }
-        }
+
         List<File> directories = new ArrayList<>();
         directories.add(new File("temp"));
         directories.add(new File("logs"));
@@ -280,6 +271,16 @@ public class App {
         directories.add(new File("temp/toChunk"));
         directories.add(new File("temp/reassembled"));
         NetworkUtils.initDirs(directories, true, 5);
+        File f = new File(cfg.getHarm_hist_path());
+        if (!f.exists()){
+            try{
+                HashMap<Integer, NodeAttribute> n = new HashMap<>();
+                f.createNewFile();
+                NetworkUtils.toFile(cfg.getHarm_hist_path(), n);
+            }
+            catch (IOException e){
+            }
+        }
     }
     //will block worker from doing anythin until the leader is confirmed
     public static boolean getConfirmation(int uuid) {
