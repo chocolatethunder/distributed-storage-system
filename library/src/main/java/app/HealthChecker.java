@@ -175,6 +175,7 @@ public class HealthChecker implements Runnable{
             } catch (Exception e) {
                 Debugger.log("", e);
             }
+            Debugger.log("loop", null);
             try{Thread.sleep(interval);}catch (Exception e){};
         }
         Debugger.log("Health checker shutdown init...", null);
