@@ -485,7 +485,11 @@ public class NetworkUtils {
 
             }
 
-        } catch (IOException e) {
+        }
+        catch (NullPointerException e){
+
+        }
+        catch (IOException e) {
             Debugger.log("", e);
         }
 
@@ -535,7 +539,10 @@ public class NetworkUtils {
                 File[] folder_contents = directories.get(i).listFiles();
                 if(folder_contents != null) {
                     for (File f : folder_contents) {
-                        f.delete();
+                        if (!f.getName().equals(ConfigManager.getCurrent().getHarm_hist_path())){
+                            f.delete();
+                        }
+
                     }
                 }
             }

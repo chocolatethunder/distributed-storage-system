@@ -62,7 +62,7 @@ public class CommsHandler {
 
 
         } catch (Exception e) {
-            Debugger.log("", e);
+            Debugger.log("Comms Handler: packet could not be received", null);
         }
         return recieved;
     }

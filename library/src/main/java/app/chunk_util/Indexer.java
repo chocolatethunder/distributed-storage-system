@@ -22,7 +22,8 @@ public class Indexer {
         try {
             File f = new File(indexPath);
             if (!f.exists()){
-                throw new FileNotFoundException("Indexer: Index file not found...");
+                f.createNewFile();
+                //throw new FileNotFoundException("Indexer: Index file not found...");
             }
             ind = Optional.of(mapper.readValue(NetworkUtils.fileToString(indexPath), IndexFile.class));
             System.out.println("Indexer: Indexfile loaded from file.");

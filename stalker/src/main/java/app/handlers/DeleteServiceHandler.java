@@ -89,7 +89,7 @@ public class DeleteServiceHandler implements Runnable {
     }
     public boolean removeChunks(IndexEntry e) {
         int port = cfg.getHarm_listen();
-        Map<Integer, NodeAttribute> m = NetworkUtils.getNodeMap(ConfigManager.getCurrent().getHarm_list_path());
+        Map<Integer, NodeAttribute> m = NetworkUtils.getNodeMap(ConfigManager.getCurrent().getHarm_hist_path());
         for (Chunk c : e.getChunkList()) {
             for (Integer i : c.getReplicas()) {
                 try {

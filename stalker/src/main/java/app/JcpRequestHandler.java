@@ -53,7 +53,7 @@ public class JcpRequestHandler implements Runnable {
                 TcpPacket req = commLink.receivePacket(client);
                 //creating a specific type of service handler using factory method
                 //Submit a task to the handler queue and move on
-                if (NetworkUtils.getNodeMap(ConfigManager.getCurrent().getHarm_list_path()).size() < 2){
+                if (NetworkUtils.getNodeMap(ConfigManager.getCurrent().getHarm_list_path()).size() > 1){
                     if (req.getMessageType() != MessageType.KILL){
                         executorService.submit(ServiceHandlerFactory.getServiceHandler(req, client, index));
                     }

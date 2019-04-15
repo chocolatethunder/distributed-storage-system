@@ -47,6 +47,7 @@ public class ConfigFile {
     private int debug_mode = 3;
 
     private String harm_list_path = "index/lists/harm.list";
+    private String harm_hist_path = "index/lists/harm_hist.list";
     private String stalker_list_path = "index/lists/stalker.list";
     private String index_file_path = "index/index_file/main.index";
     private String config_path = "config/";
@@ -60,6 +61,10 @@ public class ConfigFile {
 
     public ConfigFile() {
     }
+
+    public String getHarm_hist_path() { return harm_hist_path; }
+
+    public void setHarm_hist_path(String harm_hist_path) { this.harm_hist_path = harm_hist_path; }
 
     public boolean isReelection() {
         return reelection;

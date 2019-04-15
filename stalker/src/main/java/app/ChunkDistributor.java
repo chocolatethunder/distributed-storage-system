@@ -74,7 +74,7 @@ public class ChunkDistributor {
 
     //placeholder chunk sending function
     public boolean sendChunk(Chunk c, Integer target){
-        Map<Integer, NodeAttribute> n = NetworkUtils.getNodeMap(ConfigManager.getCurrent().getHarm_list_path());
+        Map<Integer, NodeAttribute> n = NetworkUtils.getNodeMap(ConfigManager.getCurrent().getHarm_hist_path());
         //HashMap<Integer, String > m = NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
         int attempts = 0;
         while(true){

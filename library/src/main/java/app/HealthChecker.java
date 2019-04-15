@@ -32,6 +32,7 @@ public class HealthChecker implements Runnable{
 
     private Map<Integer, String> stalkerList;
     private Map<Integer, NodeAttribute> harmList;
+    private Map<Integer, NodeAttribute> harmHistory;
     //private Map<Integer, String> harmList;
     private Module requestSender;
     private AtomicLong spaceAvailableSoFar;
@@ -52,7 +53,16 @@ public class HealthChecker implements Runnable{
 
         if(checker == Module.STALKER){
 
-            harmList =  NetworkUtils.getNodeMap(cfg.getHarm_list_path());
+            //
+            //harmList =  NetworkUtils.getNodeMap(cfg.getHarm_list_path());
+
+            //start initially with no harms listed in the system
+            harmList = new HashMap<>();
+
+            //this is the history of harms that have been on the system
+            //we need to keep a consistent map of these or there will be errors when trying to get files from downed harms
+            harmHistory =  NetworkUtils.getNodeMap(cfg.getHarm_hist_path());
+
         }
         this.spaceAvailableSoFar = spaceAvailableSoFar;
         this.debugMode = debugMode;
@@ -104,7 +114,7 @@ public class HealthChecker implements Runnable{
                 if(!this.stalkerList.equals(newStalkers)){
                     for(Map.Entry<Integer, String> entry : newStalkers.entrySet()){
                         if(!this.stalkerList.containsKey(entry.getKey())){
-                            Debugger.log("Health Checker: Stalker at" + entry.getValue() + " is now being tracked.", null);
+                            Debugger.log("Health Checker: Stalker at " + entry.getValue() + " is now being tracked.", null);
                             if(debugMode) {
                                 Debugger.log("Health Checker: New stalker detected" + entry.getValue(), null);
                             }
@@ -131,14 +141,22 @@ public class HealthChecker implements Runnable{
                         for (Map.Entry<Integer, NodeAttribute> entry : newHarms.entrySet()) {
                             if(!this.harmList.containsKey(entry.getKey())) {
                                 addTimerTaskForHarm(timer, mapper, entry);
-                                Debugger.log("Health Checker: Harm at" + entry.getValue().getAddress() + " is now being tracked.", null);
+                                Debugger.log("Health Checker: Harm at " + entry.getValue().getAddress() + " is now being tracked.", null);
+
                             }
+                            //check if we've seen the node before
+                            if (!harmHistory.containsKey(entry.getKey())){
+                                //put the entry in the list if we haven't seen it before
+                                harmHistory.put(entry.getKey(), entry.getValue());
+                            }
+
                             if (interrupted){
                                 break;
                             }
                         }
                         this.harmList = new HashMap<>();
                         this.harmList.putAll(newHarms);
+                        NetworkUtils.toFile(cfg.getHarm_hist_path(), harmHistory);
                     }
                 }
 
@@ -387,12 +405,6 @@ public class HealthChecker implements Runnable{
                         .collect(Collectors.toSet());
 
                 Set<String> addresses = new HashSet<>();
-//                for (Map.Entry<Integer, String> harmTarget : harmList.entrySet()) {
-//
-//                    if (macIds.contains(harmTarget.getKey())) {
-//                        addresses.add(harmTarget.getValue());
-//                    }
-//                }
 
                 for (int macId : macIds){
                     addresses.add(harmList.get(macId).getAddress());
@@ -405,37 +417,6 @@ public class HealthChecker implements Runnable{
 
             return harmIps;
         }
-
-
-        private void deleteChunks(Set<String> corruptedChunks){
-
-            int requestPort = cfg.getHarm_listen();
-            CommsHandler commsLink = new CommsHandler();
-            Socket harmServer = null;
-            try {
-
-
-                harmServer = NetworkUtils.createConnection(host, requestPort);
-
-                //if everything went well then we can send the damn file
-
-                for(String chunkId : corruptedChunks) {
-                    //send the packet to the harm target
-                    if (commsLink.sendPacket(harmServer,
-                            MessageType.DELETE,
-                            NetworkUtils.createSerializedRequest(chunkId,
-                                    MessageType.DELETE, ""), true) == MessageType.ACK) {
-                        harmServer.close();
-                    }
-                }
-            } catch (IOException ex) {
-                Debugger.log("", ex);
-
-            }
-        }
-
-
-
 
         private void updateConfigAndEndTask(){
             if(this.target == Module.STALKER) {
@@ -476,8 +457,12 @@ public class HealthChecker implements Runnable{
                     Debugger.log("A worker has died.", null);
                 }
             }else {
-                // don't remove but mark as dead in HARM list
-                NetworkUtils.updateHarmList(String.valueOf(this.uuid), -1, false );
+
+                harmHistory.get(this.uuid).setAlive(false);
+
+                Debugger.log("THE HARM IS DEAD " + harmHistory.get(this.uuid).isAlive(),null);
+                // don't remove but mark as dead in HARM list and save to file
+                NetworkUtils.toFile(cfg.getHarm_hist_path(), harmHistory);
             }
             //cancel task
             Debugger.log("Health Checker: Error Occurred Cancelling scheduled task for " + this.host + ".", null);

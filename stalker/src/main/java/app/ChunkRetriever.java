@@ -40,7 +40,7 @@ public class ChunkRetriever {
     public boolean retrieveChunk(Chunk c){
         //get the map of harm ids
         //HashMap<Integer, String > m = NetworkUtils.mapFromJson(NetworkUtils.fileToString("config/harm.list"));
-        Map<Integer, NodeAttribute> n = NetworkUtils.getNodeMap(ConfigManager.getCurrent().getHarm_list_path());
+        Map<Integer, NodeAttribute> n = NetworkUtils.getNodeMap(ConfigManager.getCurrent().getHarm_hist_path());
         int attempts = 0;
         for (Integer s : c.getReplicas()){
             NodeAttribute targ = n.get(s);

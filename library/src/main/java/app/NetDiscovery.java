@@ -57,7 +57,16 @@ public class NetDiscovery implements Runnable{
                         }
                         //write to file
 
-                        NetworkUtils.toFile(ConfigManager.getCurrent().getHarm_list_path(), listOfAddrs);
+                        HashMap<Integer, NodeAttribute> n = new HashMap<>();
+                        for (int key : listOfAddrs.keySet()){
+                            NodeAttribute node = new NodeAttribute();
+                            node.setAddress(listOfAddrs.get(key));
+                            node.setAlive(true);
+                            node.setSpace(0);
+                            n.put(key, node);
+                        }
+
+                        NetworkUtils.toFile(ConfigManager.getCurrent().getHarm_list_path(), n);
                     }
 
                 }

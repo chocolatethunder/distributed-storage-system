@@ -55,7 +55,7 @@ public class App {
         };
         ScheduledExecutorService exec = Executors.newScheduledThreadPool(4);
         // bug them every 30s
-        exec.scheduleAtFixedRate(periodic_health_check, 15, 30, TimeUnit.SECONDS);
+        exec.scheduleAtFixedRate(periodic_health_check, 15, 15, TimeUnit.SECONDS);
 
         int macID = NetworkUtils.getMacID();
         CommsHandler commLink = new CommsHandler();
