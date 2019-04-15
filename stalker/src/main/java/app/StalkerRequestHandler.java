@@ -41,7 +41,7 @@ public class StalkerRequestHandler implements Runnable {
             return;
         }
         Debugger.log("Stalker Request Handler: Leader is now taking requests on port ..." + serverPort, null);
-        while(!Thread.interrupted() && !NetworkUtils.shouldShutDown()){
+        while(!Thread.currentThread().isInterrupted() && !NetworkUtils.shouldShutDown()){
             try{
                 client = server.accept();
                 // receive packet on the socket link

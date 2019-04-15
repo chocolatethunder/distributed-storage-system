@@ -31,6 +31,7 @@ public class ElectionListener implements Runnable{
         try {
             server = new ServerSocket(serverPort);
             server.setReuseAddress(true);
+            server.setSoTimeout(5000);
 
             //server.setReuseAddress(true);
         } catch (IOException e) {
@@ -38,35 +39,35 @@ public class ElectionListener implements Runnable{
         }
         Debugger.log("Election responder listening on port " + serverPort, null);
         // will keep on listening for requests
-        while (!halt) {
+        while (!Thread.currentThread().isInterrupted() && !NetworkUtils.shouldShutDown()) {
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();
-                client.setReuseAddress(false);
-                Debugger.log("Election Listener: Accepted connection : "  + client, null);
-                // receive packet on the socket link
-                TcpPacket req = commLink.receivePacket(client);
-                //When a leader request is recieved
+                if (client != null){
+                    Debugger.log("Election Listener: Accepted connection : "  + client, null);
+                    // receive packet on the socket link
+                    TcpPacket req = commLink.receivePacket(client);
+                    //When a leader request is recieved
 
-                if(req.getMessageType() == MessageType.LEADER){
-                    // reply to with leader
-                    executorService.submit(new LeaderResponder(client));
+                    if(req.getMessageType() == MessageType.LEADER){
+                        // reply to with leader
+                        executorService.submit(new LeaderResponder(client));
+                    }
+                    else if (req.getMessageType() == MessageType.REELECT){
+                        Debugger.log("Re-election requested...", null);
+                        ConfigManager.getCurrent().setReelection(true);
+                        //executorService.submit(new LeaderResponder(client));
+                    }
+                    else if(req.getMessageType() == MessageType.UPDATE){
+                        // Update the indexfile
+                        Debugger.log("Update received from leader", null);
+                        commLink.sendResponse(client, MessageType.ACK);
+                        executorService.submit(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
+                    }
                 }
-                else if (req.getMessageType() == MessageType.REELECT){
-                    Debugger.log("Re-election requested...", null);
-                    ConfigManager.getCurrent().setReelection(true);
-                    //executorService.submit(new LeaderResponder(client));
-                }
-                else if(req.getMessageType() == MessageType.UPDATE){
-                    // Update the indexfile
-                    Debugger.log("Update received from leader", null);
-                    commLink.sendResponse(client, MessageType.ACK);
-                    executorService.submit(new IndexManager(index, Indexer.deserializeUpdate(req.getMessage())));
 
-                }
             } catch (IOException e) {
-
-                Debugger.log("Listener: Socket timeout", e);
+                Debugger.log("Listener: Socket timeout", null);
             }
         }
 

@@ -44,7 +44,7 @@ public class JcpRequestHandler implements Runnable {
         Debugger.log("JCP request handler: Listening on port " + serverPort, null);
         Debugger.log("JCP server addr: " + server, null);
         // will keep on listening for requests
-        while (!Thread.interrupted() && !NetworkUtils.shouldShutDown()) {
+        while (!Thread.currentThread().isInterrupted() && !NetworkUtils.shouldShutDown()) {
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();

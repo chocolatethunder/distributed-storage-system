@@ -37,7 +37,8 @@ public class App {
     public static void main(String[] args) {
         //debugging modes: 0 - none; 1 - message only; 2 - stack traces only; 3 - stack and message
         Debugger.setMode(3);
-        Debugger.toggleFileMode();
+
+        //Debugger.toggleFileMode();
         //make sure the directories are available
         initStalker();
         ConfigManager.loadFromFile("config/config.cfg", "default", true);

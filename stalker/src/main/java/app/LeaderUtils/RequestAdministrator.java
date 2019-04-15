@@ -21,7 +21,7 @@ public class RequestAdministrator implements Runnable {
     public void run(){
         System.out.println(NetworkUtils.timeStamp(1) + "Administrator online.");
         ExecutorService executorService = Executors.newFixedThreadPool(5);
-        while (!Thread.interrupted() && !NetworkUtils.shouldShutDown()){
+        while (!Thread.currentThread().isInterrupted() && !NetworkUtils.shouldShutDown()){
 
             if (!pQueue.isEmpty()){
                 executorService.submit(new QueueHandler(1,null, pQueue));
