@@ -67,7 +67,7 @@ public class ElectionListener implements Runnable{
                 }
 
             } catch (IOException e) {
-                Debugger.log("Listener: Socket timeout", null);
+                //Debugger.log("Listener: Socket timeout", null);
             }
         }
 

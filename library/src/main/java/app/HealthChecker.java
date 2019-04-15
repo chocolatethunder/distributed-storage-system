@@ -31,7 +31,8 @@ public class HealthChecker implements Runnable{
     private final long intialDelay = 1000 * 10;
 
     private Map<Integer, String> stalkerList;
-    private Map<Integer, String> harmList;
+    private Map<Integer, NodeAttribute> harmList;
+    //private Map<Integer, String> harmList;
     private Module requestSender;
     private AtomicLong spaceAvailableSoFar;
     private boolean debugMode;
@@ -50,7 +51,8 @@ public class HealthChecker implements Runnable{
         stalkerList =  NetworkUtils.getStalkerMap(cfg.getStalker_list_path());
 
         if(checker == Module.STALKER){
-            harmList =  NetworkUtils.mapFromJson(NetworkUtils.fileToString(cfg.getHarm_list_path()));
+
+            harmList =  NetworkUtils.getNodeMap(cfg.getHarm_list_path());
         }
         this.spaceAvailableSoFar = spaceAvailableSoFar;
         this.debugMode = debugMode;
@@ -83,7 +85,7 @@ public class HealthChecker implements Runnable{
         if(harmList != null) {
             ObjectMapper mapper = new ObjectMapper();
             // for each node in the harm list, scheduling a task to occur at interval
-            for (Map.Entry<Integer, String> entry : harmList.entrySet()) {
+            for (Map.Entry<Integer, NodeAttribute> entry : harmList.entrySet()) {
                 addTimerTaskForHarm(timer, mapper, entry);
             }
         }
@@ -93,7 +95,7 @@ public class HealthChecker implements Runnable{
          * This block is going to check changes in the list every interval and if there is any new entry
          * it will start a timer Task for it
          */
-        while (!interrupted && !NetworkUtils.shouldShutDown()){
+        while (!Thread.currentThread().isInterrupted() && !NetworkUtils.shouldShutDown()){
             try {
                 Map<Integer, String> newStalkers =  NetworkUtils.mapFromJson(NetworkUtils
                         .fileToString(cfg.getStalker_list_path()));
@@ -121,12 +123,10 @@ public class HealthChecker implements Runnable{
                 }
                 //checking if harm list contains any new harm node
                 if(this.requestSender == Module.STALKER){
-                    Map<Integer, String> newHarms =  NetworkUtils.mapFromJson(NetworkUtils
-                            .fileToString(cfg.getHarm_list_path()));
-
+                    Map<Integer, NodeAttribute> newHarms =  NetworkUtils.getNodeMap(cfg.getHarm_list_path());
                     if(!this.harmList.equals(newHarms)) {
                         ObjectMapper mapper = new ObjectMapper();
-                        for (Map.Entry<Integer, String> entry : newHarms.entrySet()) {
+                        for (Map.Entry<Integer, NodeAttribute> entry : newHarms.entrySet()) {
                             if(!this.harmList.containsKey(entry.getKey())) {
                                 addTimerTaskForHarm(timer, mapper, entry);
                             }
@@ -145,6 +145,8 @@ public class HealthChecker implements Runnable{
             }
             try{Thread.sleep(interval);}catch (Exception e){};
         }
+        timer.cancel();
+        timer.purge();
         Debugger.log("Health checker shutdown...", null);
 
     }
@@ -155,13 +157,14 @@ public class HealthChecker implements Runnable{
      * @param mapper
      * @param entry
      */
-    private void addTimerTaskForHarm(Timer timer, ObjectMapper mapper, Map.Entry<Integer, String> entry) {
+    private void addTimerTaskForHarm(Timer timer, ObjectMapper mapper, Map.Entry<Integer, NodeAttribute> entry) {
         NodeAttribute attributes = null;
-        try {
-            attributes = mapper.readValue(entry.getValue(), NodeAttribute.class);
-        } catch (IOException e) {
-            Debugger.log("", e);
-        }
+//        try {
+//            attributes = mapper.readValue(entry.getValue(), NodeAttribute.class);
+//        } catch (IOException e) {
+//            Debugger.log("", e);
+//        }
+        attributes = entry.getValue();
         //Debugger.log("Health Checker: Starting scheduled health task for harm node: " + attributes.getAddress(), null);
         addTimerTask(timer, entry.getKey(),
                 attributes.getAddress(),
@@ -263,61 +266,9 @@ public class HealthChecker implements Runnable{
                                         availableSpace,
                                         true);
                             }
-                        } else if (status.equals("CORRUPT") && sender == Module.HARM) {
-
-                            Debugger.log("Health check: Corrupted chunk detected on HARM: " + host, null);
-                            if(!corruptedList.isEmpty()){
-                                Map<String, Set<String>> addressesOfCopies = getAddressesOfCopies(corruptedList);
-
-                                for (String uuid : addressesOfCopies.keySet()){
-
-                                    Chunk c = null;
-                                    CommsHandler commLink = new CommsHandler();
-                                    //lets get the chunk first
-                                    Debugger.log("Health Checker: Attempting to retrieve copy of corrupted chunk", null);
-                                    for (String addr : addressesOfCopies.get(uuid)){
-
-                                        try{
-                                            Socket harmServer = NetworkUtils.createConnection(addr, ConfigManager.getCurrent().getHarm_listen());
-                                            if(commLink.sendPacket(harmServer, MessageType.DOWNLOAD, NetworkUtils.createSerializedRequest(uuid, MessageType.DOWNLOAD, ""), true) == MessageType.ACK){
-                                                FileStreamer fileStreamer = new FileStreamer(harmServer);
-                                                fileStreamer.receiveFileFromSocket(cfg.getStalker_chunk_dir() + uuid);
-                                                NetworkUtils.closeSocket(harmServer);
-                                                c = new Chunk();
-                                                c.setChunk_path(cfg.getStalker_chunk_dir() + uuid);
-                                                c.setUuid(uuid);
-                                                break;
-                                            }
-                                        }
-                                        catch (Exception e){
-                                            Debugger.log("Health check: could not get copy of chunk", null);
-                                        }
-                                    }
-                                    if (c == null){
-                                        throw new RuntimeException("Health check: Could not retrieve chunks");
-                                    }
-                                    try {
-
-                                        Debugger.log("Health Checker: Sending replacement chunk.", null);
-                                        socket = NetworkUtils.createConnection(host, cfg.getHarm_listen());
-                                        //start the replacement process
-                                        if(commsHandler.sendPacket(socket, MessageType.REPLACE,
-                                                NetworkUtils.createSerializedRequest(uuid, MessageType.REPLACE,""), true) == MessageType.ACK){
-                                            //send that shit
-                                            FileStreamer fileStreamer = new FileStreamer(socket);
-                                            fileStreamer.sendFileToSocket(c.getChunk_path());
-                                            NetworkUtils.closeSocket(socket);
-                                            break;
-                                        }
-                                        Debugger.log("Health check: File replaced", null);
-                                    }
-                                    catch (Exception e){
-                                        Debugger.log("Health check: Error replacing chunk", null);
-                                    }
-
-                                }
-                            }
-
+                        }
+                        else if (status.equals("CORRUPT") && sender == Module.HARM) {
+                            replaceChunk(socket, commsHandler, corruptedList);
                         }
                     }
                 }
@@ -361,6 +312,63 @@ public class HealthChecker implements Runnable{
             }
         }
 
+
+        private boolean replaceChunk(Socket socket, CommsHandler commsHandler, Set<String> corruptedList){
+            Debugger.log("Health check: Corrupted chunk detected on HARM: " + host, null);
+            if(!corruptedList.isEmpty()){
+                Map<String, Set<String>> addressesOfCopies = getAddressesOfCopies(corruptedList);
+
+                for (String uuid : addressesOfCopies.keySet()){
+
+                    Chunk c = null;
+                    CommsHandler commLink = new CommsHandler();
+                    //lets get the chunk first
+                    Debugger.log("Health Checker: Attempting to retrieve copy of corrupted chunk", null);
+                    for (String addr : addressesOfCopies.get(uuid)){
+
+                        try{
+                            Socket harmServer = NetworkUtils.createConnection(addr, ConfigManager.getCurrent().getHarm_listen());
+                            if(commLink.sendPacket(harmServer, MessageType.DOWNLOAD, NetworkUtils.createSerializedRequest(uuid, MessageType.DOWNLOAD, ""), true) == MessageType.ACK){
+                                FileStreamer fileStreamer = new FileStreamer(harmServer);
+                                fileStreamer.receiveFileFromSocket(cfg.getStalker_chunk_dir() + uuid);
+                                NetworkUtils.closeSocket(harmServer);
+                                c = new Chunk();
+                                c.setChunk_path(cfg.getStalker_chunk_dir() + uuid);
+                                c.setUuid(uuid);
+                                break;
+                            }
+                        }
+                        catch (Exception e){
+                            Debugger.log("Health check: could not get copy of chunk", null);
+                        }
+                    }
+                    if (c == null){
+                        throw new RuntimeException("Health check: Could not retrieve chunks");
+                    }
+                    try {
+
+                        Debugger.log("Health Checker: Sending replacement chunk.", null);
+                        socket = NetworkUtils.createConnection(host, cfg.getHarm_listen());
+                        //start the replacement process
+                        if(commsHandler.sendPacket(socket, MessageType.REPLACE,
+                                NetworkUtils.createSerializedRequest(uuid, MessageType.REPLACE,""), true) == MessageType.ACK){
+                            //send that shit
+                            FileStreamer fileStreamer = new FileStreamer(socket);
+                            fileStreamer.sendFileToSocket(c.getChunk_path());
+                            NetworkUtils.closeSocket(socket);
+                            break;
+                        }
+                        Debugger.log("Health check: File replaced", null);
+                    }
+                    catch (Exception e){
+                        Debugger.log("Health check: Error replacing chunk", null);
+                    }
+
+                }
+            }
+
+            return(true);
+        }
 
         private Map<String, Set<String>> getAddressesOfCopies(Set<String> corruptedList) {
             Map<String, Set<String>> harmIps = new HashMap<>();
