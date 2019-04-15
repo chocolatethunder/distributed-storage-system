@@ -170,7 +170,8 @@ public class App {
 
         }
         Debugger.log("Shudown of STALKER was successful!", null);
-
+        NetworkUtils.wait(10000);
+        System.exit(0);
 
     }
 
