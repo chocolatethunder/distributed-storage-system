@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
 import java.net.ServerSocket;
+import java.net.SocketException;
 import java.util.Map;
 import java.util.Optional;
 import java.net.Socket;
@@ -61,7 +62,8 @@ public class CommsHandler {
             recieved =  Optional.of(mapper.readValue(rec, TcpPacket.class)).get();
 
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Debugger.log("Comms Handler: packet could not be received", null);
         }
         return recieved;
@@ -81,7 +83,11 @@ public class CommsHandler {
             //Debugger.log("Comm Link: response: " + jsonInString, null);
             //write packet to port
             new DataOutputStream(socket.getOutputStream()).writeUTF(jsonInString);
-        } catch (IOException e) {
+        }
+        catch (SocketException e){
+            Debugger.log("Could not send response: socket closed.", e);
+        }
+        catch (IOException e) {
             Debugger.log("", e);
         }
         return (true);

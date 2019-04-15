@@ -53,9 +53,9 @@ public class HealthStat{
                 Debugger.log("Could not make checksum", null);
             }
             String hash = String.valueOf(check);
-            Debugger.log("File:" + entry.getKey(),null);
-            Debugger.log("Calculated Hash: " + hash, null);
-            Debugger.log("Saved Hash: "+ entry.getValue(),null);
+//            Debugger.log("File:" + entry.getKey(),null);
+//            Debugger.log("Calculated Hash: " + hash, null);
+//            Debugger.log("Saved Hash: "+ entry.getValue(),null);
             if(hash.equals(entry.getValue())){
                 // eq, good  hash do nothing (?)
             }else{
