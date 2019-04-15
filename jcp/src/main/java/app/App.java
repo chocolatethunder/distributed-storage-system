@@ -67,7 +67,7 @@ public class App {
         int attempts = 1;
         //wait for at least 1 connection
         consoleOutput.setText("Connecting to servers please wait.\n");
-        while (!connected){
+        while (!connected && !NetworkUtils.shouldShutDown()){
             //we will wait for network discovery to do its thing
             wait((discoveryTimeout * 100));
             try{
@@ -102,35 +102,39 @@ public class App {
             attempts++;
             anim ++;
         }
-        consoleOutput.append((stalkerList.size() -1) +  " servers taking requests.\n");
-        consoleOutput.append("Connected to server!.\n");
-        Debugger.log("JCP Main: System ready to take requests!", null);
 
-        requestSender = RequestSender.getInstance();
-        //starting health checker tasks for each stalker in the stalker list
+        if (!NetworkUtils.shouldShutDown()){
+            consoleOutput.append((stalkerList.size() -1) +  " servers taking requests.\n");
+            consoleOutput.append("Connected to server!.\n");
+            Debugger.log("JCP Main: System ready to take requests!", null);
+
+            requestSender = RequestSender.getInstance();
+            //starting health checker tasks for each stalker in the stalker list
 //        Thread healthChecker= new Thread(new HealthChecker(Module.JCP, totalDiskSpace, true));
 //        healthChecker.start();
-        retrieveFiles();
-        //ip of stalker we'll just use the one at index 1 for now
-        while(!NetworkUtils.shouldShutDown()){
-            try{
-                //make sure there are still servers
-                stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
-                if (stalkerList.size() -1 == 0){
-                    consoleOutput.append("Lost connection servers please wait....\n");
-                    connected = false;
+            retrieveFiles();
+            //ip of stalker we'll just use the one at index 1 for now
+            while(!NetworkUtils.shouldShutDown()){
+                try{
+                    //make sure there are still servers
+                    stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
+                    if (stalkerList.size() -1 == 0){
+                        consoleOutput.append("Lost connection servers please wait....\n");
+                        connected = false;
+                    }
+                    else{
+                        connected = true;
+                    }
+                    Thread.sleep((500));
                 }
-                else{
-                    connected = true;
+                catch (InterruptedException e){
+                    e.printStackTrace();
                 }
-                Thread.sleep((500));
             }
-            catch (InterruptedException e){
-                e.printStackTrace();
-            }
+            Debugger.log("JCP Main: Exited safely...", null);
+            NetworkUtils.wait(10000);
         }
-        Debugger.log("JCP Main: Exited safely...", null);
-        NetworkUtils.wait(10000);
+
     }
 
     public static void initJCP(){
@@ -185,6 +189,11 @@ public class App {
             consoleOutput.append("JCP Main: Connecting to server, please wait.\n");
         }
 
+    }
+
+
+    public static void exit(){
+        System.exit(0);
     }
 
     public static void chooseFile() {
@@ -303,6 +312,7 @@ public class App {
 		JButton listButton = new JButton("Refresh");
 		JButton downloadButton = new JButton("Download");
 		JButton deleteButton = new JButton("Delete");
+        JButton exitButton = new JButton("Exit");
 		JScrollPane scrollableList = new JScrollPane(listOfFiles);
 		listOfFiles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollableConsole = new JScrollPane(consoleOutput);
@@ -322,7 +332,10 @@ public class App {
 		c.insets.left = 10;
 		c.insets.right = 10;
 		c.insets.bottom = 10;
-		
+
+
+
+
 		c.gridx = 1;
 		c.gridy = 0;
 		mainFrame.getContentPane().add(uploadButton, c);
@@ -338,7 +351,11 @@ public class App {
 		c.gridx = 2;
 		c.gridy = 2;
 		mainFrame.getContentPane().add(deleteButton, c);
-		
+
+        c.gridx = 0;
+        c.gridy = 2;
+        mainFrame.getContentPane().add(exitButton, c);
+
 		c.fill = GridBagConstraints.BOTH;
 		c.weightx = 0.7;
 		c.weighty = 0.7;
@@ -360,12 +377,20 @@ public class App {
         //set up listeners
         UploadListener uploadListener = new UploadListener();
         uploadButton.addActionListener(uploadListener);
+
         ListListener listListener = new ListListener();
         listButton.addActionListener(listListener);
+
         DownloadListener downloadListener = new DownloadListener();
         downloadButton.addActionListener(downloadListener);
+
         DeleteListener deleteListener = new DeleteListener();
         deleteButton.addActionListener(deleteListener);
+
+        ExitListener exitListener = new ExitListener();
+        exitButton.addActionListener(exitListener);
+
+
         
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setPreferredSize(new Dimension((int) screenSize.getWidth()/2,(int)screenSize.getHeight()/2));
