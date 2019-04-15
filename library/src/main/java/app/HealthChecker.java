@@ -112,7 +112,7 @@ public class HealthChecker implements Runnable{
 
                 //checking if new stalker list contains any new node
                 if(!this.stalkerList.equals(newStalkers)){
-                    for(Map.Entry<Integer, String> entry : newStalkers.entrySet()){
+                    for(HashMap.Entry<Integer, String> entry : newStalkers.entrySet()){
                         if(!this.stalkerList.containsKey(entry.getKey())){
                             Debugger.log("Health Checker: Stalker at " + entry.getValue() + " is now being tracked.", null);
                             if(debugMode) {
@@ -138,7 +138,7 @@ public class HealthChecker implements Runnable{
                     if(!this.harmList.equals(newHarms)) {
 
                         ObjectMapper mapper = new ObjectMapper();
-                        for (Map.Entry<Integer, NodeAttribute> entry : newHarms.entrySet()) {
+                        for (HashMap.Entry<Integer, NodeAttribute> entry : newHarms.entrySet()) {
                             if(!this.harmList.containsKey(entry.getKey())) {
                                 addTimerTaskForHarm(timer, mapper, entry);
                                 Debugger.log("Health Checker: Harm at " + entry.getValue().getAddress() + " is now being tracked.", null);
@@ -178,7 +178,7 @@ public class HealthChecker implements Runnable{
      * @param mapper
      * @param entry
      */
-    private void addTimerTaskForHarm(Timer timer, ObjectMapper mapper, Map.Entry<Integer, NodeAttribute> entry) {
+    private void addTimerTaskForHarm(Timer timer, ObjectMapper mapper, HashMap.Entry<Integer, NodeAttribute> entry) {
         NodeAttribute attributes = null;
 //        try {
 //            attributes = mapper.readValue(entry.getValue(), NodeAttribute.class);
