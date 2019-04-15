@@ -1,5 +1,6 @@
 package app.LeaderUtils;
 
+import app.Debugger;
 import app.NetworkUtils;
 
 import java.util.PriorityQueue;
@@ -20,7 +21,7 @@ public class RequestAdministrator implements Runnable {
     public void run(){
         System.out.println(NetworkUtils.timeStamp(1) + "Administrator online.");
         ExecutorService executorService = Executors.newFixedThreadPool(5);
-        while (true){
+        while (!Thread.interrupted() && !NetworkUtils.shouldShutDown()){
 
             if (!pQueue.isEmpty()){
                 executorService.submit(new QueueHandler(1,null, pQueue));
@@ -33,6 +34,7 @@ public class RequestAdministrator implements Runnable {
                 e.printStackTrace();
             }
         }
+        Debugger.log("Request admin shutdown...", null);
     }
 
 }

@@ -29,12 +29,17 @@ public class App {
         NetworkUtils.loadConfig(cfg);
         Debugger.setMode(cfg.getDebug_mode());
 
+
+        List<Thread> toHandle = new ArrayList<>();
         //this will always be running
-        Thread discManager = new Thread(new DiscoveryManager(Module.HARM, cfg.getHarm_update_freq(), true));
-        discManager.start();
-        //Starting the listenerthread for health check requests
-        Thread listenerThread = new Thread(new ListenerThread(true));
-        listenerThread.start();
+        //discovery manager
+        toHandle.add(new Thread(new DiscoveryManager(Module.HARM, cfg.getHarm_update_freq(), true)));
+        //harm listener health thread
+        toHandle.add(new Thread(new ListenerThread(true)));
+        //Add threads to shutdown handler (will start the threads)
+        ShutDown shutDownThread = new ShutDown(toHandle);
+        Runtime.getRuntime().addShutdownHook(new ShutdownHandler(shutDownThread));
+
 
         // Let's cook some magic
         // Hiring security guards
@@ -70,7 +75,7 @@ public class App {
 
         System.out.println(NetworkUtils.timeStamp(1) + "Waiting...");
 
-        while (true) {
+        while (!NetworkUtils.shouldShutDown()) {
             try {
                 STALKER_Client = HARM_server.accept();
                 Debugger.log("Harm Main: Accepted connection : ", null);
@@ -100,6 +105,8 @@ public class App {
                 }
             }
         }
+        Debugger.log("Harm Exited safely.", null);
+
     }
 
     public static void initHarm(){

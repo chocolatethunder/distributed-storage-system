@@ -42,7 +42,7 @@ public class HealthListener implements Runnable{
         }
         Debugger.log("Health Listener: Waiting for health check on port" + serverPort +  "...", null);
         // will keep on listening for requests
-        while (running) {
+        while (!Thread.interrupted() && !NetworkUtils.shouldShutDown()) {
             try {
                 //accept connection from a JCP
                 Socket client = server.accept();
@@ -65,6 +65,7 @@ public class HealthListener implements Runnable{
                 //Debugger.log("Listener: Socket timeout", null);
             }
         }
+        Debugger.log("Health listener shutdown!", null);
     }
 
     /**

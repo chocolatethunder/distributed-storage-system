@@ -52,8 +52,13 @@ public class App {
 
         //make a discovery manager and start it, prints results to file
         //this beast will be running at all times
-        Thread discManager = new Thread(new DiscoveryManager(Module.JCP, discoveryTimeout, false));
-        discManager.start();
+        List<Thread> toHandle = new ArrayList<>();
+        //add discovery thread
+        toHandle.add(new Thread(new DiscoveryManager(Module.JCP, discoveryTimeout, false)));
+        //add to shutdown handler, will also shutdown any other threads
+        ShutDown shutDownThread = new ShutDown(toHandle);
+        Runtime.getRuntime().addShutdownHook(new ShutdownHandler(shutDownThread));
+
         List<Integer> stalkerList = null;
         Map<Integer, NodeAttribute> harmlist;
 
@@ -107,14 +112,8 @@ public class App {
 //        healthChecker.start();
         retrieveFiles();
         //ip of stalker we'll just use the one at index 1 for now
-        while(true){
+        while(!NetworkUtils.shouldShutDown()){
             try{
-
-                if (cfg.isRandom()){
-                    retrieveFiles();
-                    cfg.setRandom(false);
-                }
-
                 //make sure there are still servers
                 stalkerList = NetworkUtils.getStalkerList(cfg.getStalker_list_path());
                 if (stalkerList.size() -1 == 0){
@@ -123,12 +122,13 @@ public class App {
                 else{
                     connected = true;
                 }
-                Thread.sleep((5000));
+                Thread.sleep((500));
             }
             catch (InterruptedException e){
                 e.printStackTrace();
             }
         }
+        Debugger.log("JCP Main: Exited safely...", null);
     }
 
     public static void initJCP(){

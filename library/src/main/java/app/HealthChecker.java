@@ -93,7 +93,7 @@ public class HealthChecker implements Runnable{
          * This block is going to check changes in the list every interval and if there is any new entry
          * it will start a timer Task for it
          */
-        while (!interrupted){
+        while (!interrupted && !NetworkUtils.shouldShutDown()){
             try {
                 Map<Integer, String> newStalkers =  NetworkUtils.mapFromJson(NetworkUtils
                         .fileToString(cfg.getStalker_list_path()));
@@ -145,7 +145,7 @@ public class HealthChecker implements Runnable{
             }
             try{Thread.sleep(interval);}catch (Exception e){};
         }
-        Debugger.log("Health checker suspended...", null);
+        Debugger.log("Health checker shutdown...", null);
 
     }
 

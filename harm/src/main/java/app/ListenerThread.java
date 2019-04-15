@@ -42,7 +42,7 @@ public class ListenerThread implements Runnable {
         }
         Debugger.log("Listener: Harm server: Waiting for health check requests from stalkers..", null);
         // will keep on listening for requests
-        while (running) {
+        while (!NetworkUtils.shouldShutDown()) {
             try {
                 //accept connection from a STALKER
                 Socket client = server.accept();
@@ -85,6 +85,7 @@ public class ListenerThread implements Runnable {
                 Debugger.log("", e);
             }
         }
+        Debugger.log("Harm Listener shutdown safely!", null);
 
     }
 

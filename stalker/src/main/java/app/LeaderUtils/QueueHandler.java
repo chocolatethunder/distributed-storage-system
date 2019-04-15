@@ -51,7 +51,15 @@ public class QueueHandler implements  Runnable {
                 if (q.getMessageType() == MessageType.UPLOAD || q.getMessageType() == MessageType.DELETE){
                     TcpPacket t = null;
                     t = commLink.receivePacket(worker);
-                    sendUpdates(t);
+
+                    int attempts = 0;
+                    while (attempts < 8){
+                        if(sendUpdates(t)){
+                            break;
+                        }
+                        NetworkUtils.wait(1000);
+                    }
+
                     Thread th = new Thread(new IndexManager(Indexer.loadFromFile(), Indexer.deserializeUpdate(t.getMessage())));
                     th.start();
                     th.join();
@@ -122,9 +130,11 @@ public class QueueHandler implements  Runnable {
                 catch (IOException e){
                     Debugger.log("",e);
                     e.printStackTrace();
+                    return false;
                 }
                 catch (Exception e){
                     Debugger.log("",e);
+                    return false;
                 }
                 attempts++;
             }

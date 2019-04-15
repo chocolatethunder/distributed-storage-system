@@ -35,7 +35,8 @@ public class RequestSender {
      */
     public Socket connect(String host, int port){
         try {
-
+            //try to close the socket first if it hasn't already
+            NetworkUtils.closeSocket(this.socket);
             //TO:DO modify this to connect to STALKER in a round robin fashion
             this.socket = NetworkUtils.createConnection(host, port);
         } catch (IOException e) {

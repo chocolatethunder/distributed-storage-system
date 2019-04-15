@@ -23,7 +23,7 @@ public class DiscoveryManager implements Runnable{
     @Override
     public void run(){
         //run forever
-    while(!Thread.interrupted()){
+    while(!Thread.interrupted() && !NetworkUtils.shouldShutDown()){
         switch (mType){
             case STALKER:
                 STALKERDiscovery();
@@ -75,8 +75,8 @@ public class DiscoveryManager implements Runnable{
             threads.get(3).start();
 
             //The threads will never stop so we must stop them when this thread is interrupted
-            while (!Thread.interrupted()){
-                try{Thread.sleep(10000);}catch (Exception e){Debugger.log("", e);};
+            while (!Thread.interrupted() && !NetworkUtils.shouldShutDown()){
+                try{Thread.sleep(1000);}catch (Exception e){Debugger.log("", e);};
             }
             threads.forEach(t -> t.interrupt());
             for (Thread t : threads){
@@ -90,6 +90,7 @@ public class DiscoveryManager implements Runnable{
         } catch (Exception e) {
             Debugger.log("", e);
         }
+        Debugger.log("Discovery Manager shutdown safely!", null);
     }
     //will listen for udp packets from stalkers
     public void HARMDiscovery(){

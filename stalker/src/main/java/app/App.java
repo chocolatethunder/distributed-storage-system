@@ -44,30 +44,34 @@ public class App {
         cfg = ConfigManager.getCurrent();
         loadConfig(cfg);
         ind = Indexer.loadFromFile();
+
+        List<Thread> tohandle = new ArrayList<>();
         //start the election listener
-        Thread elecListen = new Thread(new ElectionListener());
+        tohandle.add(new Thread(new ElectionListener()));
         //health listener listens for health checks
-        Thread healthListener = new Thread(new HealthListener());
+        tohandle.add(new Thread(new HealthListener()));
         //First thing to do is locate all other stalkers and print the stalkers to file
         //check the netDiscovery class to see where the file is being created
-        Thread discManager = new Thread(new DiscoveryManager(Module.STALKER, disc_timeout, false));
-        discManager.start();
-        healthListener.start();
-        elecListen.start();
+        tohandle.add(new Thread(new DiscoveryManager(Module.STALKER, disc_timeout, false)));
+        //start the threads and make sure they are interrupted when the program exits
+        ShutDown sd = new ShutDown(tohandle);
+        Runtime.getRuntime().addShutdownHook(new ShutdownHandler(sd));
+
+
+
         Debugger.log("Stalker Main: This Stalker's macID: " + NetworkUtils.getMacID() + "\n\n", null);
         Debugger.log("Stalker Main: This IP: " + NetworkUtils.getIP() + "\n\n", null);
 
         //try and connect to the servers
         connectToServers();
-        if (!running){
+        if (!running && !NetworkUtils.shouldShutDown()){
             LeaderCheck l = new LeaderCheck();
             l.election(0);
         }
 
-        while (true){
+        while (!NetworkUtils.shouldShutDown()){
             //reelect
             //starting task for health checks on STALKERS and HARM targets
-
             HashMap<Integer, String> stalkermap = NetworkUtils.getStalkerMap(cfg.getStalker_list_path());
             stalkermap.remove(leaderUuid);
             int role = ElectionUtils.identifyRole(NetworkUtils.mapToSList(stalkermap),leaderUuid);
@@ -152,15 +156,20 @@ public class App {
 //                    }
 //                    break;
             }
-            wait(3000);
-            LeaderCheck leaderchecker = new LeaderCheck();
-            leaderchecker.election(1);
-            cfg = ConfigManager.getCurrent();
-            leaderUuid = cfg.getLeader_id();
-            cfg.setReelection(false);
-            running = false;
-            // Leader election by asking for a leader
+
+            if (!NetworkUtils.shouldShutDown()){
+                wait(3000);
+                LeaderCheck leaderchecker = new LeaderCheck();
+                leaderchecker.election(1);
+                cfg = ConfigManager.getCurrent();
+                leaderUuid = cfg.getLeader_id();
+                cfg.setReelection(false);
+                running = false;
+                // Leader election by asking for a leader
+            }
+
         }
+        Debugger.log("Shudown of STALKER was successful!", null);
 
 
     }
@@ -173,8 +182,9 @@ public class App {
         List<Integer> stalkerList = null;
         Map<Integer, NodeAttribute> harmlist = null;
         int attempts = 0;
+        boolean found = false;
         //wait for at least 2 connections
-        while (!connected){
+        while (!connected && !NetworkUtils.shouldShutDown()){
             //we will wait for network discovery to do its thing
             wait((disc_timeout * 1000) + 1000);
             try{
@@ -193,6 +203,13 @@ public class App {
                 }
                 LeaderCheck leaderchecker = new LeaderCheck();
                 if (stalkerList != null && stalkerList.size() > 0){
+
+                    if (!found){
+                        found = true;
+                        Debugger.log("Stalker Main: Stalkers have been discovered on the network!", null);
+                        Debugger.log("Stalker Main: Waiting for a leader or election threshold to be met...", null);
+
+                    }
                     if(leaderchecker.tryLeader()){
                         connected = true;
                         running = true;
@@ -201,6 +218,10 @@ public class App {
                         Debugger.log("Leader uuid = " + cfg.getLeader_id(), null);
                     }
                 }
+                else{
+                    Debugger.log("Stalker Main: No STALKERs detected yet...", null);
+                }
+
                 if (stalkerList != null && stalkerList.size() >= cfg.getElection_threshold_s()){
 
                     if(harmlist.size() >= 1){
@@ -210,9 +231,7 @@ public class App {
 
                 }
                 else{
-
-                    Debugger.log("Stalker Main: No STALKERs detected yet...", null);
-                    Debugger.log("Stalker Main: Waiting for servers to become available...", null);
+                    Debugger.log("Stalker Main: Waiting for more servers to become available...", null);
                 }
             }
             catch(NullPointerException e){

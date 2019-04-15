@@ -36,7 +36,7 @@ public class NetDiscovery implements Runnable{
         catch (SocketException e){
         }
         int counter = 1;
-        while (!Thread.interrupted()){
+        while (!Thread.interrupted() && !NetworkUtils.shouldShutDown()){
             try {
                 listOfAddrs = serverSearch(MessageType.DISCOVER, ports);
                 if (listOfAddrs != null){

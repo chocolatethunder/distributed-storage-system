@@ -4,7 +4,6 @@ public class ConfigFile {
     private String conf_path;
     private int leader_id;
     private boolean reelection = false;
-
     private int role = 0;
 
     private boolean random = false;
@@ -12,7 +11,7 @@ public class ConfigFile {
     private int chunk_count = 5;
     private int replica_count = 3;
 
-    private String broadcast_ip = "192.168.1.255";
+    private String broadcast_ip = "192.168.0.255";
 
     private int election_threshold_s = 3;
     private int election_threshold_h = 3;
@@ -40,6 +39,7 @@ public class ConfigFile {
     private int election_port = 50003;
     private int health_check_port = 50004;
     private int harm_listen_port = 50005;
+
 
     //the port for requests
     private int harm_listen = 50006;

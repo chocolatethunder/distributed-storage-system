@@ -30,7 +30,7 @@ public class NetworkUtils {
 
     private static int STK_STK_S = 10002;
     private static int STK_STK_R = 11002;
-
+    private static volatile boolean shutdown = false;
 
 
     public static List<Integer> getStalkerList(String path){
@@ -41,6 +41,12 @@ public class NetworkUtils {
     }
 
 
+    public static synchronized boolean shouldShutDown(){
+        return(shutdown);
+    }
+    public static synchronized void toggleShutdown(boolean b){
+        shutdown = b;
+    }
 
 
     public static void loadConfig(ConfigFile cfg){
