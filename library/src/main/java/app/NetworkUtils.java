@@ -434,7 +434,7 @@ public class NetworkUtils {
         try {
             TypeReference<HashMap<Integer, Object>> typeRef = new TypeReference<HashMap<Integer, Object>>() {
             };
-            list = mapper.readValue(s, typeRef);
+            list = mapper.readValue(NetworkUtils.fileToString(s), typeRef);
         } catch (IOException e) {
             Debugger.log("", e);
             return null;
