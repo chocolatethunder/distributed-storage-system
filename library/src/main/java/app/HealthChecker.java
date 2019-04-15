@@ -133,7 +133,7 @@ public class HealthChecker implements Runnable{
                     this.stalkerList.putAll(newStalkers);
                 }
                 //checking if harm list contains any new harm node
-                if(this.requestSender == Module.STALKER){
+                if(this.requestSender == Module.STALKER && !Thread.currentThread().isInterrupted()){
                     Map<Integer, NodeAttribute> newHarms =  NetworkUtils.getNodeMap(cfg.getHarm_list_path());
                     if(!this.harmList.equals(newHarms)) {
 
