@@ -174,9 +174,10 @@ public class HealthChecker implements Runnable{
             }
             try{Thread.sleep(interval);}catch (Exception e){};
         }
+        Debugger.log("Health checker shutdown init...", null);
         timer.cancel();
         timer.purge();
-        Debugger.log("Health checker shutdown...", null);
+        Debugger.log("Health checker shutdown complete...", null);
 
     }
 
