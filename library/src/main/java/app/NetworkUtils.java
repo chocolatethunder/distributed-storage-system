@@ -432,7 +432,7 @@ public class NetworkUtils {
         //Optional<List<String>> list = Optional.empty();
         HashMap<Integer, NodeAttribute> list = new HashMap<>();
         try {
-            TypeReference<HashMap<Integer, Object>> typeRef = new TypeReference<HashMap<Integer, Object>>() {
+            TypeReference<HashMap<Integer, NodeAttribute>> typeRef = new TypeReference<HashMap<Integer, NodeAttribute>>() {
             };
             list = mapper.readValue(NetworkUtils.fileToString(s), typeRef);
         } catch (IOException e) {
