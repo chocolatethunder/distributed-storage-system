@@ -183,7 +183,7 @@ public class HealthChecker implements Runnable{
                 }
             }
             if (!Thread.currentThread().isInterrupted()){
-                //this.harmList = new HashMap<>();
+                this.harmList = new HashMap<>();
                 this.harmList.putAll(newHarms);
                 NetworkUtils.toFile(cfg.getHarm_hist_path(), harmHistory);
             }
